@@ -1,0 +1,15 @@
+<div class="flex flex-col mr-10">
+    <div class="p">
+      <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias">
+    </div>
+  
+    <div>
+      <h5>Categorias</h5>
+    </div>
+    <ul class="flex mt-4 flex-col gap-2" >
+      <li *ngFor="let category of categories" (click)="getProducts(category.category || '')" >{{category.category}}</li>
+    </ul>
+  
+    <button class="p-3 mt-1 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500">Add Category</button>
+  </div>
+  

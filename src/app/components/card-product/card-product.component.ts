@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Product } from '../../interfaces/product';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-card-product',
@@ -9,5 +11,16 @@ import { CommonModule } from '@angular/common';
   styleUrl: './card-product.component.css'
 })
 export class CardProductComponent {
+  @Input() renderProduct: Product | undefined;
+  @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
+  constructor(private supaBase : SupabaseService) { }
+  toggleForm: boolean= false;
+  ngOnInit() {
+    
+  }
 
+  getProductId(id:number){
+    this.supaBase.getProductById(id)
+    this.booleanOutput.emit();
+  }
 }

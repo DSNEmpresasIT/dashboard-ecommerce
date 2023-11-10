@@ -1,1 +1,19 @@
-<p>card-product works!</p>
+<div class="max-w-sm  rounded overflow-hidden shadow-xl p-2 relative">
+  <img class="w-full aspect-square object-cover rounded-sm"  [src]="renderProduct?.img ? renderProduct?.img :'../../../assets/img/placeholder.png'" alt="Sunset in the mountains">
+  <div class="min-h-[120px]">
+    <div class="px-6 pt-4">
+      <div class="font-bold text-xl mb-2">{{renderProduct?.name}}</div>
+    </div>
+    <div class="px-6 pb-1">
+      <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm mr-2 mb-2">{{ renderProduct?.created_at | date }}</span>
+      <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm  mr-2 " *ngIf="renderProduct?.formulacion !== ''" >{{renderProduct?.formulacion}}</span>
+    </div>
+  </div>
+  <div class="flex justify-between items-center">
+    <button class="flex px-4 py-1 mb-2 ml-2 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500" (click)="getProductId(renderProduct?.id || 0)">Editar</button>
+  </div>
+  <p class="absolute top-8 right-3 flex text-base items-center bg-green-400 rounded-full px-3 py-1 text-white font-semibold">
+    {{renderProduct?.is_active_substance ? 'Sustancia activa' : 'Sin sustancia activa'}}
+    <span class="p-2 flex ms-2 w-2 h-2 rounded-full  bg-green-400" ngClass="{{renderProduct?.is_active_substance ? 'bg-green-500' : 'bg-red-500'}}"></span>
+  </p>
+</div>
