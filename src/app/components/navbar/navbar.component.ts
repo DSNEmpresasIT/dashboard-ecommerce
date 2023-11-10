@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +14,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 })
 export class NavbarComponent implements OnInit{
   searcherProducts:FormControl<string | null> = new FormControl<string>('');
-  constructor(private supaBase: SupabaseService) {
+  constructor(private supaBase: SupabaseService, public authServ: AuthService) {
     this.searcherProducts.valueChanges.pipe(
       debounceTime(600),
       distinctUntilChanged() 

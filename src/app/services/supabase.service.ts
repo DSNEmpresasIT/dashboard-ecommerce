@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Category, Product } from '../interfaces/product';
 
 @Injectable({
@@ -17,6 +17,9 @@ export class SupabaseService {
 
   private editProductSubject = new BehaviorSubject<Product | null>(null);
   editProduct = this.editProductSubject.asObservable();
+
+  private updateNotifier = new Subject<void>();
+  updateNotification$ = this.updateNotifier.asObservable();
 
   constructor() {
     this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
@@ -39,20 +42,17 @@ async getProductById(id: number | undefined) {
 }
 
 
-  async updateProduct(product: Product) {
+  async updateProduct(product: Product): Promise<{ data: any, error: any }> {
     try {
-      const { data, error } = await this.supabase
+      const result = await this.supabase
         .from('products')
         .update(product)
-        .eq('id', product.id) 
+        .eq('id', product.id);
 
-      if (error) {
-        console.error('Error al actualizar el producto:', error);
-      } else {
-        console.log('Producto actualizado exitosamente:', data);
-      }
+      return result;
     } catch (error) {
       console.error('Error al realizar la actualización en Supabase:', error);
+      throw error;
     }
   }
 
@@ -75,7 +75,8 @@ async getProductById(id: number | undefined) {
         .from('categories')
         .select('*')
         .ilike('category', `%${query}%`);
-      return categoriesResponse.data as Category[] | null;
+        const categories = categoriesResponse.data as Category[] | null;
+        return categories;
     } catch (error) {
       console.log('Categorías no encontradas', error);
       return null;
@@ -102,6 +103,7 @@ async getProductById(id: number | undefined) {
         .select('*')
         .ilike('name', `%${productName}%`);
       if (productResponse.data) {
+        this.updateNotifier.next(); 
         this.productsSubject.next(productResponse.data);
       }
     } catch (error) {

@@ -3,16 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Product } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase.service';
+import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 
 @Component({
-  selector: 'app-form-product',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
-  templateUrl: './form-product.component.html',
-  styleUrl: './form-product.component.css'
+    selector: 'app-form-product',
+    standalone: true,
+    templateUrl: './form-product.component.html',
+    styleUrl: './form-product.component.css',
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, ButtonSpinerComponent]
 })
 export class FormProductComponent implements OnInit {
   productForm: FormGroup;
+  isLoading: boolean= false;
   renderProduct: Product | undefined;
   @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
 
@@ -28,6 +30,10 @@ export class FormProductComponent implements OnInit {
 
   toggleModal(){
     this.booleanOutput.emit();
+  }
+
+  toggleLoading(){
+    this.isLoading = !this.isLoading
   }
 
   ngOnInit(): void {
@@ -65,8 +71,19 @@ export class FormProductComponent implements OnInit {
   onSubmit() {
     if (this.productForm.valid) {
       const formData: Product = this.productForm.value;
-      console.log(formData.id)
-      this.supaBase.updateProduct(formData);
+      console.log(formData.id);
+      this.toggleLoading()
+      this.supaBase.updateProduct(formData)
+        .then((result) => {
+          this.toggleModal() // cerrar el modal del form
+          console.log('Producto actualizado exitosamente:', result.data);
+          this.supaBase.fetchAllProducts()
+        })
+        .catch((error) => {
+          this.toggleLoading()
+          console.error('Error al actualizar el producto:', error);
+
+        });
     }
   }
 

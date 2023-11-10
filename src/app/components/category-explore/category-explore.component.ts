@@ -15,6 +15,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 export class CategoryExploreComponent {
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories: Category[] | null = null;
+  selectedCategory: string = '';
+
+
 constructor(private supaBase: SupabaseService) {
     this.searcherCategory.valueChanges
     .pipe(
@@ -30,14 +33,25 @@ constructor(private supaBase: SupabaseService) {
           this.getCategoryByName(queryString)
         }
       })
+      this.supaBase.updateNotification$.subscribe(async () => {
+        await this.resetSelect(); // Esperar a que resetSelect se complete
+      });
+      
    }
 
   ngOnInit() {
     this.getAllCategory()
+
   }
 
-  getProducts(product:string){
-    this.supaBase.fetchByCategory(product)
+  getProducts(category: string){
+    this.supaBase.fetchByCategory(category)
+    this.selectedCategory = category;
+  }
+
+  resetSelect() {
+    console.log('Resetting selectedCategory');
+    this.selectedCategory = '';
   }
 
   async getAllCategory(){

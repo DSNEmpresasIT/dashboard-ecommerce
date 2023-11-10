@@ -1,15 +1,21 @@
 <div class="flex flex-col mr-10">
-    <div class="p">
-      <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias">
-    </div>
-  
-    <div>
-      <h5>Categorias</h5>
-    </div>
-    <ul class="flex mt-4 flex-col gap-2" >
-      <li *ngFor="let category of categories" (click)="getProducts(category.category || '')" >{{category.category}}</li>
-    </ul>
-  
-    <button class="p-3 mt-1 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500">Add Category</button>
+  <div class="p">
+    <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-green-400 focus:border-green-400">
   </div>
-  
+
+  <div class="border-b-2 flex mt-2 border-spacing-1">
+    <h5 class="text-green-400 text-xl font-bold"> {{selectedCategory ? 'Categoria ' + selectedCategory : 'Categorias' }}</h5>
+  </div>
+
+  <ul class="flex mt-4 flex-col gap-1">
+    <li *ngFor="let category of categories" 
+        (click)="getProducts(category.category || '')" 
+        [class.bg-green-400]="selectedCategory === category.category"
+        [class.text-white]="selectedCategory === category.category"
+        class="p-2 rounded-lg cursor-pointer font-semibold hover:bg-green-500 hover:text-white">
+      {{category.category}}
+    </li>
+  </ul>
+
+  <button class="p-3 mt-1 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500 focus:outline-none">Add Category</button>
+</div>
