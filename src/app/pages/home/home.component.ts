@@ -2,29 +2,37 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../interfaces/product';
 import { Subscription } from 'rxjs';
-import { SupabaseService } from '../../services/supabase.service';
+import { SupabaseService } from '../../services/supabase/supabase.service';
 import { CardProductComponent } from "../../components/card-product/card-product.component";
 import { FormProductComponent } from '../../components/form-product/form-product.component';
 import { CategoryExploreComponent } from '../../components/category-explore/category-explore.component';
+import { FormNewProductComponent } from "../../components/form-new-product/form-new-product.component";
+import { ModalNewProductService } from '../../services/modal-new-product.service';
 
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
-    imports: [CommonModule, CardProductComponent, FormProductComponent , CategoryExploreComponent]
+    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent]
 })
 export class HomeComponent implements OnInit, OnDestroy{
+
   products: Product[] | undefined;
   private productsSubscription: Subscription = new Subscription();
   toggleForm:boolean = false;
-  constructor(private supaBase: SupabaseService) { }
+  toggleFormNewProduct:boolean = false
+  constructor(private supaBase: SupabaseService, private modalToggleService: ModalNewProductService) { }
 
   ngOnInit() {
    this.supaBase.fetchAllProducts();
     this.productsSubscription = this.supaBase.products.subscribe((res: Product[]) => {
       this.products = res;
       console.log(this.products)
+    });
+
+    this.modalToggleService.toggle$.subscribe((value) => {
+      this.toggleModal(value);
     });
   }
 
@@ -39,4 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy{
     console.log('Valor booleano recibido:', value);
   }
   
+  toggleModal(value: boolean) {
+    this.toggleFormNewProduct = value;
+  }
 }

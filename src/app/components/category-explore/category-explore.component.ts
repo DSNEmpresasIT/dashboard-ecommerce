@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Category } from '../../interfaces/product';
-import { SupabaseService } from '../../services/supabase.service';
+import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({

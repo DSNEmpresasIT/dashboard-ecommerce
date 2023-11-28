@@ -6,5 +6,10 @@
     </div>
     <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleForm">
       <app-form-product (booleanOutput)="handleBooleanValue($event)" ></app-form-product>
+      
     </div>
+    <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormNewProduct" >
+      <app-form-new-product (newProductForm)="toggleModal($event)"></app-form-new-product>
+    </div>
+    
   </div>

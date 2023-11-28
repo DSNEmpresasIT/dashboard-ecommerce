@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.development';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { environment } from '../../../environments/environment.development';
+import { PostgrestSingleResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { Category, Product } from '../interfaces/product';
+import { Category, Product } from '../../interfaces/product';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseService {
-  supabaseUrl = environment.SUPABASEURL;
-  supabaseKey = environment.SUPABASEKEY;
+  supabaseUrl = environment.MAIN_SUPABASE_URL;
+  supabaseKey = environment.MAIN_SUPABASE_KEY;
   private supabase: SupabaseClient;
 
   private productsSubject = new BehaviorSubject<Product[]>([]);
@@ -149,5 +149,61 @@ async getProductById(id: number | undefined) {
       console.log('Error', error);
     }
   }
+
+  // metodos para agregar 
+
+  async newProduct(product: Product, category_id: string): Promise<Product | null> {
+    if (!category_id) {
+      console.error('Error: category_id is required.');
+      return null;
+    }
+  
+    try {
+      // Primero, inserta el producto en la tabla productos
+      const { error } = await this.supabase
+        .from('products')
+        .insert([product]);
+  
+      if (error) {
+        console.error('Error inserting product:', error);
+        return null;
+      }
+  
+      // Busca el producto recién insertado por nombre
+      const {data} = await this.supabase
+        .from('products')
+        .select('*')
+        .ilike('name', `%${product.name}%`);
+  
+      // Obtiene el ID del producto insertado
+      const newProduct = data?.find((item) => item.name === product.name);
+      const productId = newProduct?.id;
+
+      console.log(productId, 'ID del producto');
+  
+      if (productId) {
+        // Asocia el producto a la categoría en la tabla 'products_categories'
+        const { error: categoryError } = await this.supabase
+          .from('products_categories')
+          .upsert([
+            {
+              category_id: category_id,
+              product_id: productId
+            }
+          ]);
+  
+        if (categoryError) {
+          console.error('Error associating product with category:', categoryError);
+          return null;
+        }
+      }
+  
+      return productId ? { ...product, id: productId } : null;
+    } catch (error) {
+      console.error('Error adding product:', error);
+      return null;
+    }
+  }
+  
   
 }

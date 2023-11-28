@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../interfaces/product';
-import { SupabaseService } from '../../services/supabase.service';
+import { SupabaseService } from '../../services/supabase/supabase.service';
 
 @Component({
   selector: 'app-card-product',
