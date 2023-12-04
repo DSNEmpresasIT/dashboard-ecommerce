@@ -15,18 +15,18 @@ import { ModalNewProductService } from '../../services/modal-new-product.service
     imports: [CommonModule, ReactiveFormsModule, FormsModule, ButtonSpinerComponent]
 })
 export class FormNewProductComponent implements OnInit {
-  productForm: FormGroup ;
+  productNewForm: FormGroup ;
   isLoading: boolean= false;
   categories:Category[] | null = []; 
-  @Output() newProductForm: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() newproductNewForm: EventEmitter<boolean> = new EventEmitter<boolean>();
   
   constructor(private formBuilder: FormBuilder, private supabase: SupabaseService, private modalToggleService: ModalNewProductService) {
-    this.productForm = this.formBuilder.group({
+    this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       formulacion: [''],
       img: [''],
       is_active_substance: [''],
-      selectedCategory: ['', [Validators.required]] // Agregado el campo selectedCategory
+      selectedCategory: ['', [Validators.required]] 
     });
   }
   
@@ -50,7 +50,7 @@ export class FormNewProductComponent implements OnInit {
       // Esperar a que se complete la lectura del archivo
       await new Promise<void>((resolve, reject) => {
         reader.onload = (e: any) => {
-          this.productForm.get('img')?.setValue(e.target.result);
+          this.productNewForm.get('img')?.setValue(e.target.result);
           resolve();
         };
   
@@ -72,9 +72,9 @@ export class FormNewProductComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.productForm.valid) {
+    if (this.productNewForm.valid) {
       this.toggleLoading();
-      const productData = { ...this.productForm.value }; // Copiar todas las propiedades
+      const productData = { ...this.productNewForm.value }; // Copiar todas las propiedades
   
       // Eliminar selectedCategory del objeto si existe
       if ('selectedCategory' in productData) {
@@ -82,7 +82,7 @@ export class FormNewProductComponent implements OnInit {
       }
   
       try {
-        const newProduct = await this.supabase.newProduct(productData, this.productForm.value.selectedCategory);
+        const newProduct = await this.supabase.newProduct(productData, this.productNewForm.value.selectedCategory);
   
         if (newProduct) {
           console.log('Producto agregado con éxito:', newProduct);

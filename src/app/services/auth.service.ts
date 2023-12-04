@@ -29,8 +29,10 @@ export class AuthService {
       const { data, error } = await this.supabase.auth.getUser(); // Verificar el token
       if (error) {
         this.isLoggedIn.next(false); // Si el token no es válido, cierra la sesión
+        console.log(error, ' no auth')
       } else {
         this.isLoggedIn.next(true); // Si el token es válido, el usuario está autenticado
+       
         this.onUserLoggedIn(data?.user?.id);
       }
     } catch (error) {

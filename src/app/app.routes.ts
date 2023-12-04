@@ -11,7 +11,7 @@ export const routes: Routes = [
         path: 'home',
         loadComponent: ()=> import('./pages/home/home.component').then(c => c.HomeComponent),
         title: 'adminDashBoard',
-        // canActivate: [AuthGuard]
+        canActivate: [AuthGuard]
     },
     {
         path: 'auth',
