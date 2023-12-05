@@ -25,7 +25,7 @@ export class FormNewProductComponent implements OnInit {
       name: ['', [Validators.required]],
       formulacion: [''],
       img: [''],
-      is_active_substance: [''],
+      is_active_substance: [false],
       selectedCategory: ['', [Validators.required]] 
     });
   }
@@ -87,7 +87,7 @@ export class FormNewProductComponent implements OnInit {
         if (newProduct) {
           console.log('Producto agregado con éxito:', newProduct);
           this.toggleModal(false);
-          
+          this.supabase.updateProducts()
         } else {
           console.error('Error al agregar el producto.');
           // Manejar el caso de error al agregar el producto

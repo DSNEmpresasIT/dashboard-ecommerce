@@ -21,9 +21,32 @@ export class SupabaseService {
   private updateNotifier = new Subject<void>();
   updateNotification$ = this.updateNotifier.asObservable();
 
+  private selectedCategory = new BehaviorSubject<string>('');
+  private lastQuery = new BehaviorSubject<string>("");
+
   constructor() {
     this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
   }
+
+
+  async updateProducts() {
+    const config = [
+      { condition: () => this.selectedCategory.value, action: this.fetchByCategory.bind(this) },
+      { condition: () => this.lastQuery.value, action: this.fetchProductsByName.bind(this) },
+      { condition: () => true, action: this.fetchAllProducts.bind(this) }
+    ];
+  
+    try {
+      const { action } = config.find(item => item.condition()) || {};
+      if (action) {
+        await action();
+      }
+    } catch (error) {
+      console.error('Error al actualizar productos:', error);
+    }
+  }
+  
+  
 
 async getProductById(id: number | undefined) {
   try {
@@ -90,13 +113,14 @@ async getProductById(id: number | undefined) {
       .select('*');
       if(productResponse.data){
         this.productsSubject.next(productResponse.data);
+        this.selectedCategory.next('')
       }
     } catch (error) {
        console.log('error', error)
     }
   }
 
-  async fetchProductsByName(productName: string) {
+  async fetchProductsByName(productName: string = this.lastQuery.value) {
     try {
       const productResponse = await this.supabase
         .from('products')
@@ -104,6 +128,8 @@ async getProductById(id: number | undefined) {
         .ilike('name', `%${productName}%`);
       if (productResponse.data) {
         this.updateNotifier.next(); 
+        this.lastQuery.next(productName)
+        this.selectedCategory.next('')
         this.productsSubject.next(productResponse.data);
       }
     } catch (error) {
@@ -111,14 +137,16 @@ async getProductById(id: number | undefined) {
     }
   }
   
-  async fetchByCategory(category:string) {
+  async fetchByCategory(category:string = this.selectedCategory.value) {
     try {
       // Paso 1: Obtener el ID de la categoría 'Fertilizantes'
       const categoryResponse = await this.supabase
         .from('categories')
         .select('id')
         .ilike('category', `%${category}%`);
-  
+        if (categoryResponse.data && categoryResponse.data.length > 0) {
+          this.selectedCategory.next(category);
+        }
       if (categoryResponse.data) {
         const categoryId = categoryResponse.data[0]?.id;
   

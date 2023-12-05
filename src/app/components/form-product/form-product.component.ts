@@ -24,7 +24,7 @@ export class FormProductComponent implements OnInit {
       name: [this.renderProduct?.name, [Validators.required]],
       formulacion: [this.renderProduct?.formulacion],
       img: [this.renderProduct?.img],
-      is_active_substance: [this.renderProduct?.is_active_substance]
+      is_active_substance: [this.renderProduct?.is_active_substance !== undefined ? this.renderProduct.is_active_substance : false]
     });
   }
 
@@ -77,7 +77,7 @@ export class FormProductComponent implements OnInit {
         .then((result) => {
           this.toggleModal() // cerrar el modal del form
           console.log('Producto actualizado exitosamente:', result.data);
-          this.supaBase.fetchAllProducts()
+          this.supaBase.updateProducts()
         })
         .catch((error) => {
           this.toggleLoading()
