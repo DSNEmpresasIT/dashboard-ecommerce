@@ -126,10 +126,11 @@ async getProductById(id: number | undefined) {
         .from('products')
         .select('*')
         .ilike('name', `%${productName}%`);
-      if (productResponse.data) {
-        this.updateNotifier.next(); 
+        
         this.lastQuery.next(productName)
         this.selectedCategory.next('')
+      if (productResponse.data) {
+        this.updateNotifier.next();
         this.productsSubject.next(productResponse.data);
       }
     } catch (error) {
