@@ -8,13 +8,14 @@ import { FormProductComponent } from '../../components/form-product/form-product
 import { CategoryExploreComponent } from '../../components/category-explore/category-explore.component';
 import { FormNewProductComponent } from "../../components/form-new-product/form-new-product.component";
 import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
-    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent]
+    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent, HttpClientModule]
 })
 export class HomeComponent implements OnInit, OnDestroy{
 
