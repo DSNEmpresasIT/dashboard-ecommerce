@@ -55,7 +55,7 @@ export class FormNewProductComponent implements OnInit {
 
       if (file.size > maxSizeInBytes) {
         console.error('The file exceeds the maximum allowed size.');
-        this.alertServ.show(4000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
+        this.alertServ.show(6000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
         return;
       }
 
@@ -152,11 +152,11 @@ export class FormNewProductComponent implements OnInit {
     try {
       const newProduct = await this.supabase.newProduct(productData, this.productNewForm.value.selectedCategory);
       if (newProduct) {
-        this.alertServ.show(4000, "producto agregado con exito", AlertsType.SUCCESS)
+        this.alertServ.show(6000, "producto agregado con exito", AlertsType.SUCCESS)
         this.supabase.updateProducts();
       }
     } catch (error) {
-      this.alertServ.show(4000, "Error al agregar el producto", AlertsType.ERROR)
+      this.alertServ.show(6000, "Error al agregar el producto", AlertsType.ERROR)
 
     }
   }
