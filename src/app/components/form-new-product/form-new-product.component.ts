@@ -94,8 +94,6 @@ export class FormNewProductComponent implements OnInit {
 
   toggleModal(value: boolean) {
     this.modalToggleService.toggleModal(value)
-    this.alertServ.show(4000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
-
   }
 
   toggleLoading(){
