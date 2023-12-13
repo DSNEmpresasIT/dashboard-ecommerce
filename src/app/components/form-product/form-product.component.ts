@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Product } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
+import { AlertService, AlertsType } from '../../services/alert.service';
 
 @Component({
     selector: 'app-form-product',
@@ -18,7 +19,9 @@ export class FormProductComponent implements OnInit {
   renderProduct: Product | undefined;
   @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor(private formBuilder: FormBuilder, private supaBase : SupabaseService) {
+  constructor(private formBuilder: FormBuilder, private supaBase : SupabaseService,
+    private alertServ: AlertService
+  ) {
     this.productForm = this.formBuilder.group({
       id: [this.renderProduct?.id],
       name: [this.renderProduct?.name, [Validators.required]],
@@ -51,7 +54,14 @@ export class FormProductComponent implements OnInit {
       const file = inputElement.files[0];
       const reader = new FileReader();
   
-      // Esperar a que se complete la lectura del archivo
+      const maxSizeInBytes = 500 * 1024; // 500kb
+
+      if (file.size > maxSizeInBytes) {
+        console.error('The file exceeds the maximum allowed size.');
+        this.alertServ.show(4000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
+        return;
+      }
+
       await new Promise<void>((resolve, reject) => {
         reader.onload = (e: any) => {
           this.productForm.get('img')?.setValue(e.target.result);
@@ -76,13 +86,13 @@ export class FormProductComponent implements OnInit {
       this.supaBase.updateProduct(formData)
         .then((result) => {
           this.toggleModal() // cerrar el modal del form
-          console.log('Producto actualizado exitosamente:', result.data);
           this.supaBase.updateProducts()
+          this.alertServ.show(4000, "Producto actualizado con exito", AlertsType.SUCCESS);
         })
         .catch((error) => {
           this.toggleLoading()
           console.error('Error al actualizar el producto:', error);
-
+          this.alertServ.show(4000, "Error al actualizar el producto", AlertsType.ERROR);
         });
     }
   }

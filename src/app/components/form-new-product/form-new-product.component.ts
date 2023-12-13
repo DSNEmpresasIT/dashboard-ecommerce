@@ -7,6 +7,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ModalNewProductService } from '../../services/modal-new-product.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClientModule } from '@angular/common/http';
+import { AlertService, AlertsType } from '../../services/alert.service';
 
 @Component({
     selector: 'app-form-new-product',
@@ -24,7 +25,8 @@ export class FormNewProductComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
      private supabase: SupabaseService,
       private cloudinaryService : CloudinaryService,
-       private modalToggleService : ModalNewProductService) {
+       private modalToggleService : ModalNewProductService,
+       private alertServ: AlertService) {
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       formulacion: [''],
@@ -53,6 +55,7 @@ export class FormNewProductComponent implements OnInit {
 
       if (file.size > maxSizeInBytes) {
         console.error('The file exceeds the maximum allowed size.');
+        this.alertServ.show(4000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
         return;
       }
 
@@ -91,6 +94,8 @@ export class FormNewProductComponent implements OnInit {
 
   toggleModal(value: boolean) {
     this.modalToggleService.toggleModal(value)
+    this.alertServ.show(4000, "La imagen supera el tamaño maximo de 500kb", AlertsType.ERROR)
+
   }
 
   toggleLoading(){
@@ -149,11 +154,12 @@ export class FormNewProductComponent implements OnInit {
     try {
       const newProduct = await this.supabase.newProduct(productData, this.productNewForm.value.selectedCategory);
       if (newProduct) {
-        console.log('Product added successfully:', newProduct);
+        this.alertServ.show(4000, "producto agregado con exito", AlertsType.SUCCESS)
         this.supabase.updateProducts();
       }
     } catch (error) {
-      console.error('Error adding the product:', error);
+      this.alertServ.show(4000, "Error al agregar el producto", AlertsType.ERROR)
+
     }
   }
   
