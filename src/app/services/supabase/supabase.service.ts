@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment.development';
 import { PostgrestError, PostgrestSingleResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Category, Product } from '../../interfaces/product';
+import { AlertService, AlertsType } from '../alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class SupabaseService {
   private selectedCategory = new BehaviorSubject<string>('');
   private lastQuery = new BehaviorSubject<string>("");
 
-  constructor() {
+  constructor(private alertServ: AlertService) {
     this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
   }
 
@@ -238,16 +239,17 @@ async getProductById(id: number | undefined) {
   async deleteProduct(id: number | undefined): Promise<PostgrestError | null>  {
     try {
        const response = await this.supabase
-          .from('tu_tabla')
+          .from('products_categories')
           .delete()
-          .eq('id', id);
+          .eq('product_id', id);
           
           if (response.error) {
              throw new Error(response.error.message);
           }
-          
+          this.alertServ.show(6000, "Producto Eliminado con exito.", AlertsType.SUCCESS)
           return response.data;
         } catch (error) {
+          this.alertServ.show(6000, "El producto no se pudo eliminar", AlertsType.ERROR)
           console.error('Error al eliminar el producto:', error);
           return null      
     }   
