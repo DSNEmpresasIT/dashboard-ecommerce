@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
-import { PostgrestSingleResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
+import { PostgrestError, PostgrestSingleResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Category, Product } from '../../interfaces/product';
 
@@ -234,5 +234,25 @@ async getProductById(id: number | undefined) {
     }
   }
   
+
+  async deleteProduct(id: number | undefined): Promise<PostgrestError | null>  {
+    try {
+       const response = await this.supabase
+          .from('tu_tabla')
+          .delete()
+          .eq('id', id);
+          
+          if (response.error) {
+             throw new Error(response.error.message);
+          }
+          
+          return response.data;
+        } catch (error) {
+          console.error('Error al eliminar el producto:', error);
+          return null      
+    }   
+ }  
+ 
+
   
 }
