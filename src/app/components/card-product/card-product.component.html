@@ -5,12 +5,13 @@
       <div class="font-bold text-xl mb-2">{{renderProduct?.name}}</div>
     </div>
     <div class="px-6 pb-1">
-      <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm mr-2 mb-2">{{ renderProduct?.created_at | date }}</span>
+      <!-- <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm mr-2 mb-2">{{ renderProduct?.created_at | date }}</span> -->
       <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm  mr-2 " *ngIf="renderProduct?.formulacion !== ''" >{{renderProduct?.formulacion}}</span>
     </div>
   </div>
-  <div class="flex justify-between items-center">
+  <div class="flex  items-center">
     <button class="flex px-4 py-1 mb-2 ml-2 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500" (click)="getProductId(renderProduct?.id || 0)">Editar</button>
+    <a [routerLink]="['/product-details']" [queryParams]="{ id: renderProduct?.id, name: renderProduct?.name}" class="flex px-4 py-1 mb-2 ml-2 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500">ir a Detalle</a>
   </div>
     <app-modal-delet [id]="renderProduct?.id" />
   <p class="absolute top-8 right-3 flex text-base items-center bg-green-400 rounded-full px-3 py-1 text-white font-semibold">

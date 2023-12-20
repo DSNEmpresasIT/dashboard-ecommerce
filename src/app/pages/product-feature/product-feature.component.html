@@ -1,14 +1,90 @@
-<div class="min-h-screen w-full px-20 mt-4 flex justify-center">  
-  <div class="flex justify-center gap-3">
-    <div class="flex w-1/2 h-1/2 justify-center bg-red-300">
-      <div class="flex w-2/3 h-[300px]">
-        <img src="../../../assets/img/placeholder.png">
+<div class="min-h-screen w-full px-20  justify-center bg-slate-800">  
+  <div class="flex justify-center items-start">
+    @if (productName){
+      <h2 class="text-2xl font-bold mb-4 text-white flex">Detalle de : {{productName}} </h2>
+    }
+</div>
+  <a [routerLink]="['/home']" routerLinkActive="router-link-active"  class="text-2xl font-bold mb-4 text-white flex">
+    Atras
+  </a>
+  <div class=" flex justify-center w-full">
+  
+    <form class="flex  gap-2  " [formGroup]="productSingle" (ngSubmit)="onSubmit()">
+  
+      <div class=" flex flex-col"> 
+     
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Ingrediente Activo</label>
+        <input type="text" formControlName="activeIngredient" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Modo de Acción</label>
+        <input type="text" formControlName="modeOfAction" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Sitio de Acción</label>
+        <input type="text" formControlName="actionSite" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Método de Aplicación</label>
+        <input type="text" formControlName="applicationMethod" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Clasificación Toxicológica</label>
+        <input type="text" formControlName="toxicologicalClassification" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Formulación</label>
+        <input type="text" formControlName="formulation" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Tipo de Maleza</label>
+        <input type="text" formControlName="weedType" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      </div>
+
+      
+
+      <div class=" flex flex-col"> 
+     
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Archivos PDF</label>
+        <input type="text" formControlName="pdffiles" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Timing de Aplicación en Cultivos</label>
+        <input type="text" formControlName="applicationTimingCrops" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Timing de Aplicación en Malezas</label>
+        <input type="text" formControlName="applicationTimingWeeds" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Forma de Acción</label>
+        <input type="text" formControlName="actionForm" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Ubicación de Aplicación</label>
+        <input type="text" formControlName="applicationLocation" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Hoja de Datos de Seguridad</label>
+        <input type="text" formControlName="safetyDataSheet" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-white font-bold mb-2">Descripción</label>
+        <textarea type="text" formControlName="description" class="text-white p-3  px-10 rounded-lg bg-green-400 hover:bg-green-500"></textarea>
+      </div>
+      <div class=" flex  justify-center">
+        <button type="submit" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">Guardar Cambios</button>
       </div>
     </div>
-    <div class="flex w-1/2 h-1/2 flex-col bg-red-300">
-      <h1 class="text-end me-4 font-bold text-2xl">Product Name</h1>
-      <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam eligendi hic, exercitationem ad minima repudiandae nostru</p>
-      
-    </div>
+
+    
+    </form>
   </div>
+  
 </div>

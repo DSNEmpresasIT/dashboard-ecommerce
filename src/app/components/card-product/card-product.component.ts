@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Product } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { ModalDeletComponent } from "../modal-delet/modal-delet.component";
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-card-product',
     standalone: true,
     templateUrl: './card-product.component.html',
     styleUrl: './card-product.component.css',
-    imports: [CommonModule, ModalDeletComponent]
+    imports: [CommonModule, ModalDeletComponent, RouterModule]
 })
 export class CardProductComponent {
   @Input() renderProduct: Product | undefined;
