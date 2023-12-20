@@ -13,6 +13,10 @@ export class SupabaseService {
   supabaseKey = environment.MAIN_SUPABASE_KEY;
   private supabase: SupabaseClient;
 
+  constructor(private alertServ: AlertService) {
+    this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
+  }
+
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products = this.productsSubject.asObservable();
 
@@ -25,10 +29,7 @@ export class SupabaseService {
   private selectedCategory = new BehaviorSubject<string>('');
   private lastQuery = new BehaviorSubject<string>("");
 
-  constructor(private alertServ: AlertService) {
-    this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
-  }
-
+ 
 
   async updateProducts() {
     const config = [
@@ -256,5 +257,17 @@ async getProductById(id: number | undefined) {
  }  
  
 
+
+  async addCategory(category : Category ): Promise<Category | null >{
+    try {
+      const response = await this.supabase
+        .from('categories')
+        .insert({ category })
+
+        return response.data 
+    } catch (error) {
+        return null
+    }
+  }
   
 }
