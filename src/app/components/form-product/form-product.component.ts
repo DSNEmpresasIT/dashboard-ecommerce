@@ -27,6 +27,9 @@ export class FormProductComponent implements OnInit {
     this.productForm = this.formBuilder.group({
       id: [this.renderProduct?.id],
       name: [this.renderProduct?.name, [Validators.required]],
+      brand:[ '' ],
+      stock:[ null ],
+      code:[ null ],
       formulacion: [this.renderProduct?.formulacion],
       img: [this.renderProduct?.img],
       is_active_substance: [this.renderProduct?.is_active_substance !== undefined ? this.renderProduct.is_active_substance : false]

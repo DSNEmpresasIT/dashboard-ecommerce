@@ -20,13 +20,28 @@
       <label for="formulacion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Formulacion</label>
     </div>
 
+    <div class="relative z-0 w-full mb-6 group">
+      <input type="text"  formControlName="brand" id="brand" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
+      <label for="brand" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Marca</label>
+    </div>
+
+    <div class="relative z-0 w-full mb-6 group">
+      <input type="number"  formControlName="stock" id="stock" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
+      <label for="stock" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stock</label>
+    </div>
+
+    <div class="relative z-0 w-full mb-6 group">
+      <input type="number"  formControlName="code" id="code" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
+      <label for="code" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">codigo</label>
+    </div>
+
+
     <div>
       <input type="file" class="text-white rounded-lg bg-green-400 hover:bg-green-500" (change)="onImageSelected($event)" id="img" formControlName="img">
     </div>
-    <div class="flex mt-2 w-[400px] h-[309px]">
-      <img class="w-full aspect-square object-cover" [src]="productForm.get('img')?.value" alt="">
+    <div class="flex mt-2" [ngClass]="productForm.get('img')?.value ? 'w-[400px] h-[250px]' : 'w-[400px] h-1'">
+      <img class="w-full aspect-square object-contain" [src]="productForm.get('img')?.value" alt="">
     </div>
-  
     <div class="relative z-0 mb-3 mt-3 group">
       <input   formControlName="is_active_substance" type="checkbox" id="is_active_substance" name="is_active_substance" class="block py-2.5 px-0  text-base rounded-full text-green-500 bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" />
       <label for="is_active_substance" class="peer-focus:font-medium absolute text-lg text-white duration-300 transform -translate-y-6 scale-75 left-8 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-11">¿Es sustancia Activa ?</label>

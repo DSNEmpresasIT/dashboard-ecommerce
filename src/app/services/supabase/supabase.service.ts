@@ -257,17 +257,4 @@ async getProductById(id: number | undefined) {
  }  
  
 
-
-  async addCategory(category : Category ): Promise<Category | null >{
-    try {
-      const response = await this.supabase
-        .from('categories')
-        .insert({ category })
-
-        return response.data 
-    } catch (error) {
-        return null
-    }
-  }
-  
 }

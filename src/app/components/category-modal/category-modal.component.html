@@ -1,23 +1,27 @@
-<dialog>
-    <div class="bg-slate-800 p-6 rounded-md shadow-lg">
-        <button class="p-2 group flex ms-auto items-center text-white hover:bg-green-500 rounded-lg iner" (click)="toggleModal()">
-            Cerrar formulario
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-            </svg>
-          </button>
-          <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" >
+<div *ngIf="isOpen" class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center ">
+    <div class="bg-slate-800 p-6 rounded-md shadow-lg w-1/2">
+          <button class="p-2 group flex ms-auto items-center text-white hover:bg-green-500 rounded-lg iner" (click)="toggleModal()">
+              Cerrar formulario
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          <form class="w-full" [formGroup]="categoryForm" (ngSubmit)="onSubmit()" >
             
             <div class="relative z-0 w-full mb-6 group">
-              <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
-              <label for="name" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
+              <input type="text"  formControlName="category" id="category" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
+              <label for="category" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
             </div>
             <div class="text-red-600" *ngIf="categoryForm?.get('name')?.hasError('required')">
               Name is required.
             </div>
-            <div class="relative z-0 w-full mb-6 group">
-              <input   formControlName="formulacion" type="text" id="formulacion" name="floating_formulacion" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
-              <label for="formulacion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Formulacion</label>
+
+            <div class="relative z-0 w-full my-6 group">
+              <select formControlName="father_category" id="selectedCategory" name="selectedCategory" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" required>
+                <option *ngFor="let category of categories" [value]="category.id">{{ category.category }}</option>
+                <option value="" selected   > Ninguna </option>
+              </select>
+              <label for="selectedCategory" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar Categoria padre</label>
             </div>
           
             <div class="relative z-0 mb-3 mt-3 group">
@@ -32,4 +36,5 @@
             <!-- Implementar @defer -->
           </form>
     </div>
-</dialog>
+</div>
+<button (click)="toggleModal()" class="p-3 mt-1 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-500 focus:outline-none">Agregar Categoria</button>

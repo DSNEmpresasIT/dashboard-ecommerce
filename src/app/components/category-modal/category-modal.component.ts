@@ -13,18 +13,19 @@ import { Category } from '../../interfaces/product';
     imports: [CommonModule, ButtonSpinerComponent, FormsModule, ReactiveFormsModule ]
 })
 export class CategoryModalComponent implements OnInit {
-  categoryForm: FormGroup 
+  isOpen: boolean = false;
+  categoryForm: FormGroup;
   isLoading : boolean = false;
-  categories: Category[] | null = []
+  categories: Category[] | null = [];
 
   constructor(
     private formBuilder : FormBuilder,
     private categoryServ : CategoryService
   ){ this.categoryForm  = this.formBuilder.group({
-      category : [ '',Validators.required ],
-      father_category : [ Number, ],
+      category : [ '', Validators.required ],
+      father_category : [ null ],
       is_substance_active : [ false ],
-  }) }
+  })}
 
   ngOnInit(): void {
     this.categoryServ.getAllFhaterCategories().then((res: Category[] | null) => {
@@ -34,10 +35,22 @@ export class CategoryModalComponent implements OnInit {
     });
   }
 
-  
+    onSubmit(){
+      if(this.categoryForm.valid){
+        const data = this.categoryForm.value;
+        try {
+          this.categoryServ.addCategory(data)
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
 
+    toggleLoading(){
+      this.isLoading = !this.isLoading
+    }
 
-    onSubmit(){}
-
-    toggleModal(){}
+    toggleModal(){
+      this.isOpen = !this.isOpen
+    }
 }

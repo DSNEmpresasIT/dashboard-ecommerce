@@ -25,10 +25,13 @@ export class FormNewProductComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
      private supabase: SupabaseService,
       private cloudinaryService : CloudinaryService,
-       private modalToggleService : ModalNewProductService,
-       private alertServ: AlertService) {
+      private modalToggleService : ModalNewProductService,
+     private alertServ: AlertService) {
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
+      brand:[ '' ],
+      stock:[ null ],
+      code:[ null ],
       formulacion: [''],
       img: [''],
       is_active_substance: [false],

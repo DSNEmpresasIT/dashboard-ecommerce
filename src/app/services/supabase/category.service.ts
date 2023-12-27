@@ -23,15 +23,26 @@ export class CategoryService {
       const response = await this.supabase
       .from('categories')
       .select('*')
-      .is('fhater_categories', 'null');
-
+      .is('father_category', 'null');
       return response.data as Category[] | null
     } catch (error) {
       console.error('Categorias padres no encontradas',  error)
         return null;
     }
- 
   }
 
+
+  async addCategory(category : Category ): Promise<Category | null >{
+    try {
+      const response = await this.supabase
+        .from('categories')
+        .insert({ category })
+
+        return response.data 
+    } catch (error) {
+        return null
+    }
+  }
+  
 
 }
