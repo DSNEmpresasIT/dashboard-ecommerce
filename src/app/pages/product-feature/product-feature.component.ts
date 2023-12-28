@@ -24,26 +24,30 @@ export class ProductFeatureComponent implements OnInit {
   ) {
     this.productSingle = this.formBuilder.group({
       id:[''],
-      product_id: [''],
-      description: [''],
-      activeIngredient: [''],
-      modeOfAction: [''],
-      actionSite: [''],
-      toxicologicalClassification: [''],
-      formulation: [''],
-      weedType: [''],
-      pdffiles: [''],
-      applicationTimingCrops: [''],
-      applicationTimingWeeds: [''],
-      actionForm: [''],
-      applicationLocation: [''],
-      safetyDataSheet: [''],
+      product_id: [null],
+      description: [null],
+      activeIngredient: [null],
+      modeOfAction: [null],
+      actionSite: [null],
+      toxicologicalClassification: [null],
+      formulation: [null],
+      weedType: [null],
+      pdffiles: [null],
+      applicationTimingCrops: [null],
+      applicationTimingWeeds: [null],
+      actionForm: [null],
+      applicationLocation: [null],
+      safetyDataSheet: [null],
     });
   }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       const categoryParam = params.get('id');
+      if (categoryParam) {
+        const updatedProductSingleValue = { ...this.productSingle.value, product_id: categoryParam };
+        this.productSingle.setValue(updatedProductSingleValue);
+      }
       this.productName = params.get('name')
       this.getProductSingle(categoryParam as string);
     });
@@ -89,6 +93,10 @@ export class ProductFeatureComponent implements OnInit {
   }
 
   onSubmit(){
+    const data = this.productSingle.value
+    if (data.id === '') {
+      delete data.id;
+    }
     if(this.productSingle.valid){
       this.productServ.updateProductSingle(this.productSingle.value)
     }

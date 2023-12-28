@@ -108,13 +108,19 @@ export class FormNewProductComponent implements OnInit {
       this.toggleLoading();
   
       try {
-        const cloudinaryUrl = await this.uploadImageToCloudinary();
-        if (cloudinaryUrl) {
-          const productData = this.prepareProductData(cloudinaryUrl);
-          await this.saveProductToSupabase(productData);
-        } else {
-          console.error('Cloudinary URL not available.');
+        let cloudinaryUrl: string | undefined;
+
+        // Check if an image is selected
+        const imgBase64 = this.productNewForm.get('img')?.value;
+        if(imgBase64){
+          cloudinaryUrl = await this.uploadImageToCloudinary();
         }
+          // Prepare product data with or without the Cloudinary URL
+          const productData = this.prepareProductData(cloudinaryUrl as string);
+          
+          // Save product to Supabase
+          await this.saveProductToSupabase(productData);
+        
       } catch (error) {
         console.error('Error processing the form:', error);
       } finally {
