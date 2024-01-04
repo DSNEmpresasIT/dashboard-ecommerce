@@ -69,7 +69,6 @@ export class FormProductComponent implements OnInit {
   
       await new Promise<void>((resolve, reject) => {
         reader.onload = async (e: any) => {
-     
           if (this.renderProduct?.img) {
             // Elimina la imagen antigua de Cloudinary antes de asignar la nueva
             await this.cloudinaryService.onEditImageSelected(this.renderProduct.img);
@@ -87,19 +86,27 @@ export class FormProductComponent implements OnInit {
     }
   }
   
+  
 
   async onSubmit(): Promise<void> {
     if (this.productForm.valid) {
       this.toggleLoading();
   
       try {
-        const cloudinaryUrl = await this.uploadImageToCloudinary();
-        if (cloudinaryUrl) {
-          const productData = this.prepareProductData(cloudinaryUrl);
-          await this.saveProductToSupabase(productData);
-        } else {
-          console.error('Cloudinary URL not available.');
+        let cloudinaryUrl: string | undefined;
+  
+        // Check if an image is selected
+        const imgBase64 = this.productForm.get('img')?.value;
+        if (imgBase64) {
+          cloudinaryUrl = await this.uploadImageToCloudinary();
         }
+  
+        // Prepare product data with or without the Cloudinary URL
+        const productData = this.prepareProductData(cloudinaryUrl as string);
+  
+        // Save product to Supabase
+        await this.saveProductToSupabase(productData);
+  
       } catch (error) {
         console.error('Error processing the form:', error);
       } finally {
@@ -108,6 +115,7 @@ export class FormProductComponent implements OnInit {
       }
     }
   }
+  
 
   uploadToCloudinary(file: any): Promise<any> {
     return new Promise((resolve, reject) => {
@@ -135,7 +143,7 @@ export class FormProductComponent implements OnInit {
         const cloudinaryResponse = await this.uploadToCloudinary(imgBase64);
         return cloudinaryResponse?.url;
       } else {
-        console.error('The image is not available.');
+        // Image is not available, return undefined
         return undefined;
       }
     } catch (error) {
