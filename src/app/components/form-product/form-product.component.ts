@@ -175,7 +175,10 @@ export class FormProductComponent implements OnInit {
       name: this.renderProduct?.name,
       formulacion: this.renderProduct?.formulacion,
       img: this.renderProduct?.img,
-      is_active_substance: this.renderProduct?.is_active_substance
+      is_active_substance: this.renderProduct?.is_active_substance,
+      brand: this.renderProduct?.brand,
+      stock: this.renderProduct?.stock,
+      code: this.renderProduct?.code,
     });
   }
 

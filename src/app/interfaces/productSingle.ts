@@ -16,4 +16,6 @@ export interface ProductFeature {
   applicationTimingWeeds: string,
   actionForm: string,
   applicationLocation: string,
+  downloadMarbete: string,
+  downloadCommercialFlyer : string
 }

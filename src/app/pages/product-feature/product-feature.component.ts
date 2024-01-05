@@ -38,6 +38,8 @@ export class ProductFeatureComponent implements OnInit {
       actionForm: [''],
       applicationLocation: [''],
       safetyDataSheet: [''],
+      downloadMarbete: [''],
+      downloadCommercialFlyer: [''],
     });
   }
 
@@ -84,6 +86,8 @@ export class ProductFeatureComponent implements OnInit {
         actionForm: this.renderProductSingle.actionForm || undefined,
         applicationLocation: this.renderProductSingle.applicationLocation || undefined,
         safetyDataSheet: this.renderProductSingle.safetyDataSheet || undefined,
+        downloadMarbete: this.renderProductSingle.downloadMarbete || undefined,
+        downloadCommercialFlyer: this.renderProductSingle.downloadCommercialFlyer || undefined,
       });
     }
   }
