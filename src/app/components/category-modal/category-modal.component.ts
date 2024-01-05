@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { SupabaseService } from '../../services/supabase/supabase.service';
 import { CategoryService } from '../../services/supabase/category.service';
 import { Category } from '../../interfaces/product';
 

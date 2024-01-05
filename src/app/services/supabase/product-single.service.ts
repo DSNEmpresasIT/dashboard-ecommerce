@@ -42,21 +42,44 @@ export class ProductSingleService {
   };
   
 
+  // async updateProductSingle(productSingle: ProductFeature): Promise<{ data: any, error: any }> {
+  //   try {
+  //     const result = await this.supabase
+  //       .from('productFeature')
+  //       .update(productSingle)
+  //       .eq('id', productSingle.id);
+  //     if(result){
+  //       console.log(result)
+  //       this.alertServ.show(6000, "Detalle de producto actualizado con exito.", AlertsType.SUCCESS)
+  //     }
+  //     return result;
+  //   } catch (error) {
+  //     this.alertServ.show(6000, "El detalle de producto no pudo ser actualizado", AlertsType.ERROR)
+  //     console.error('Error al realizar la actualización en Supabase:', error);
+  //     throw error;
+  //   }
+  // }
+
   async updateProductSingle(productSingle: ProductFeature): Promise<{ data: any, error: any }> {
     try {
-      const result = await this.supabase
+      const { data, error } = await this.supabase
         .from('productFeature')
-        .update(productSingle)
-        .eq('id', productSingle.id);
-      if(result){
-        console.log(result)
-        this.alertServ.show(6000, "Detalle de producto actualizado con exito.", AlertsType.SUCCESS)
+        .upsert([productSingle]);
+      
+      if (!error) {
+        console.log(data);
+        this.alertServ.show(6000, "Detalle de producto actualizado con éxito.", AlertsType.SUCCESS);
+      } else {
+        this.alertServ.show(6000, "El detalle de producto no pudo ser actualizado", AlertsType.ERROR);
+        console.error('Error al realizar la actualización en Supabase:', error);
       }
-      return result;
+  
+      return { data, error };
     } catch (error) {
-      this.alertServ.show(6000, "El detalle de producto no pudo ser actualizado", AlertsType.ERROR)
+      this.alertServ.show(6000, "Error al realizar la actualización en Supabase", AlertsType.ERROR);
       console.error('Error al realizar la actualización en Supabase:', error);
       throw error;
     }
   }
+  
 }

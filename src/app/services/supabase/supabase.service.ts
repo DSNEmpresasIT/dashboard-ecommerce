@@ -247,6 +247,15 @@ async getProductById(id: number | undefined) {
           if (response.error) {
              throw new Error(response.error.message);
           }
+          if(response){
+            const data = await this.supabase
+            .from('products')
+            .delete()
+            .eq('id', id);
+            if(data.error){
+              throw new Error(data.error.message);
+            }
+          }
           this.alertServ.show(6000, "Producto Eliminado con exito.", AlertsType.SUCCESS)
           return response.data;
         } catch (error) {
