@@ -6,17 +6,21 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FormNewProductComponent } from '../form-new-product/form-new-product.component';
 import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormNewProductComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormNewProductComponent, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
 export class NavbarComponent implements OnInit{
   searcherProducts:FormControl<string | null> = new FormControl<string>('');
-  constructor(private supaBase: SupabaseService, public authServ: AuthService, private modalToggleService: ModalNewProductService) {
+  constructor(private supaBase: SupabaseService,
+     public authServ: AuthService,
+     private modalToggleService: ModalNewProductService,
+     ) {
     this.searcherProducts.valueChanges.pipe(
       debounceTime(600),
       distinctUntilChanged() 
@@ -33,6 +37,10 @@ export class NavbarComponent implements OnInit{
 
    toggleModal() {
     this.modalToggleService.toggleModal(true); 
+  }
+
+  logout(){
+    this.authServ.logout()
   }
 
   ngOnInit() {

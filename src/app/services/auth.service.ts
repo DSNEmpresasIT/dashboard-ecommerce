@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs';
+import { AlertService, AlertsType } from './alert.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +11,12 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
   private supabaseUrl: string = environment.MAIN_SUPABASE_URL;
   private supabaseKey: string = environment.MAIN_SUPABASE_KEY;
-
   private supabase: SupabaseClient;
   isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor() {
+  constructor(
+    private alert:AlertService,
+    private router: Router) {
     this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
     this.checkToken();
   }
@@ -57,8 +60,14 @@ export class AuthService {
     return { data, error };
   }
   async logout() {
-    await this.supabase.auth.signOut();
-    this.isLoggedIn.next(false); 
+    const {error} = await this.supabase.auth.signOut();
+    this.isLoggedIn.next(false);
+    if(error === null){
+      this.alert.show(6000, 'Sesión cerrada con exito', AlertsType.SUCCESS)
+      this.router.navigate(['/auth'])
+    }else {
+      this.alert.show(6000,`Error al cerrar sesión error:${error}`, AlertsType.ERROR)
+    }
   }
 
   private onUserLoggedIn(userId: string | undefined) {
@@ -77,4 +86,6 @@ export class AuthService {
     }
     return null;
   }
+
+
 }
