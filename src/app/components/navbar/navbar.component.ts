@@ -39,6 +39,10 @@ export class NavbarComponent implements OnInit{
     this.modalToggleService.toggleModal(true); 
   }
 
+  toggleEditSupplier() {
+    this.modalToggleService.toggleEditSupplier(true);
+  }
+
   logout(){
     this.authServ.logout()
   }

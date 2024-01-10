@@ -9,18 +9,20 @@ import { CategoryExploreComponent } from '../../components/category-explore/cate
 import { FormNewProductComponent } from "../../components/form-new-product/form-new-product.component";
 import { ModalNewProductService } from '../../services/modal-new-product.service';
 import { HttpClientModule } from '@angular/common/http';
+import { FormSupplierComponent } from "../../components/form-supplier/form-supplier.component";
 
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
-    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent, HttpClientModule]
+    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent, HttpClientModule, FormSupplierComponent]
 })
 export class HomeComponent implements OnInit, OnDestroy{
 
   products: Product[] | undefined;
   private productsSubscription: Subscription = new Subscription();
+  toggleFormSupplier:boolean = false;
   toggleForm:boolean = false;
   toggleFormNewProduct:boolean = false
   constructor(private supaBase: SupabaseService, private modalToggleService: ModalNewProductService) { }
@@ -30,6 +32,10 @@ export class HomeComponent implements OnInit, OnDestroy{
     this.productsSubscription = this.supaBase.products.subscribe((res: Product[]) => {
       this.products = res;
       console.log(this.products)
+    });
+
+    this.modalToggleService.toggleEditSupplier$.subscribe((value) => {
+      this.toggleEditSupplier(value);
     });
 
     this.modalToggleService.toggle$.subscribe((value) => {
@@ -46,6 +52,10 @@ export class HomeComponent implements OnInit, OnDestroy{
   handleBooleanValue(value: boolean) {
     this.toggleForm = !this.toggleForm
     console.log('Valor booleano recibido:', value);
+  }
+
+  toggleEditSupplier(value: boolean) {
+    this.toggleFormSupplier = value;
   }
   
   toggleModal(value: boolean) {

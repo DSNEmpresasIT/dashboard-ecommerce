@@ -11,5 +11,9 @@
     <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormNewProduct" >
       <app-form-new-product (newProductForm)="toggleModal(true)"></app-form-new-product>
     </div>
-    
+
+    <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormSupplier" >
+      <app-form-supplier></app-form-supplier>
+    </div>
+
   </div>
