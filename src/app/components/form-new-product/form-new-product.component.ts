@@ -8,6 +8,9 @@ import { ModalNewProductService } from '../../services/modal-new-product.service
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
+import { CategoryService } from '../../services/supabase/category.service';
+import { SupplierService } from '../../services/supabase/supplier.service';
+import { Supplier } from '../../interfaces/supplier';
 
 @Component({
     selector: 'app-form-new-product',
@@ -15,15 +18,17 @@ import { AlertService, AlertsType } from '../../services/alert.service';
     templateUrl: './form-new-product.component.html',
     styleUrl: './form-new-product.component.css',
     imports: [CommonModule, ReactiveFormsModule, FormsModule, ButtonSpinerComponent, HttpClientModule]
-})
-export class FormNewProductComponent implements OnInit {
-  productNewForm: FormGroup ;
-  isLoading: boolean= false;
-  categories:Category[] | null = []; 
+  })
+  export class FormNewProductComponent implements OnInit {
+    productNewForm: FormGroup ;
+    isLoading: boolean= false;
+    categories:Category[] | null = []; 
+    suppliers: Supplier[] | null = []; 
   @Output() newproductNewForm: EventEmitter<boolean> = new EventEmitter<boolean>();
   
   constructor(private formBuilder: FormBuilder,
      private supabase: SupabaseService,
+     private supplierServ: SupplierService,
       private cloudinaryService : CloudinaryService,
       private modalToggleService : ModalNewProductService,
      private alertServ: AlertService) {
@@ -35,7 +40,8 @@ export class FormNewProductComponent implements OnInit {
       formulacion: [''],
       img: [''],
       is_active_substance: [false],
-      selectedCategory: ['', [Validators.required]] 
+      selectedCategory: ['', [Validators.required]],
+      supplier_id: [ null ]
     });
   }
   
@@ -46,8 +52,19 @@ export class FormNewProductComponent implements OnInit {
       })
       .catch(error =>{
         console.log('Error fetching categories:', error);
-      })
+      });
+      this.fetchAllSuppliers()
       
+  }
+
+  fetchAllSuppliers(){
+    this.supplierServ.getSuppliers()
+    .then((arg: Supplier[] | null)=>{
+      this.suppliers = arg
+    })
+    .catch(error =>{
+      console.log('error fetching suppliers', error)
+    })
   }
 
   async onImageSelected(event: Event): Promise<void> {
