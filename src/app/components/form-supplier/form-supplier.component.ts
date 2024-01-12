@@ -18,7 +18,7 @@ import { SupplierService } from '../../services/supabase/supplier.service';
 })
 export class FormSupplierComponent {
   supplierForm: FormGroup ;
-  isLoading: boolean= false;
+  isLoading: boolean = false;
   suppliers: Supplier[] | null = []; 
   supplierToEddit: Supplier | null = null;
   isEdit: boolean= false;
@@ -58,29 +58,43 @@ export class FormSupplierComponent {
   }
 
   toggleLoading(){
-    this.isLoading = !this.isLoading
+      this.isLoading = !this.isLoading
+      console.log(this.isLoading)
+  }
+
+  async onDeleteSupplier(supplierId: number | undefined): Promise<void> {
+    if(!supplierId) return this.alertServ.show(6000, "Debe elegir un proveedor", AlertsType.ERROR)
+    console.log(supplierId, 'id de supplier to edit')
+      this.supplierServ.deleteSupplier(supplierId)
+      .then(()=>
+      {
+        this.fetchAllSuppliers()
+      })
+      .catch(() => {
+        throw new Error("Error in #onDeleteSupplier method")
+      }) ;
   }
 
   async onSubmit(): Promise<void> {
-    if (this.supplierForm.valid) {
+    if (!this.supplierForm.valid) return;
+
+    this.toggleLoading();
+    const supplier = this.supplierForm.value;
+
+    if(!this.isEdit){
+      delete supplier.id
+    }
+    try {
+      if(this.isEdit){
+         this.supplierServ.editSupplier(supplier);
+      }else{
+         this.supplierServ.createSupplier(supplier);
+      }
+    } catch (error) {
       this.toggleLoading();
-      const supplier = this.supplierForm.value;
-      if(!this.isEdit){
-        delete supplier.id
-      }
-      try {
-        if(this.isEdit){
-           this.supplierServ.editSupplier(supplier);
-        }else{
-           this.supplierServ.createSupplier(supplier);
-        }
-        this.modalToggleService.toggleEditSupplier(false);
-      } catch (error) {
-        this.alertServ.show(6000, `${this.isEdit ? `No se pudo crear el proveedor error: ${error}` : `No se pudo editar el proveedor error: ${error}`}`, AlertsType.ERROR);
-      } finally {
-        this.toggleLoading();
-        this.toggleModal(false);
-      }
+      this.alertServ.show(6000, `${this.isEdit ? `No se pudo crear el proveedor error: ${error}` : `No se pudo editar el proveedor error: ${error}`}`, AlertsType.ERROR);
+    } finally {
+      this.toggleLoading();
     }
   }
 

@@ -85,4 +85,20 @@ export class SupplierService {
     }
   }
 
+  async deleteSupplier(supplierId: number | undefined): Promise<Supplier | null>{
+    if(!supplierId) return null
+    try {
+      const {data, error} = await this.supabase
+      .from('supplier')
+      .delete()
+      .eq('id', supplierId);
+      console.log(data, ' data ondelet')
+      this.alertServ.show(6000, 'Proveedor Borrador con exito', AlertsType.SUCCESS)
+      return data
+    } catch (error) {
+      this.alertServ.show(6000, `No se pudo Borrar el Proveedor error: ${error}`, AlertsType.ERROR)
+      return null
+    }
+  }
+
 }

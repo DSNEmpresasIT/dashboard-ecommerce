@@ -7,14 +7,21 @@
   </button>
 <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
   @if(isEdit){
-  
      <div class="relative z-0 w-full my-6 group">
-       <select formControlName="id" id="supplier" name="floating_supplier" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" (change)="getSupplierById(supplierForm.get('id')?.value)">
-         <option class="bg-slate-800" *ngFor="let supplier of suppliers" [value]="supplier.id" >{{ supplier.name }}</option>
+       @if(suppliers && suppliers.length > 0){
+       <select formControlName="id" id="supplier" name="floating_supplier" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 " (change)="getSupplierById(supplierForm.get('id')?.value)">
+         <option class="bg-slate-800"  *ngFor="let supplier of suppliers" [value]="supplier.id" >{{ supplier.name }}</option>
+         
        </select>
+       } @else {
+       <select disabled class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" >
+        <option class="bg-slate-800" selected disabled value="Debe Crear un proveedor">Debe crear un proveedor</option>
+       </select>
+       }
+
+       
        <label for="supplier" class="peer-focus:font-medium absolute text-lg text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar proveedor a editar</label>
      </div>
-    
   }
   <div class="relative z-0 w-full mb-6 group">
     <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
@@ -25,27 +32,28 @@
   </div>
   <div class="relative z-0 w-full mb-6 group">
     <input   formControlName="description" type="text" id="descripcion" name="floating_descripcion" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " />
-    <label for="descripcion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">descripcion</label>
+    <label for="descripcion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Descripcion</label>
   </div>
 
   <div class="relative z-0 w-full mb-6 group">
     <input type="text"  formControlName="phone" id="phone" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
-    <label for="phone" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">phone</label>
+    <label for="phone" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Telefono</label>
   </div>
 
   <div class="relative z-0 w-full mb-6 group">
     <input type="text"  formControlName="address" id="address" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " />
-    <label for="address" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">address</label>
+    <label for="address" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Direccion</label>
   </div>
 
-  
- 
-  <!-- Botón de submit -->
   @if (!isLoading) {
     <button type="submit" class="text-white p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">{{ isEdit ? 'Guardar' : 'Crear' }}</button>
   } @else {
     <app-button-spiner></app-button-spiner>
   }
   <button (click)="editSuppliers()" class="text-white ms-1 p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">{{ isEdit ? 'Crear Proveedor' : 'Editar Proveedores' }}</button>
+  @if (isEdit){
+    <button type="button" (click)="onDeleteSupplier(this.supplierToEddit?.id)" class="text-white ms-2 p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">Borrar Proveedor</button>
+
+  }
 </form>
 </div>
