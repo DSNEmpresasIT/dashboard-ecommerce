@@ -8,6 +8,10 @@ export interface Product {
     img?: string | null;
     created_at: Date;
     is_active_substance?: boolean | null;
+    supplier?: {
+        name: string;
+      } | null;
+    supplier_id: number | undefined;
 }
 
 export interface Category {

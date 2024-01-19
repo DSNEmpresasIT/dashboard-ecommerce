@@ -1,11 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Product } from '../../interfaces/product';
+import { Category, Product } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { AlertService, AlertsType } from '../../services/alert.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
+import { Supplier } from '../../interfaces/supplier';
+import { SupplierService } from '../../services/supabase/supplier.service';
+import { CategoryService } from '../../services/supabase/category.service';
 
 @Component({
     selector: 'app-form-product',
@@ -18,22 +21,46 @@ export class FormProductComponent implements OnInit {
   productForm: FormGroup;
   isLoading: boolean= false;
   renderProduct: Product | undefined;
+  categories:Category[] | null = []; 
+  suppliers: Supplier[] | null = []; 
+  selectedCategory: Category | null = null;
   @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private formBuilder: FormBuilder, private supabase : SupabaseService,
     private alertServ: AlertService,
+    private supplierServ: SupplierService,
+    private categoryServ: CategoryService,
     private cloudinaryService: CloudinaryService
   ) {
     this.productForm = this.formBuilder.group({
       id: [this.renderProduct?.id],
       name: [this.renderProduct?.name, [Validators.required]],
-      brand:[ '' ],
       stock:[ null ],
       code:[ null ],
       formulacion: [this.renderProduct?.formulacion],
       img: [this.renderProduct?.img],
-      is_active_substance: [this.renderProduct?.is_active_substance !== undefined ? this.renderProduct.is_active_substance : false]
+      is_active_substance: [this.renderProduct?.is_active_substance !== undefined ? this.renderProduct.is_active_substance : false],
+      supplier_id: [ null , [Validators.required]],
+      category_id: [ null , [Validators.required]]
     });
+  }
+
+  getCategoryOfOneProduct(id: number){
+    this.categoryServ.fetchCategoryOfOneProduct(id)
+    .then((arg: Category | null | undefined)=>{
+      if(arg){
+        console.log(arg, 'categoria del producto en el form')
+        this.selectedCategory = arg
+
+        this.productForm.patchValue({ 'category_id': this.selectedCategory?.id });
+        this.productForm.patchValue({ 'supplier_id': this.renderProduct?.supplier_id });
+        return arg
+      }
+      return null
+    })
+    .catch(error =>{
+     throw new Error('error fetching category', error.message)
+    })
   }
 
   toggleModal(){
@@ -47,11 +74,35 @@ export class FormProductComponent implements OnInit {
   ngOnInit(): void {
     this.supabase.editProduct.subscribe((editedProduct: Product | null) => {
       if (editedProduct) {
+        this.fetchAllSuppliers()
+        this.getAllCategory()
         this.renderProduct = editedProduct;
         this.updateFormValues();
+        this.getCategoryOfOneProduct(this.renderProduct.id)
+        
+       
       }
     });
-  } 
+    
+  }
+  
+  fetchAllSuppliers(){
+    this.supplierServ.getSuppliers()
+    .then((arg: Supplier[] | null)=>{
+      this.suppliers = arg
+    })
+    .catch(error =>{
+      console.log('error fetching suppliers', error)
+    })
+  }
+
+  async getAllCategory(){
+    try {
+      this.categories = await this.categoryServ.getAllChildrenCategories();
+    } catch (error) {
+      console.log('Error al cargar categorías', error);
+    }
+  }
   
   async onImageSelected(event: Event): Promise<void> {
     const inputElement = event.target as HTMLInputElement;
@@ -156,8 +207,8 @@ export class FormProductComponent implements OnInit {
     const productData = { ...this.productForm.value };
     productData.img = cloudinaryUrl;
   
-    if ('selectedCategory' in productData) {
-      delete productData.selectedCategory;
+    if ('category_id' in productData) {
+      delete productData.category_id;
     }
   
     return productData;
@@ -167,13 +218,21 @@ export class FormProductComponent implements OnInit {
     try {
       const newProduct = await this.supabase.updateProduct(productData);
       if (newProduct) {
-        this.alertServ.show(6000, "producto agregado con exito", AlertsType.SUCCESS)
+        this.alertServ.show(6000, "producto actualizado con exito", AlertsType.SUCCESS)
         this.supabase.updateProducts();
+        this.editProductCategory()
       }
     } catch (error) {
       this.alertServ.show(6000, "Error al agregar el producto", AlertsType.ERROR)
-
     }
+  }
+
+  private async editProductCategory(){
+    const product_id = this.renderProduct?.id;
+    const category_id = this.productForm.get('category_id')?.value;
+    console.log(product_id, category_id, 'id de producto y categoria');
+
+    this.categoryServ.editProductCategory(product_id, category_id)
   }
 
   private updateFormValues() {
@@ -184,7 +243,6 @@ export class FormProductComponent implements OnInit {
       formulacion: this.renderProduct?.formulacion,
       img: this.renderProduct?.img,
       is_active_substance: this.renderProduct?.is_active_substance,
-      brand: this.renderProduct?.brand,
       stock: this.renderProduct?.stock,
       code: this.renderProduct?.code,
     });

@@ -2,10 +2,10 @@
   <img class="w-full aspect-square object-cover rounded-sm"  [src]="renderProduct?.img ? renderProduct?.img :'../../../assets/img/placeholder.png'" alt="Sunset in the mountains">
   <div class="min-h-[120px]">
     <div class="px-6 pt-4">
-      <div class="font-bold text-xl mb-2">{{renderProduct?.name}}</div>
+      <div class=" text-black font-bold text-md  mb-1">Marca: {{ renderProduct?.supplier?.name }}</div>
+      <div class="font-bold text-xl mb-2 truncate line-clamp-2">{{renderProduct?.name}}</div>
     </div>
     <div class="px-6 pb-1">
-      <!-- <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm mr-2 mb-2">{{ renderProduct?.created_at | date }}</span> -->
       <span class="inline-block bg-green-400 rounded-full px-3 py-1 text-white font-semibold text-sm  mr-2 " *ngIf="renderProduct?.formulacion !== ''" >{{renderProduct?.formulacion}}</span>
     </div>
   </div>

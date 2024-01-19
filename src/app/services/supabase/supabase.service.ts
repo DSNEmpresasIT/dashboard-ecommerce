@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { PostgrestError, PostgrestSingleResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
 import { Category, Product } from '../../interfaces/product';
 import { AlertService, AlertsType } from '../alert.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -108,25 +109,46 @@ export class SupabaseService {
     }
   }
 
+  // async fetchAllProducts() {
+  //   try {
+  //     const productResponse = await this.supabase
+  //       .from('products')
+  //       .select('*');
+  //     if (productResponse.data) {
+  //       this.productsSubject.next(productResponse.data);
+  //       this.selectedCategory.next('')
+  //     }
+  //   } catch (error) {
+  //     console.log('error', error)
+  //   }
+  // }
+
   async fetchAllProducts() {
     try {
-      const productResponse = await this.supabase
+        const products = await this.supabase
         .from('products')
-        .select('*');
-      if (productResponse.data) {
-        this.productsSubject.next(productResponse.data);
-        this.selectedCategory.next('')
-      }
+        .select(`
+          *,
+          supplier: supplier(name)
+        `);
+        if (products.data) {
+          this.productsSubject.next(products.data);
+          this.selectedCategory.next('')
+        }
     } catch (error) {
       console.log('error', error)
     }
   }
 
+
   async fetchProductsByName(productName: string = this.lastQuery.value) {
     try {
       const productResponse = await this.supabase
         .from('products')
-        .select('*')
+        .select(`
+        *,
+        supplier: supplier(name)
+        `)
         .ilike('name', `%${productName}%`);
 
       this.lastQuery.next(productName)
@@ -180,6 +202,7 @@ export class SupabaseService {
       console.log('Error', error);
     }
   }
+
 
   // metodos para agregar 
 
