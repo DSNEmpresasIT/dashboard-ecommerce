@@ -7,14 +7,15 @@ import { ModalNewProductService } from '../../services/modal-new-product.service
 import { Supplier } from '../../interfaces/supplier';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { SupplierService } from '../../services/supabase/supplier.service';
-
+import { LabelComponent } from "../ui/label/label.component";
+import { InputComponent } from '../ui/input/input.component';
 
 @Component({
     selector: 'app-form-supplier',
     standalone: true,
     templateUrl: './form-supplier.component.html',
     styleUrl: './form-supplier.component.css',
-    imports: [CommonModule, ButtonSpinerComponent, ReactiveFormsModule, FormsModule]
+    imports: [CommonModule, ButtonSpinerComponent, ReactiveFormsModule, FormsModule, LabelComponent, InputComponent]
 })
 export class FormSupplierComponent {
   supplierForm: FormGroup ;
