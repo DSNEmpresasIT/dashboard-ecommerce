@@ -189,7 +189,10 @@ export class SupabaseService {
             // traer todos los productos con las ids buscadas en products_categories 
             const productDetails = await this.supabase
               .from('products')
-              .select('*')
+              .select(`
+              *,
+              supplier: supplier(name)
+              `)
               .in('id', productIds);
 
             if (productDetails.data) {
