@@ -209,7 +209,7 @@ export class SupabaseService {
 
   // metodos para agregar 
 
-  async newProduct(product: Product, category_id: string): Promise<Product | null> {
+  async newProduct(product: Product, category_id: string, subCategory_id : string ): Promise<Product | null> {
     if (!category_id) {
       console.error('Error: category_id is required.');
       return null;
@@ -253,6 +253,23 @@ export class SupabaseService {
           console.error('Error associating product with category:', categoryError);
           return null;
         }
+      }
+
+      if (subCategory_id) {
+              // Asocia el producto a la sub categoría en la tabla 'products_categories'
+              const { error: categoryError } = await this.supabase
+              .from('products_categories')
+              .upsert([
+                {
+                  category_id: subCategory_id,
+                  product_id: productId
+                }
+              ]);
+    
+            if (categoryError) {
+              console.error('Error associating product with category:', categoryError);
+              return null;
+            }
       }
 
       return productId ? { ...product, id: productId } : null;

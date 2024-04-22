@@ -19,3 +19,13 @@ export interface Category {
     category?: string | null;
     created_at: Date;
 }
+
+export interface selecdedCategories{
+    category: Category[] | null
+    subCategory: Category[] | null
+}
+
+export interface selectedCategory {
+    category: Category | null,
+    subCategory: Category | null
+}

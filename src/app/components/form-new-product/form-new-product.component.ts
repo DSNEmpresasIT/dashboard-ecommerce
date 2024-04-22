@@ -23,38 +23,57 @@ import { Supplier } from '../../interfaces/supplier';
     productNewForm: FormGroup ;
     isLoading: boolean= false;
     categories:Category[] | null = []; 
+    subCategories :Category[] | null = []; 
     suppliers: Supplier[] | null = []; 
   @Output() newproductNewForm: EventEmitter<boolean> = new EventEmitter<boolean>();
   
   constructor(private formBuilder: FormBuilder,
      private supabase: SupabaseService,
+     private categoryServ : CategoryService,
      private supplierServ: SupplierService,
       private cloudinaryService : CloudinaryService,
       private modalToggleService : ModalNewProductService,
      private alertServ: AlertService) {
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
-      brand:[ '' ],
       stock:[ null ],
       code:[ null ],
       formulacion: [''],
       img: [''],
-      is_active_substance: [false],
+      unid: [''],
       selectedCategory: ['', [Validators.required]],
-      supplier_id: [ null ]
+      selectedSubCategories: [ '' , [Validators.required]],
+      supplier_id: [ null ,[Validators.required]]
     });
   }
   
   ngOnInit(): void {
-    this.supabase.fetchAllCategories()
+    this.categoryServ.getAllFhaterCategories()
       .then((arg: Category[] | null)=>{
         this.categories = arg;
       })
       .catch(error =>{
         console.log('Error fetching categories:', error);
       });
+
       this.fetchAllSuppliers()
       
+  }
+
+  getChillCategories(event : Event) {
+    const target = event.target as HTMLSelectElement;
+    const categoryId = parseInt(target.value);
+
+
+    this.categoryServ.getChildrenCategories(categoryId)
+    .then((arg: Category[] | null)=>{
+      this.subCategories = arg;
+      console.log(this.subCategories)
+    })
+    .catch(error =>{
+      console.log('Error fetching categories:', error);
+    });
+
   }
 
   fetchAllSuppliers(){
@@ -169,14 +188,18 @@ import { Supplier } from '../../interfaces/supplier';
   
     if ('selectedCategory' in productData) {
       delete productData.selectedCategory;
+    } 
+    
+    if ('selectedSubCategories' in productData) {
+      delete productData.selectedSubCategories;
     }
-  
+
     return productData;
   }
   
   private async saveProductToSupabase(productData: any): Promise<void> {
     try {
-      const newProduct = await this.supabase.newProduct(productData, this.productNewForm.value.selectedCategory);
+      const newProduct = await this.supabase.newProduct(productData, this.productNewForm.value.selectedCategory, this.productNewForm.value.selectedSubCategories);
       if (newProduct) {
         this.alertServ.show(6000, "producto agregado con exito", AlertsType.SUCCESS)
         this.supabase.updateProducts();

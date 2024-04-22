@@ -5,61 +5,88 @@
       <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
     </svg>
   </button>
-  <form [formGroup]="productForm" (ngSubmit)="onSubmit()" >
+  <form class="grid grid-cols-2 gap-5" [formGroup]="productForm" (ngSubmit)="onSubmit()" >
 
 
-    <div class="relative z-0 w-full mb-6 group">
+    <div class="relative z-0 w-full  group">
       <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
       <label for="name" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Name</label>
     </div>
     <div class="text-red-600" *ngIf="productForm?.get('name')?.hasError('required')">
       Name is required.
     </div>
-    <div class="relative z-0 w-full mb-6 group">
+    <div class="relative z-0 w-full  group">
       <input   formControlName="formulacion" type="text" id="formulacion" name="floating_formulacion" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
       <label for="formulacion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Formulacion</label>
     </div>
 
+    <div class="relative z-0 w-full  group">
+      <input type="text"  formControlName="unid" id="unid" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=""  />
+      <label for="unid" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Unidad</label>
+    </div>
 
-    <div class="relative z-0 w-full mb-6 group">
+
+    <div class="relative z-0 w-full  group">
       <input type="number"  formControlName="stock" id="stock" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
       <label for="stock" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Stock</label>
     </div>
 
-    <div class="relative z-0 w-full mb-6 group">
+    <div class="relative z-0 w-full  group">
       <input type="number"  formControlName="code" id="code" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
       <label for="code" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">codigo</label>
     </div>
 
-    <div class="relative z-0 w-full my-6 group">
-      <select formControlName="category_id" id="category_id" name="category_id" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" required>
-        <option *ngFor="let category of categories" [selected]="category.id === selectedCategory?.id" [value]="category.id">{{ category.category }}</option>
-      </select>
-      <label for="category_id" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar categoria</label>
+    <div>
+      <div class="relative z-0 w-full  group ">
+    
+        <select formControlName="category_id"  (change)="handleGetChillCategories($event)" id="category_id" name="category_id" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" required>
+          <option *ngFor="let category of categories"  [value]="category.id">{{ category.category }}</option>
+        </select>
+        <label for="category_id" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar categoria</label>
+      </div>
+      <div class="text-red-600" *ngIf="productForm?.get('category_id')?.hasError('required') && productForm.touched">
+        La categoria es requerida.
+      </div> 
     </div>
 
-    <div class="relative z-0 w-full my-6 group">
+    <div>
+      <div class="relative z-0 w-full  group ">
+        <select formControlName="sub_category_id" id="sub_category_id" name="sub_category_id" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" required>
+          <option *ngFor="let category of subCategories" [value]="category.id">{{ category.category }}</option>
+        </select>
+        <label for="sub_category_id" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar sub categoria</label>
+      </div>
+      <div class="text-red-600" *ngIf="productForm?.get('sub_category_id')?.hasError('required') && productForm.touched">
+        La sub categoria es requerida.
+      </div> 
+    </div>
+
+
+
+    <div class="relative z-0 w-full group">
       <select formControlName="supplier_id" id="supplier" name="supplier" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer">
         <option *ngFor="let supplier of suppliers" [selected]="supplier.id === renderProduct?.supplier_id" [value]="supplier.id">{{ supplier.name }}</option>
       </select>
       <label for="supplier" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar Proveedor</label>
     </div>
 
-    <div>
-      <input type="file" class="text-white rounded-lg bg-green-400 hover:bg-green-500" (change)="onImageSelected($event)" id="img" formControlName="img">
+    <div class=" col-span-2 flex flex-col justify-center items-center  w-full">
+      <div class="flex mt-2  max-w-[250px] min-w-[400px] max-h-[200px] ">
+        <img class="w-full aspect-square object-cover" [src]="productForm.get('img')?.value" alt="Imagen del producto">
+      </div>
+
+      <div>
+        <input type="file" class="text-white rounded-lg bg-green-400 hover:bg-green-500" (change)="onImageSelected($event)" id="img" formControlName="img">
+      </div>
+   </div>
+
+    <div class="flex w-full justify-center items-center">
+      @if (!isLoading) {
+        <button type="submit" class="text-white p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">Guardar</button>
+      } @else {
+        <app-button-spiner></app-button-spiner>
+      }
     </div>
-    <div class="flex mt-2" [ngClass]="productForm.get('img')?.value ? 'w-[400px] h-[250px]' : 'w-[400px] h-1'">
-      <img class="w-full aspect-square object-contain" [src]="productForm.get('img')?.value" alt="">
-    </div>
-    <div class="relative z-0 mb-3 mt-3 group">
-      <input   formControlName="is_active_substance" type="checkbox" id="is_active_substance" name="is_active_substance" class="block py-2.5 px-0  text-base rounded-full text-green-500 bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" />
-      <label for="is_active_substance" class="peer-focus:font-medium absolute text-lg text-white duration-300 transform -translate-y-6 scale-75 left-8 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-11">¿Es sustancia Activa ?</label>
-    </div>
-    @if (!isLoading) {
-      <button type="submit" class="text-white p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">Submit</button>
-    } @else {
-      <app-button-spiner></app-button-spiner>
-    }
     <!-- Implementar @defer -->
   </form>
 </div>

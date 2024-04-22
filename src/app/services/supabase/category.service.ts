@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { AlertService, AlertsType } from '../alert.service';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { Category } from '../../interfaces/product';
+import { PostgrestResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
+import { Category, selecdedCategories } from '../../interfaces/product';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +44,19 @@ export class CategoryService {
     }
   }
 
+  async getChildrenCategories(fatherCategoryId : number): Promise<Category[] | null>{
+    try {
+      const response = await this.supabase
+      .from('categories')
+      .select('*')
+      .eq('father_category', fatherCategoryId)
+      return response.data as Category[] | null
+    } catch (error) {
+      console.error('Categorias hijas no encontradas',  error)
+        return null;
+    }
+  }
+
 
   async addCategory(category : Category ): Promise<Category | null >{
     try {
@@ -71,27 +84,35 @@ export class CategoryService {
     }
   }
   
-  async fetchCategoryOfOneProduct(productId: number): Promise<Category | null | undefined> {
+
+  async fetchCategoryOfOneProduct(productId: number): Promise<selecdedCategories | null | undefined> {
     try {
       const { data, error } = await this.supabase
         .from('products_categories')
         .select('category_id')
         .eq('product_id', productId)
-      console.log(data, 'data')
       if (data && data.length > 0) {
         const categoryIds = data.map(item => item.category_id);
-  
-        const { data: categoryData, error: categoryError } = await this.supabase
+        const { data: categoryData , error: categoryError } : PostgrestResponse<Category> = await this.supabase
+          .from('categories')
+          .select('*')
+          .is('father_category', null)
+          .in('id', categoryIds);
+          const { data: subCategory, error: subCategoryError } :  PostgrestResponse<Category>= await this.supabase
           .from('categories')
           .select('*')
           .not('father_category', 'is', null)
           .in('id', categoryIds);
-      
-        console.log(categoryData, 'Categorías obtenidas');
-        if (categoryData && categoryData.length > 0) {
+
+        if (categoryData  && categoryData.length > 0) {
           console.log(categoryData[0], 'Categoría obtenida en return')
 
-          return categoryData[0];
+          const selectedCategoriess: selecdedCategories = {
+            category: categoryData,
+            subCategory: subCategory
+          }
+          console.log(selectedCategoriess,' CAtegorias seleccionada')
+          return selectedCategoriess;
         } else if (categoryError) {
           console.log('Error fetching category:', categoryError);
           return null;

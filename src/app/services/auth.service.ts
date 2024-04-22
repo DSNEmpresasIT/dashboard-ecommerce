@@ -51,10 +51,11 @@ export class AuthService {
     });
 
     if (error) {
-      console.error('Error al iniciar sesión:', error);
+      this.alert.show(6000,`Las credenciales que estás usando no son validas`, AlertsType.ERROR)
     } else {
       this.isLoggedIn.next(true);
       this.onUserLoggedIn(data?.user?.id);
+      this.alert.show(6000,`Sesion iniciada con exito`, AlertsType.SUCCESS)
     }
 
     return { data, error };
