@@ -5,6 +5,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { ProductFeature } from '../../interfaces/productSingle';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
+export enum COMPONENTSS{ 
+  MAIN_INFORMATION = 'Main Information',
+  TECHNICAL_DETAILS = 'Technical Details',
+  DOWNLOAD_LINKS = 'Download Links'
+}
+
 @Component({
   selector: 'app-product-feature',
   standalone: true,
@@ -16,6 +22,12 @@ export class ProductFeatureComponent implements OnInit {
   productSingle: FormGroup;
   renderProductSingle: ProductFeature | undefined | null; 
   productName: string | null | undefined;
+  readonly COMPONENTS = COMPONENTSS
+  componentsToRender: COMPONENTSS = this.COMPONENTS.DOWNLOAD_LINKS
+
+  switchComponentsToRender(componentToRender: COMPONENTSS){
+    this.componentsToRender = componentToRender
+  }
 
   constructor(
     private productServ: ProductSingleService,

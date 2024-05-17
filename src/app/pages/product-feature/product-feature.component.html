@@ -1,151 +1,138 @@
-<div class="min-h-screen w-full px-20  justify-center  bg-slate-800 ">
-  <div class="flex justify-center items-start">
-    @if (productName){
-    <h2 class="text-3xl  font-bold mb-4 mt-6 text-white flex">Edicion de detalle del producto : {{productName}} </h2>
-    }
+<div class="min-h-screen w-full px-20  justify-center  bg-Base">
+
+  <div class="flex mb-10 pt-10">
+    <a [routerLink]="['/home']" routerLinkActive="router-link-active" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
+      Ir Atras
+     </a>
   </div>
-  <a [routerLink]="['/home']" routerLinkActive="router-link-active" class="text-xl  font-bold text-white p-2 rounded-lg bg-green-500 ">
-   Ir Atras
-  </a>
-  <div class=" mt-2 p-2 rounded-lg flex justify-center w-full">
+ 
+  <div class=" mt-2 p-4 rounded-lg flex bg-Overlay  w-full">
 
     <form   [formGroup]="productSingle" (ngSubmit)="onSubmit()">
-      <div class="flex flex-col md:flex-row  gap-2  ">
-        <div class=" flex flex-col ">
-
-          <div class=" p-2 flex lg:w-[400px] flex-col gap-3">
-            <div>
-              <h5 class="text-white text-2xl font-semibold">
-                Detalles Tecnicos
-              </h5>
-            </div>
-            <div class="mb-4 ">
-              <label class="block text-white font-bold mb-2">Modo de Acción</label>
-              <input type="text" formControlName="modeOfAction"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Sitio de Acción</label>
-              <input type="text" formControlName="actionSite"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Formulación</label>
-              <input type="text" formControlName="formulation"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Método de Aplicación</label>
-              <input type="text" formControlName="applicationMethod"
-                class="text-white p-3  w-full px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Clasificación Toxicológica</label>
-              <input type="text" formControlName="toxicologicalClassification"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-
-
-
-          </div>
-
+      <div class="flex  justify-center items-start ">
+        @if (productName){
+        <h2 class="text-3xl  font-bold mb-4 mt-6 text-Text flex">Edicion de detalle del producto : {{productName}} </h2>
+        }
+      </div>
+      <div class="flex flex-col gap-4  ">
+        <div class="flex gap-3">
+          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
+          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
+          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
         </div>
-
-
-
-        <div class=" flex lg:w-[400px] flex-col">
-
-
-          <div class=" p-2 flex flex-col gap-3">
-            <div>
-              <h5 class="text-white text-2xl font-semibold">
-                Informacion Principal
-              </h5>
+        @switch (componentsToRender) {
+          @case (COMPONENTS.MAIN_INFORMATION) {
+            <div class=" flex flex-col gap-3">
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Momento de Aplicación Malezas</label>
+                  <input type="text" formControlName="applicationTimingWeeds"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Forma de Acción</label>
+                  <input type="text" formControlName="actionForm"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Lugar de Aplicación.</label>
+                  <input type="text" formControlName="applicationLocation"
+                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+    
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Tipo de Maleza</label>
+                  <input type="text" formControlName="weedType"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+    
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Momento de aplicación Cultivo</label>
+                  <input type="text" formControlName="applicationTimingCrops"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+    
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Principio Activo</label>
+                  <input type="text" formControlName="activeIngredient"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
             </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Momento de Aplicación Malezas</label>
-              <input type="text" formControlName="applicationTimingWeeds"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
+          }
+          @case ( COMPONENTS.TECHNICAL_DETAILS ) {
+            <div class=" flex flex-col gap-3">
+           
+              <div class="mb-4 ">
+                <label class="block text-Text font-bold mb-2">Modo de Acción</label>
+                <input type="text" formControlName="modeOfAction"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              </div>
+              <div class="mb-4">
+                <label class="block text-Text font-bold mb-2">Sitio de Acción</label>
+                <input type="text" formControlName="actionSite"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              </div>
+    
+              <div class="mb-4">
+                <label class="block text-Text font-bold mb-2">Formulación</label>
+                <input type="text" formControlName="formulation"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              </div>
+              <div class="mb-4">
+                <label class="block text-Text font-bold mb-2">Método de Aplicación</label>
+                <input type="text" formControlName="applicationMethod"
+                  class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              </div>
+              <div class="mb-4">
+                <label class="block text-Text font-bold mb-2">Clasificación Toxicológica</label>
+                <input type="text" formControlName="toxicologicalClassification"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              </div>
             </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Forma de Acción</label>
-              <input type="text" formControlName="actionForm"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Lugar de Aplicación.</label>
-              <input type="text" formControlName="applicationLocation"
-                class="text-white p-3  w-full px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Tipo de Maleza</label>
-              <input type="text" formControlName="weedType"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Momento de aplicación Cultivo</label>
-              <input type="text" formControlName="applicationTimingCrops"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Principio Activo</label>
-              <input type="text" formControlName="activeIngredient"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-          </div>
-
-        
-
-        
-        </div>
-
-
-        <div class="flex lg:w-[400px] flex-col">
-          <div class=" p-2 flex flex-col gap-3">
-            <div>
-              <h5 class="text-white text-2xl font-semibold">
-                Links de Descarga
-              </h5>
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Link Archivos PDF</label>
-              <input type="text" formControlName="pdffiles"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Link PDF Marbete</label>
-              <input type="text" formControlName="downloadMarbete"
-                class="text-white p-3 w-full  px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Link PDF Flyer Comercial</label>
-              <input type="text" formControlName="downloadCommercialFlyer"
-                class="text-white p-3  w-full px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-            <div class="mb-4">
-              <label class="block text-white font-bold mb-2">Link Hoja de Datos de Seguridad</label>
-              <input type="text" formControlName="safetyDataSheet"
-                class="text-white p-3  w-full px-8 rounded-lg bg-green-400 hover:bg-green-500">
-            </div>
-          </div>
-        </div>
+          }
+          @case (COMPONENTS.DOWNLOAD_LINKS) {
+           
+              <div class="flex flex-col gap-3">
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Link Archivos PDF</label>
+                  <input type="text" formControlName="pdffiles"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Link PDF Marbete</label>
+                  <input type="text" formControlName="downloadMarbete"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Link PDF Flyer Comercial</label>
+                  <input type="text" formControlName="downloadCommercialFlyer"
+                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4">
+                  <label class="block text-Text font-bold mb-2">Link Hoja de Datos de Seguridad</label>
+                  <input type="text" formControlName="safetyDataSheet"
+                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                </div>
+                <div class="mb-4 ">
+                  <label class="block text-Text font-bold mb-2">Descripción</label>
+                  <textarea type="text" formControlName="description"
+                    class="text-Text p-3  w-full px-10 rounded-lg bg-HighLightLow "></textarea>
+                </div>
+              </div>
+             
+          }
+          }
       </div>
     <div class="flex flex-col w-full ">
-      <div class="mb-4 ">
-        <label class="block text-white font-bold mb-2">Descripción</label>
-        <textarea type="text" formControlName="description"
-          class="text-white p-3  w-full px-10 rounded-lg bg-green-400 hover:bg-green-500"></textarea>
-      </div>
+     
       <div class=" flex  justify-end">
-        <button type="submit" class="text-white p-3  px-8 rounded-lg bg-green-400 hover:bg-green-500">Guardar
-          Cambios</button>
+        <button type="submit" class="text-Text p-2  px-8 rounded-lg hover:bg-Pine bg-HighLightLow  border">Guardar Cambios</button>
       </div>
     </div>
     </form>
+
+
+
+
   </div>
 
 </div>
