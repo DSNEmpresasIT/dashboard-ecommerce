@@ -15,10 +15,11 @@
         }
       </div>
       <div class="flex flex-col gap-4  ">
+        
         <div class="flex gap-3">
-          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
-          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
-          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
+          <button type="button" [class.bg-Pine]="componentsToRender == COMPONENTS.TECHNICAL_DETAILS" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg" (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
+          <button type="button" [class.bg-Pine]="componentsToRender == COMPONENTS.MAIN_INFORMATION" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
+          <button type="button"[class.bg-Pine]="componentsToRender == COMPONENTS.DOWNLOAD_LINKS" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
         </div>
         @switch (componentsToRender) {
           @case (COMPONENTS.MAIN_INFORMATION) {

@@ -23,7 +23,7 @@ export class ProductFeatureComponent implements OnInit {
   renderProductSingle: ProductFeature | undefined | null; 
   productName: string | null | undefined;
   readonly COMPONENTS = COMPONENTSS
-  componentsToRender: COMPONENTSS = this.COMPONENTS.DOWNLOAD_LINKS
+  componentsToRender: COMPONENTSS = this.COMPONENTS.TECHNICAL_DETAILS
 
   switchComponentsToRender(componentToRender: COMPONENTSS){
     this.componentsToRender = componentToRender
