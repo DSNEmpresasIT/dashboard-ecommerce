@@ -1,4 +1,4 @@
-<div class="min-h-screen w-full px-20  justify-center  bg-Base">
+<div class="min-h-screen w-full mt-20 px-20  justify-center  bg-Base">
 
   <div class="flex mb-10 pt-10">
     <a [routerLink]="['/home']" routerLinkActive="router-link-active" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
@@ -16,9 +16,9 @@
       </div>
       <div class="flex flex-col gap-4  ">
         <div class="flex gap-3">
-          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
-          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
-          <button class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
+          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
+          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
+          <button type="button" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
         </div>
         @switch (componentsToRender) {
           @case (COMPONENTS.MAIN_INFORMATION) {

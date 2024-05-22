@@ -1,18 +1,18 @@
-<div class="flex mt-20 w-full px-10">
+<div class="flex mt-32 w-full px-10">
     <app-category-explore></app-category-explore>
 
     <div class=" grid gap-4 md:grid-cols-2 min-[1210px]:grid-cols-3  min-[1501px]:grid-cols-4  grid-rows-1 mb-auto">
        <app-card-product *ngFor="let product of products; let i = index" [renderProduct]="product" (booleanOutput)="handleBooleanValue($event)" ></app-card-product>
     </div>
-    <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleForm">
+    <div class="fixed inset-0 z-10 bg-black/50 h-full w-full flex justify-center items-center " *ngIf="toggleForm">
       <app-form-product (booleanOutput)="handleBooleanValue($event)" ></app-form-product>
       
     </div>
-    <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormNewProduct" >
+    <div class="fixed inset-0 z-10 bg-black/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormNewProduct" >
       <app-form-new-product (newProductForm)="toggleModal(true)"></app-form-new-product>
     </div>
 
-    <div class="fixed inset-0 z-10 bg-slate-400/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormSupplier" >
+    <div class="fixed inset-0 z-10 bg-black/50 h-full w-full flex justify-center items-center " *ngIf="toggleFormSupplier" >
       <app-form-supplier></app-form-supplier>
     </div>
 

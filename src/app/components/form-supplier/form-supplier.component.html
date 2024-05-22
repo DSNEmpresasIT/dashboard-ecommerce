@@ -1,5 +1,5 @@
-<div class="bg-slate-800 p-6 rounded-md shadow-lg w-full min-w-[500px]">
-  <button class="p-2 group flex ms-auto items-center text-white hover:bg-green-500 rounded-lg" (click)="toggleModal(false)">
+<div class="bg-Overlay p-6 rounded-md shadow-lg w-full min-w-[500px]">
+  <button class="p-2 group flex ms-auto items-center hover:bg-Pine bg-HighLightLow  border  text-Text rounded-lg" (click)="toggleModal(false)">
     Cerrar formulario
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
       <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
@@ -9,49 +9,49 @@
   @if(isEdit){
      <div class="relative z-0 w-full my-6 group">
        @if(suppliers && suppliers.length > 0){
-       <select formControlName="id" id="supplier" name="floating_supplier" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 " (change)="getSupplierById(supplierForm.get('id')?.value)">
+       <select formControlName="id" id="supplier" name="floating_supplier" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine " (change)="getSupplierById(supplierForm.get('id')?.value)">
          <option class="bg-slate-800"  *ngFor="let supplier of suppliers" [value]="supplier.id" >{{ supplier.name }}</option>
          
        </select>
        } @else {
-       <select disabled class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none focus:outline-none focus:ring-0 focus:text-green-500 peer" >
+       <select disabled class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" >
         <option class="bg-slate-800" selected disabled value="Debe Crear un proveedor">Debe crear un proveedor</option>
        </select>
        }
 
        
-       <label for="supplier" class="peer-focus:font-medium absolute text-lg text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar proveedor a editar</label>
+       <label for="supplier" class="peer-focus:font-medium absolute text-lg text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar proveedor a editar</label>
      </div>
   }
   <div class="relative z-0 w-full mb-6 group">
-    <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " required />
-    <label for="name" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
+    <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
+    <label for="name" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
   </div>
   <div class="text-red-600" *ngIf="supplierForm?.get('name')?.hasError('required') && supplierForm.touched">
     El nombre es requerido.
   </div>
   <div class="relative z-0 w-full mb-6 group">
-    <input   formControlName="description" type="text" id="descripcion" name="floating_descripcion" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " />
-    <label for="descripcion" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Descripcion</label>
+    <input   formControlName="description" type="text" id="descripcion" name="floating_descripcion" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " />
+    <label for="descripcion" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Descripcion</label>
   </div>
 
   <div class="relative z-0 w-full mb-6 group">
-    <input type="text"  formControlName="phone" id="phone" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" "  />
-    <label for="phone" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Telefono</label>
+    <input type="text"  formControlName="phone" id="phone" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
+    <label for="phone" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Telefono</label>
   </div>
 
   <div class="relative z-0 w-full mb-6 group">
-    <input type="text"  formControlName="address" id="address" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-white bg-transparent border-0 border-b-2 border-green-400 appearance-none    focus:outline-none focus:ring-0 focus:text-green-500 peer" placeholder=" " />
-    <label for="address" class="peer-focus:font-medium absolute text-sm text-white duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-green-500  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Direccion</label>
+    <input type="text"  formControlName="address" id="address" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " />
+    <label for="address" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Direccion</label>
   </div>
   @if (!isLoading) {
-    <button type="submit" class="text-white p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">{{ isEdit ? 'Guardar' : 'Crear' }}</button>
+    <button type="submit" class=" p-2 px-4 rounded-lg hover:bg-Pine bg-HighLightLow  border  text-Text hover:Pine">{{ isEdit ? 'Guardar' : 'Crear' }}</button>
   } @else {
     <app-button-spiner></app-button-spiner>
   }
-  <button (click)="editSuppliers()" class="text-white ms-1 p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">{{ isEdit ? 'Crear Proveedor' : 'Editar Proveedores' }}</button>
+  <button (click)="editSuppliers()" class=" ms-1 p-2 px-4 rounded-lg hover:bg-Pine bg-HighLightLow  border  text-Text hover:Pine">{{ isEdit ? 'Crear Proveedor' : 'Editar Proveedores' }}</button>
   @if (isEdit){
-    <button type="button" (click)="onDeleteSupplier(this.supplierToEddit?.id)" class="text-white ms-2 p-2 px-4 rounded-lg bg-green-400 hover:bg-green-500">Borrar Proveedor</button>
+    <button type="button" (click)="onDeleteSupplier(this.supplierToEddit?.id)" class=" ms-2 p-2 px-4 rounded-lg hover:bg-Pine bg-HighLightLow  border  text-Text hover:Pine">Borrar Proveedor</button>
 
   }
 </form>
