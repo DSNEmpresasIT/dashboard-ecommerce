@@ -40,7 +40,7 @@ export class AuthService {
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
-      this.isLoggedIn.next(false); // Manejar errores y cerrar la sesión
+      this.isLoggedIn.next(false); 
     }
   }
   

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "admDashBoardFelix": {
+    "dashboard": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -11,11 +11,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/adm-dash-board-felix",
+            "outputPath": "dist/dashboard",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -34,7 +34,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "600kb",
                   "maximumError": "1mb"
                 },
                 {
@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "admDashBoardFelix:build:production"
+              "buildTarget": "dashboard:build:production"
             },
             "development": {
-              "buildTarget": "admDashBoardFelix:build:development"
+              "buildTarget": "dashboard:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "admDashBoardFelix:build"
+            "buildTarget": "dashboard:build"
           }
         },
         "test": {
