@@ -5,19 +5,30 @@ import { Category } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CategoryModalComponent } from "../category-modal/category-modal.component";
+import { DropdownComponent } from "../ui/dropdown/dropdown.component";
 
 @Component({
     selector: 'app-category-explore',
     standalone: true,
     templateUrl: './category-explore.component.html',
     styleUrl: './category-explore.component.css',
-    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent]
+    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, DropdownComponent]
 })
 export class CategoryExploreComponent {
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories: Category[] | null = null;
   selectedCategory: string = '';
+  dropdownOptions = [
+    { label: 'Editar', action: this.editCart.bind(this) },
+    { label: 'Borrar', action: this.deleteCart.bind(this) }
+  ];
 
+  editCart() {
+  }
+
+  deleteCart() {
+    
+  }
 
 constructor(private supaBase: SupabaseService) {
     this.searcherCategory.valueChanges

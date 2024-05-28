@@ -10,7 +10,7 @@ export const routes: Routes = [
     {
         path: 'home',
         loadComponent: ()=> import('./pages/home/home.component').then(c => c.HomeComponent),
-        title: 'adminDashBoard',
+        title: 'Dashboard',
         canActivate: [AuthGuard]
     },
     {
@@ -21,7 +21,8 @@ export const routes: Routes = [
     {
         path: 'product-details',
         loadComponent: ()=> import('./pages/product-feature/product-feature.component').then(c => c.ProductFeatureComponent),
-        title: 'Detalles del producto'
+        title: 'Detalles del producto',
+        canActivate: [AuthGuard]
     }
 
 ];
