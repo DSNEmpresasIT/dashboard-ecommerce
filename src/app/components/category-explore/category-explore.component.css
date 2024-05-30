@@ -1,0 +1,4 @@
+details[open] .fa-caret-right{
+ rotate: 90deg;
+ transition-duration: 200ms;
+}

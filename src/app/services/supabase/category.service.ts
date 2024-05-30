@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment.development';
 import { AlertService, AlertsType } from '../alert.service';
 import { PostgrestResponse, SupabaseClient, createClient } from '@supabase/supabase-js';
 import { Category, selecdedCategories } from '../../interfaces/product';
+import { Observable, from } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -62,7 +63,7 @@ export class CategoryService {
     try {
       const response = await this.supabase
         .from('categories')
-        .insert({ category })
+        .insert( category )
 
         return response.data 
     } catch (error) {
@@ -129,4 +130,102 @@ export class CategoryService {
     }
   }
 
+  async editCategory(categoryID: number, dataToEdit: Category): Promise<Category | null> {
+    try {
+      console.log(categoryID, dataToEdit, 'send to supabase ')
+      const { data, error }  = await this.supabase
+        .from('categories')
+        .update({
+          'category':dataToEdit.category ,
+          'father_category': dataToEdit.father_category,
+          'is_substance_active': dataToEdit.is_substance_active
+        })
+        .eq('id', categoryID);
+      if (error) {
+        throw error;
+      }
+      this.alertServ.show(6000, 'categoria editada correctamente', AlertsType.SUCCESS);
+      return data ? data[0] as Category : null;
+    } catch (error) {
+      console.log('Error:', error);
+      this.alertServ.show(6000, 'Error al editar la categoria', AlertsType.ERROR);
+      return null;
+    }
+  }
+
+  async deleteCategory(categoryId: number): Promise<Category | null>{
+    if(!categoryId) return null
+    try {
+      const {data, error} = await this.supabase
+      .from('categories')
+      .delete()
+      .eq('id', categoryId);
+      console.log(data, 'data ondelet')
+      this.alertServ.show(6000, 'Categoria borrada con exito', AlertsType.SUCCESS)
+      return data
+    } catch (error) {
+      this.alertServ.show(6000, `No se pudo Borrar la categoria error: ${error}`, AlertsType.ERROR)
+      return null
+    }
+  }
+
+
+  getCategoryById(id: number): Observable<Category> {
+    return from(this.supabase
+      .from('categories')
+      .select('*')
+      .eq('id', id)
+      .then(({ data, error }) => {
+        if (error) {
+          throw new Error(error.message);
+        }
+        return data ? data[0] : null; 
+      }));
+  }
+
+  getCategoriesChildren = async (categoryFather: string): Promise<Category[] | null> => {
+
+    const { data: parentCategory, error: parentError } = await this.supabase
+      .from('categories')
+      .select('id')
+      .eq('category', categoryFather)
+      .single();
+  
+    if (parentError) {
+      console.error('Error obtaining parent category:', parentError.message);
+      return null;
+    }
+  
+    if (!parentCategory) {
+      console.error('Parent category not found.');
+      return null;
+    }
+  
+    const { data, error } = await this.supabase
+      .from('categories')
+      .select('*')
+      .eq('father_category', parentCategory.id);
+  
+    if (error) {
+      console.error('Error when obtaining child categories:', error.message);
+      return null;
+    }
+  
+    return data;
+  };
+  
+  getCategoriesFathers = async () : Promise<Category[] | null> => {
+    const { data, error } = await this.supabase
+      .from('categories')
+      .select('*')
+      .is('father_category', null);
+  
+    if (error) {
+      console.error('Error when obtaining parent categories:', error.message);
+      return null;
+    }
+  
+    return data;
+  };
+  
 }

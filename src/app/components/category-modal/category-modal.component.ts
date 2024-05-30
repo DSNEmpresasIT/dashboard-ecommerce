@@ -1,55 +1,135 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoryService } from '../../services/supabase/category.service';
 import { Category } from '../../interfaces/product';
+import { BehaviorSubject, take } from 'rxjs';
 
 @Component({
     selector: 'app-category-modal',
     standalone: true,
     templateUrl: './category-modal.component.html',
-    imports: [CommonModule, ButtonSpinerComponent, FormsModule, ReactiveFormsModule ]
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonSpinerComponent]
 })
 export class CategoryModalComponent implements OnInit {
+  private _categoryIdSubject = new BehaviorSubject<number | null>(null);
+  categoryId$ = this._categoryIdSubject.asObservable();
+  categoryIdSelected = this._categoryIdSubject.value
   isOpen: boolean = false;
   categoryForm: FormGroup;
-  isLoading : boolean = false;
+  isLoading: boolean = false;
   categories: Category[] | null = [];
+  @Output() handleGetCategories = new EventEmitter<any>();
 
   constructor(
-    private formBuilder : FormBuilder,
-    private categoryServ : CategoryService
-  ){ this.categoryForm  = this.formBuilder.group({
-      category : [ '', Validators.required ],
-      father_category : [ null ],
-      is_substance_active : [ false ],
-  })}
-
-  ngOnInit(): void {
-    this.categoryServ.getAllFhaterCategories().then((res: Category[] | null) => {
-      this.categories = res
-    }).catch((error)=> {
-    console.error("error to fetch fhater_categories", error)
+    private formBuilder: FormBuilder,
+    private categoryServ: CategoryService
+  ) {
+    this.categoryForm = this.formBuilder.group({
+      category: ['', Validators.required],
+      father_category: [null],
+      is_substance_active: [false],
     });
   }
 
-    onSubmit(){
-      if(this.categoryForm.valid){
-        const data = this.categoryForm.value;
-        try {
-          this.categoryServ.addCategory(data)
-        } catch (error) {
-          console.error(error)
+  ngOnInit(): void {
+    this.loadFatherCategories();
+  
+  }
+
+  loadFatherCategories(): void {
+    this.categoryServ.getAllFhaterCategories().then((res: Category[] | null) => {
+      this.categories = res;
+    }).catch((error) => {
+      console.error("Error fetching father categories", error);
+    });
+  }
+
+  loadCategory(categoryId: number): void {
+    this.categoryServ.getCategoryById(categoryId).pipe(
+      take(1) 
+    ).subscribe((category: Category | null) => {
+      if (category) {
+        console.log(category)
+        this.categoryForm.patchValue({
+          category: category.category,
+          father_category: category.father_category,
+          is_substance_active: category.is_substance_active,
+        });
+      }
+    }, (error) => {
+      console.error("Error fetching category", error);
+    });
+  }
+
+  setCategoryId(categoryId: number | null): void {
+    this._categoryIdSubject.next(categoryId);
+    if(categoryId) {
+      this.loadCategory(categoryId)
+      this.categoryIdSelected = categoryId
+      this.categoryId$.subscribe(categoryId => {
+        if (categoryId !== null) {
+          this.loadCategory(categoryId);
         }
+      });
+    }
+    
+  }
+
+  onSubmit(): void {
+    console.log('aca llegue ')
+    if (this.categoryForm.valid) {
+      const data = this.categoryForm.value;
+      if (this.categoryIdSelected) {
+        console.log('actualizar')
+        this.updateCategory(data);
+        this.handleGetCategories.emit();
+
+      } else {
+        console.log('crear', this._categoryIdSubject.value, this.categoryIdSelected)
+        this.createCategory(data);
+        this.handleGetCategories.emit();
+
       }
     }
+  }
 
-    toggleLoading(){
-      this.isLoading = !this.isLoading
-    }
+  createCategory(data: Category): void {
+    this.categoryServ.addCategory(data).then(() => {
+      this.toggleModal();
+      
+    }).catch((error) => {
+      console.error("Error creating category", error);
+    });
+  }
 
-    toggleModal(){
-      this.isOpen = !this.isOpen
+  updateCategory(data: Category): void {
+    const categoryId = this.categoryIdSelected;
+    if (categoryId) {
+      this.categoryServ.editCategory(categoryId, data).then(() => {
+        this.toggleModal();
+      }).catch((error) => {
+        console.error("Error updating category", error);
+      });
     }
+  }
+
+  resetForm(): void {
+    this.categoryForm.reset({
+      category: '',
+      father_category: null, 
+      is_substance_active: false 
+    });
+  }
+
+  toggleModal(): void {
+    this.resetForm();
+    this._categoryIdSubject.next(null);
+    this.isOpen = !this.isOpen;
+  }
+
+  toggleLoading(): void {
+    this.isLoading = !this.isLoading;
+  }
 }

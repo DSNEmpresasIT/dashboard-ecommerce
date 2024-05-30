@@ -18,6 +18,8 @@ export interface Category {
     id: number;
     category?: string | null;
     created_at: Date;
+    father_category?: number;
+    is_substance_active?: boolean;
 }
 
 export interface selecdedCategories{

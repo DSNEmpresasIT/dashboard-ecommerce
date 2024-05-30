@@ -3,19 +3,64 @@
     <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-Pine focus:border-Pine">
   </div>
 
-  <div class="border-b-2 flex mt-2 border-spacing-1">
-    <h5 class="text-Pine text-xl font-bold"> {{selectedCategory ? 'Categoria ' + selectedCategory : 'Categorias' }}</h5>
+  <div class="flex flex-col ">
+    <div class="border-b-2 flex my-2 py-2 flex-wrap gap-2 border-spacing-1">
+      @if(selectedCategory && !selectedSubCategory){
+        <h5 class="text-Pine border rounded-lg border-Text p-1 text-lg font-bold"> {{selectedCategory}} </h5>
+      }@if(selectedSubCategory){
+        <h5 class="text-Pine border rounded-lg border-Text p-1 text-lg font-bold"> {{selectedCategory }} </h5>
+        <h5 class="text-Pine border rounded-lg border-Text p-1 text-lg font-bold"> {{selectedSubCategory}} </h5>
+      } @else if (!selectedCategory) {
+      <h5 class="text-Pine  text-xl font-bold">Categorias</h5>
+      }
+    </div>
+  
+    @if(selectedCategory){
+      <button class="text-Text text-start flex border-Text pb-1 hover:text-Pine" (click)="removeFilters()">Ver Todos</button>
+    }
   </div>
-
+ 
   <ul class="flex mt-4 flex-col gap-1">
-    <li *ngFor="let category of categories" 
-        (click)="getProducts(category.category || '')" 
-        [class.bg-Pine]="selectedCategory === category.category"
-        [class.text-white]="selectedCategory === category.category"
-        class="p-2 rounded-lg cursor-pointer font-semibold hover:bg-Pine text-Text hover:text-white">
-      {{category.category}}
+    <li  *ngFor="let category of categories"   
+        class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
+      <details class="w-full "  name="category">
+        <summary class="flex w-full items-center hover:text-Pine justify-between  pe-2" 
+        [class.text-Pine]="selectedCategory === category.category" (click)="getProducts(category.category || '')">
+       <span class=" flex gap-2 items-center">
+        <i class="fa-solid  fa-caret-right "></i>
+        {{category.category}}
+       </span>
+      <button [cdkMenuTriggerFor]="menu" class="inline-flex justify-center aria-expanded:bg-Pine  items-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
+
+      </summary>
+          <div class="flex flex-col ps-3 pt-3 gap-2">
+            @for(chilCategory of chilCategorys; track chilCategory.id) {
+         
+              <div class="flex justify-between items-center">
+                <a [class.text-Pine]="selectedSubCategory === chilCategory.category"  (click)="getCategories(chilCategory.category || '')" class="hover:text-Pine ">{{chilCategory.category}}</a>
+                <button [cdkMenuTriggerFor]="menuChilCategories" class="inline-flex aria-expanded:bg-Pine justify-center  items-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
+              </div>
+
+      <ng-template #menuChilCategories>
+        <div class=" mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+          <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editCategory(chilCategory.id)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+          <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteCategory(chilCategory)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
+        </div>
+      </ng-template>
+         }
+          </div>
+      </details>
+      <ng-template #menu>
+        <div class=" mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+          <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editCategory(category.id)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+          <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteCategory(category)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
+        </div>
+      </ng-template>
     </li>
   </ul>
-  <app-dropdown [options]="dropdownOptions"></app-dropdown>
- <app-category-modal></app-category-modal>
+  <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()" ></app-category-modal>
+  <app-delet-check [id]="categoryId" (handleGetCategories)="handleGetCategories()"  [itemName]="categoryName" ></app-delet-check>
+
+ 
+  
 </div>

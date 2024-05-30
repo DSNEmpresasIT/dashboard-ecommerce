@@ -17,19 +17,20 @@
             </div>
 
             <div class="relative z-0 w-full my-6 group">
-              <select formControlName="father_category" id="father_category" name="father_category" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" required>
-                <option value="" selected>Fijar como categoria padre</option>
+              <select formControlName="father_category" id="father_category" name="father_category" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer">
+                <option [value]="null" [selected]="!categoryForm.get('father_category')?.value">Categoría padre</option>
                 <option *ngFor="let category of categories" [value]="category.id">{{ category.category }}</option>
               </select>
-              <label for="father_category" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar Categoria padre</label>
+              <label for="father_category" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar Categoría padre</label>
             </div>
+            
           
             <div class="relative z-0 mb-3 mt-3 group">
               <input   formControlName="is_substance_active" type="checkbox" id="is_substance_active" name="is_substance_active" class="block py-2.5 px-0  text-base rounded-full text-Pine bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" />
               <label for="is_substance_active" class="peer-focus:font-medium absolute text-lg text-Text duration-300 transform -translate-y-6 scale-75 left-8 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-11">¿ Es principio activo ?</label>
             </div>
             @if (!isLoading) {
-              <button type="submit" class=" p-2 px-4 rounded-lg text-Text hover:bg-Pine bg-HighLightLow  border ">Submit</button>
+              <button type="submit" class=" p-2 px-4 rounded-lg text-Text hover:bg-Pine bg-HighLightLow  border ">{{this.categoryIdSelected ? 'Guardar' : 'Crear'}}</button>
             } @else {
               <app-button-spiner></app-button-spiner>
             }

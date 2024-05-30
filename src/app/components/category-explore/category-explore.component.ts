@@ -1,36 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Category } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { CategoryModalComponent } from "../category-modal/category-modal.component";
-import { DropdownComponent } from "../ui/dropdown/dropdown.component";
+import { CategoryService } from '../../services/supabase/category.service';
+import { CdkMenuModule } from '@angular/cdk/menu'
+import { DeletCheckComponent } from "../delet-check/delet-check.component";
 
 @Component({
     selector: 'app-category-explore',
     standalone: true,
     templateUrl: './category-explore.component.html',
     styleUrl: './category-explore.component.css',
-    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, DropdownComponent]
+    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, CdkMenuModule, DeletCheckComponent]
 })
-export class CategoryExploreComponent {
+export class CategoryExploreComponent implements OnInit {
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories: Category[] | null = null;
   selectedCategory: string = '';
-  dropdownOptions = [
-    { label: 'Editar', action: this.editCart.bind(this) },
-    { label: 'Borrar', action: this.deleteCart.bind(this) }
-  ];
+  selectedCategoryId!: number | null ;
+  chilCategorys: Category[] | null = null;
+  selectedSubCategory: string = '';
+  categoryId!: number ;
+  categoryName!: string ;
+  @ViewChild(CategoryModalComponent) CategoryModalComponent!: CategoryModalComponent;
+  
+  @ViewChild(DeletCheckComponent) deletCheckComponent!: DeletCheckComponent;
 
-  editCart() {
+  editCategory(categoryId: number): void {
+    this.selectedCategoryId = categoryId;
+    this.CategoryModalComponent.isOpen = true;
+
+    this.CategoryModalComponent.setCategoryId(categoryId)
   }
 
-  deleteCart() {
-    
+ 
+
+  deleteCategory(category: Category) {
+    const name = category.category
+    if(category && name){
+      this.categoryName = name;
+      this.categoryId = category.id;
+      this.deletCheckComponent.openDialog()
+    }
   }
 
-constructor(private supaBase: SupabaseService) {
+
+
+
+constructor(private supaBase: SupabaseService, private categoryServ: CategoryService) {
     this.searcherCategory.valueChanges
     .pipe(
       debounceTime(600),
@@ -46,32 +66,71 @@ constructor(private supaBase: SupabaseService) {
         }
       })
       this.supaBase.updateNotification$.subscribe(async () => {
-        await this.resetSelect(); // Esperar a que resetSelect se complete
+        await this.resetSelect(); 
       });
       
    }
 
   ngOnInit() {
     this.getAllCategory()
+  }
 
+
+  getCategories(category: string, isFather?: boolean){
+    if(!isFather){
+      this.selectedSubCategory = category;
+    }
+    this.supaBase.fetchByCategory(category)
+
+  }
+
+  removeFilters(){
+    this.selectedSubCategory = '';
+    this.selectedCategory = '';
+   
+    const details = document.querySelectorAll("details")
+    details.forEach((item) => {
+      if(item.open){
+        item.open = false
+      }
+    });
+
+    this.supaBase.fetchAllProducts()
   }
 
   getProducts(category: string){
-    this.supaBase.fetchByCategory(category)
+    this.selectedSubCategory = ''
+    this.getCategories(category, true)
     this.selectedCategory = category;
+    console.log(category, 'getProducts ')
+    this.getChillCategory(category);
   }
 
   resetSelect() {
-    console.log('Resetting selectedCategory');
     this.selectedCategory = '';
   }
 
   async getAllCategory(){
     try {
-      this.categories = await this.supaBase.fetchAllCategories();
+      this.categories = await this.categoryServ.getCategoriesFathers();
     } catch (error) {
       console.log('Error al cargar categorías', error);
     }
+  }
+
+  async getChillCategory(categoryName: string){
+    try {
+      this.chilCategorys = await this.categoryServ.getCategoriesChildren(categoryName);
+    } catch (error) {
+      console.log('Error al cargar categorías', error);
+    }
+  }
+
+   handleGetCategories(){
+    setTimeout(()=>{
+      this.getAllCategory()
+      this.resetSelect()
+    },1000)
   }
 
   async getCategoryByName(query:string){
