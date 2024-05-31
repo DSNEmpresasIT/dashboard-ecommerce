@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "/dist/adm-dash-board-felix/browser",
+    "public": "/dist/dashboard",
     "ignore": [
       "firebase.json",
       "**/.*",
