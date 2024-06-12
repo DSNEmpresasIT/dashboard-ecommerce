@@ -127,6 +127,9 @@ export class CategoryModalComponent implements OnInit {
     this.resetForm();
     this._categoryIdSubject.next(null);
     this.isOpen = !this.isOpen;
+    if(this.isOpen){
+      this.loadFatherCategories();
+    }
   }
 
   toggleLoading(): void {

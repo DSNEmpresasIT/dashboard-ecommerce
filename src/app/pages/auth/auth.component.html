@@ -1,12 +1,12 @@
 <div class="w-full items-center min-h-screen justify-center m-auto bg-Base flex">
-    <form class="flex w-1/3 flex-col" (submit)="login()">
+    <form class="flex w-full max-w-[600px] px-3 flex-col" (submit)="login()">
       <div class="mb-6">
         <label for="email" class="block mb-2 text-sm font-medium text-Text ">Email</label>
-        <input type="email" id="email" [(ngModel)]="email" name="email" class="hover:bg-Pine bg-HighLightLow w-full  border  text-sm rounded-lg " placeholder="name@dsn.com" required>
+        <input type="email" id="email" [(ngModel)]="email" name="email" class="hover:bg-Pine text-Text md:px-5 py-2.5 bg-HighLightLow w-full  border  text-sm rounded-lg " placeholder="name@dsn.com" required>
       </div>
       <div class="mb-6">
         <label for="password" class="block mb-2 text-sm font-medium text-Text ">Contraseña</label>
-        <input type="password" id="password" [(ngModel)]="password" name="password"  class="hover:bg-Pine w-full bg-HighLightLow  border  text-sm rounded-lg " required>
+        <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="******"  class="hover:bg-Pine text-Text w-full md:px-5 py-2.5 bg-HighLightLow  border  text-sm rounded-lg " required>
       </div>
       <button type="submit" class="hover:bg-Pine bg-HighLightLow  border  text-Text focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ">Iniciar Sesion</button>
     </form>

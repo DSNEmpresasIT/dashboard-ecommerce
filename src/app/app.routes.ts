@@ -5,7 +5,7 @@ export const routes: Routes = [
     {
         path: '',
         redirectTo: 'home',
-        pathMatch: 'full'
+        pathMatch: 'prefix'
     },
     {
         path: 'home',

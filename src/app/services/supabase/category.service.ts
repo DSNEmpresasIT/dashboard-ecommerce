@@ -160,9 +160,13 @@ export class CategoryService {
       .from('categories')
       .delete()
       .eq('id', categoryId);
-      console.log(data, 'data ondelet')
-      this.alertServ.show(6000, 'Categoria borrada con exito', AlertsType.SUCCESS)
-      return data
+      console.log(data,error, 'data ondelet')
+      if(!error?.code){
+        this.alertServ.show(6000, 'Categoria borrada con exito', AlertsType.SUCCESS)
+      } else {
+        this.alertServ.show(9000, `No se pudo Borrar la categoria error: ${error?.message}`, AlertsType.ERROR)
+      }
+        return data
     } catch (error) {
       this.alertServ.show(6000, `No se pudo Borrar la categoria error: ${error}`, AlertsType.ERROR)
       return null
