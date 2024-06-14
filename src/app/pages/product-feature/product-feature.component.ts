@@ -4,6 +4,8 @@ import { ProductSingleService } from '../../services/supabase/product-single.ser
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductFeature } from '../../interfaces/productSingle';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { CloudinaryService } from '../../services/cloudinary.service';
+import { ButtonSpinerComponent } from "../../components/button-spiner/button-spiner.component";
 
 export enum COMPONENTSS{ 
   MAIN_INFORMATION = 'Main Information',
@@ -12,11 +14,11 @@ export enum COMPONENTSS{
 }
 
 @Component({
-  selector: 'app-product-feature',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
-  templateUrl: './product-feature.component.html',
-  styleUrl: './product-feature.component.css'
+    selector: 'app-product-feature',
+    standalone: true,
+    templateUrl: './product-feature.component.html',
+    styleUrl: './product-feature.component.css',
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent]
 })
 export class ProductFeatureComponent implements OnInit {
   productSingle: FormGroup;
@@ -24,6 +26,8 @@ export class ProductFeatureComponent implements OnInit {
   productName: string | null | undefined;
   readonly COMPONENTS = COMPONENTSS
   componentsToRender: COMPONENTSS = this.COMPONENTS.TECHNICAL_DETAILS
+  isLoading: boolean = false
+  pdfFiles: { [key: string]: File } = {}; 
 
   switchComponentsToRender(componentToRender: COMPONENTSS){
     this.componentsToRender = componentToRender
@@ -32,7 +36,8 @@ export class ProductFeatureComponent implements OnInit {
   constructor(
     private productServ: ProductSingleService,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cloudinaryServ: CloudinaryService
   ) {
     this.productSingle = this.formBuilder.group({
       id:[''],
@@ -108,13 +113,55 @@ export class ProductFeatureComponent implements OnInit {
     }
   }
 
-  onSubmit(){
-    const data = this.productSingle.value
-    if (data.id === '') {
-      delete data.id;
+
+  onPDFFileSelected(event: any, fieldName: string) {
+    const file = event.target.files[0];
+    console.log(file, 'archivo en file')
+    if (file) {
+      this.pdfFiles[fieldName] = file;
     }
-    if(this.productSingle.valid){
-      this.productServ.updateProductSingle(this.productSingle.value)
+  }
+
+  async onSubmit() {
+    if (this.productSingle.valid) {
+      this.isLoading = true;
+      const data = this.productSingle.value;
+
+      const uploadAndUpdate = async (fieldName: string) => {
+        const oldUrl = data[fieldName];
+        if (oldUrl) {
+          const publicId = this.cloudinaryServ.extractPublicIdFromUrl(oldUrl);
+          if (publicId) {
+            await this.cloudinaryServ.deleteFile(publicId).toPromise();
+          }
+        }
+        if (this.pdfFiles[fieldName]) {
+          const response = await this.cloudinaryServ.uploadPDF(this.pdfFiles[fieldName]).toPromise();
+          data[fieldName] = response.secure_url;
+        }
+      };
+
+      const uploadPromises = [
+        uploadAndUpdate('pdffiles'),
+        uploadAndUpdate('safetyDataSheet'),
+        uploadAndUpdate('downloadMarbete'),
+        uploadAndUpdate('downloadCommercialFlyer')
+      ];
+
+      try {
+        await Promise.all(uploadPromises);
+        if (data.id === '') {
+          delete data.id;
+        }
+        await this.productServ.updateProductSingle(data);
+        console.log('Datos actualizados correctamente en Supabase.');
+        this.isLoading = false;
+        this.getProductSingle(data.id)
+      } catch (error) {
+        this.isLoading = false;
+        console.error('Error al actualizar datos:', error);
+        alert('Hubo un error al actualizar los datos. Por favor, inténtelo de nuevo.');
+      }
     }
   }
 }

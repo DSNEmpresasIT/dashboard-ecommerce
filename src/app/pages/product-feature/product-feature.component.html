@@ -97,21 +97,25 @@
                   <label class="block text-Text font-bold mb-2">Link Archivos PDF</label>
                   <input type="text" formControlName="pdffiles"
                     class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  (change)="onPDFFileSelected($event, 'pdffiles')">
                 </div>
                 <div class="mb-4">
                   <label class="block text-Text font-bold mb-2">Link PDF Marbete</label>
                   <input type="text" formControlName="downloadMarbete"
                     class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  name="downloadMarbete" (change)="onPDFFileSelected($event, 'downloadMarbete')">
                 </div>
                 <div class="mb-4">
                   <label class="block text-Text font-bold mb-2">Link PDF Flyer Comercial</label>
                   <input type="text" formControlName="downloadCommercialFlyer"
                     class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  (change)="onPDFFileSelected($event, 'downloadCommercialFlyer')">
                 </div>
                 <div class="mb-4">
                   <label class="block text-Text font-bold mb-2">Link Hoja de Datos de Seguridad</label>
                   <input type="text" formControlName="safetyDataSheet"
                     class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"   (change)="onPDFFileSelected($event, 'safetyDataSheet')">
                 </div>
                 <div class="mb-4 ">
                   <label class="block text-Text font-bold mb-2">Descripción</label>
@@ -125,15 +129,14 @@
       </div>
     <div class="flex flex-col w-full ">
      
-      <div class=" flex  justify-end">
-        <button type="submit" class="text-Text p-2  px-8 rounded-lg hover:bg-Pine bg-HighLightLow  border">Guardar Cambios</button>
+      <div class="flex w-full justify-center items-center">
+        @if (!isLoading) {
+          <button type="submit" class="hover:bg-Pine bg-HighLightLow  border  text-Text p-2 px-4 rounded-lg ">Guardar</button>
+        } @else {
+          <app-button-spiner></app-button-spiner>
+        }
       </div>
+    
     </div>
     </form>
-
-
-
-
-  </div>
-
 </div>
