@@ -1,10 +1,12 @@
 <div class="bg-Overlay p-6 rounded-md shadow-lg w-full min-w-[500px]">
-  <button class="p-2 group flex ms-auto items-center hover:bg-Pine bg-HighLightLow  border  text-Text rounded-lg" (click)="toggleModal(false)">
-    Cerrar formulario
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-    </svg>
-  </button>
+  <div class="flex mb-2 justify-between">
+    <h5 class="text-Text text-xl ">{{!isEdit ? 'Crear proveedor' : 'Editando proveedores'}}</h5>
+    <button class="p-2 group flex ms-auto items-center" (click)="toggleModal(false)">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </div>
 <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
   @if(isEdit){
      <div class="relative z-0 w-full my-6 group">
