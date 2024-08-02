@@ -25,10 +25,10 @@
         class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
       <details class="w-full "  name="category">
         <summary class="flex w-full items-center hover:text-Pine justify-between  pe-2" 
-        [class.text-Pine]="selectedCategory === category.category" (click)="getProducts(category.category || '')">
+        [class.text-Pine]="selectedCategory === category.label" (click)="getProducts(category.label || '')">
        <span class=" flex gap-2 items-center">
         <i class="fa-solid  fa-caret-right "></i>
-        {{category.category}}
+        {{category.label}}
        </span>
       <button [cdkMenuTriggerFor]="menu" class="inline-flex justify-center aria-expanded:bg-Pine  items-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
 
@@ -37,7 +37,7 @@
             @for(chilCategory of chilCategorys; track chilCategory.id) {
          
               <div class="flex justify-between items-center">
-                <a [class.text-Pine]="selectedSubCategory === chilCategory.category"  (click)="getCategories(chilCategory.category || '')" class="hover:text-Pine ">{{chilCategory.category}}</a>
+                <a [class.text-Pine]="selectedSubCategory === chilCategory.label"  (click)="getCategories(chilCategory.label || '')" class="hover:text-Pine ">{{chilCategory.label}}</a>
                 <button [cdkMenuTriggerFor]="menuChilCategories" class="inline-flex aria-expanded:bg-Pine justify-center  items-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
               </div>
 

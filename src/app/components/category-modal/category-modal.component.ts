@@ -53,7 +53,7 @@ export class CategoryModalComponent implements OnInit {
       if (category) {
         console.log(category)
         this.categoryForm.patchValue({
-          category: category.category,
+          category: category.label,
           father_category: category.father_category,
           is_substance_active: category.is_substance_active,
         });

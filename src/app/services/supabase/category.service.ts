@@ -136,7 +136,7 @@ export class CategoryService {
       const { data, error }  = await this.supabase
         .from('categories')
         .update({
-          'category':dataToEdit.category ,
+          'category':dataToEdit.label ,
           'father_category': dataToEdit.father_category,
           'is_substance_active': dataToEdit.is_substance_active
         })

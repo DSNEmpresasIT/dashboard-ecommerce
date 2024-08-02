@@ -4,15 +4,22 @@ import { environment } from '../../environments/environment.development';
 import { BehaviorSubject } from 'rxjs';
 import { AlertService, AlertsType } from './alert.service';
 import { Router } from '@angular/router';
+import { TokenPayload } from '../interfaces/auth';
+
+
+
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   private supabaseUrl: string = environment.MAIN_SUPABASE_URL;
   private supabaseKey: string = environment.MAIN_SUPABASE_KEY;
   private supabase: SupabaseClient;
   isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  currentTokenPayload: BehaviorSubject<TokenPayload | null> = new BehaviorSubject<TokenPayload | null>(null); // Agregado
+
 
   constructor(
     private alert:AlertService,
@@ -31,16 +38,25 @@ export class AuthService {
     try {
       const { data, error } = await this.supabase.auth.getUser(); // Verificar el token
       if (error) {
-        this.isLoggedIn.next(false); // Si el token no es válido, cierra la sesión
+        this.currentTokenPayload.next(null)
+        this.isLoggedIn.next(false); 
         console.log(error, ' no auth')
       } else {
-        this.isLoggedIn.next(true); // Si el token es válido, el usuario está autenticado
+        const payload: TokenPayload = {
+          catalogId: 3,
+          companyId:1,
+          token:'asdasdas',
+          userId:1
+        }
+        this.currentTokenPayload.next(payload)
+        this.isLoggedIn.next(true);
        
         this.onUserLoggedIn(data?.user?.id);
       }
     } catch (error) {
       console.error('Error al verificar el token:', error);
-      this.isLoggedIn.next(false); // Manejar errores y cerrar la sesión
+      this.isLoggedIn.next(false);
+      this.currentTokenPayload.next(null)
     }
   }
   

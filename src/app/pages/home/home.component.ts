@@ -10,6 +10,8 @@ import { FormNewProductComponent } from "../../components/form-new-product/form-
 import { ModalNewProductService } from '../../services/modal-new-product.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormSupplierComponent } from "../../components/form-supplier/form-supplier.component";
+import { CategoryService } from '../../services/global-api/category.service';
+import { ProductService } from '../../services/global-api/product.service';
 
 @Component({
     selector: 'app-home',
@@ -25,11 +27,17 @@ export class HomeComponent implements OnInit, OnDestroy{
   toggleFormSupplier:boolean = false;
   toggleForm:boolean = false;
   toggleFormNewProduct:boolean = false
-  constructor(private supaBase: SupabaseService, private modalToggleService: ModalNewProductService) { }
+  constructor(
+     private supaBase: SupabaseService,
+     private modalToggleService: ModalNewProductService,
+     private productApi: ProductService 
+    ){ }
 
   ngOnInit() {
-   this.supaBase.fetchAllProducts();
-    this.productsSubscription = this.supaBase.products.subscribe((res: Product[]) => {
+    console.log(
+   this.productApi.fetchAllProducts(), 'products'
+    )
+    this.productsSubscription = this.productApi.products.subscribe((res: Product[]) => {
       this.products = res;
       console.log(this.products)
     });
