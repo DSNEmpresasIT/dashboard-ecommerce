@@ -1,108 +1,114 @@
 import { Injectable } from '@angular/core';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
-import { environment } from '../../environments/environment.development';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AlertService, AlertsType } from './alert.service';
 import { Router } from '@angular/router';
-import { TokenPayload } from '../interfaces/auth';
-
-
-
+import { HttpClient } from '@angular/common/http';
+import { UserAuthPayload } from '../interfaces/auth';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AuthService {
-  private supabaseUrl: string = environment.MAIN_SUPABASE_URL;
-  private supabaseKey: string = environment.MAIN_SUPABASE_KEY;
-  private supabase: SupabaseClient;
   isLoggedIn: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  currentTokenPayload: BehaviorSubject<TokenPayload | null> = new BehaviorSubject<TokenPayload | null>(null); // Agregado
-
+  currentTokenPayload: BehaviorSubject<UserAuthPayload | null> =
+    new BehaviorSubject<UserAuthPayload | null>(null);
+  private GLOBALAPIURL = environment.GLOBALAPIURL;
+  private readonly TOKEN_KEY = 'auth_token';
 
   constructor(
-    private alert:AlertService,
-    private router: Router) {
-    this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
-    this.checkToken();
+    private alert: AlertService,
+    private router: Router,
+    private http: HttpClient
+  ) {}
+
+  private saveToken(token: string) {
+    localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  setSupabaseCredentials(url: string, key: string) {
-    this.supabaseUrl = url;
-    this.supabaseKey = key;
-    this.supabase = createClient(this.supabaseUrl, this.supabaseKey);
+  private getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
- 
-  async checkToken() {
-    try {
-      const { data, error } = await this.supabase.auth.getUser(); // Verificar el token
-      if (error) {
-        this.currentTokenPayload.next(null)
-        this.isLoggedIn.next(false); 
-        console.log(error, ' no auth')
-      } else {
-        const payload: TokenPayload = {
-          catalogId: 3,
-          companyId:1,
-          token:'asdasdas',
-          userId:1
-        }
-        this.currentTokenPayload.next(payload)
-        this.isLoggedIn.next(true);
-       
-        this.onUserLoggedIn(data?.user?.id);
-      }
-    } catch (error) {
-      console.error('Error al verificar el token:', error);
+
+  private removeToken() {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  async checkToken(): Promise<boolean> {
+    const token = this.getToken();
+
+    if (!token) {
       this.isLoggedIn.next(false);
-      this.currentTokenPayload.next(null)
+      this.currentTokenPayload.next(null);
+      this.router.navigate(['/auth']);
+      return false;
     }
-  }
-  
-  async login(email: string, password: string) {
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
 
-    if (error) {
-      this.alert.show(6000,`Las credenciales que estás usando no son validas`, AlertsType.ERROR)
-    } else {
+    try {
+      const response = await firstValueFrom(
+        this.http.get<UserAuthPayload>(
+          `${this.GLOBALAPIURL}auth/verify-token`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+      );
+
       this.isLoggedIn.next(true);
-      this.onUserLoggedIn(data?.user?.id);
-      this.alert.show(6000,`Sesion iniciada con exito`, AlertsType.SUCCESS)
-    }
+      this.currentTokenPayload.next(response);
+      return true;
+    } catch (error) {
+      console.error('Token verification failed:', error);
 
-    return { data, error };
-  }
-  async logout() {
-    const {error} = await this.supabase.auth.signOut();
-    this.isLoggedIn.next(false);
-    if(error === null){
-      this.alert.show(6000, 'Sesión cerrada con exito', AlertsType.SUCCESS)
-      this.router.navigate(['/auth'])
-    }else {
-      this.alert.show(6000,`Error al cerrar sesión error:${error}`, AlertsType.ERROR)
-    }
-  }
-
-  private onUserLoggedIn(userId: string | undefined) {
-    const userConfig = this.findUserConfig(userId);
-    if (userConfig) {
-      this.setSupabaseCredentials(userConfig.SUPABASE_URL, userConfig.SUPABASE_KEY);
-    }
-  }
-
-  private findUserConfig(userId: string | undefined) {
-    const users = environment.USERS;
-    for (const key in users) {
-      if (users.hasOwnProperty(key) && users[key].USER_ID === userId) {
-        return users[key];
+      if (this.isLoggedIn.value) {
+        return true;
+      } else {
+        this.logout('La sesión ha caducado', AlertsType.ERROR);
+        return false;
       }
     }
-    return null;
   }
 
+  async login(email: string, password: string) {
+    const body = { email, password };
 
+    try {
+      const response = await firstValueFrom(
+        this.http.post<UserAuthPayload>(`${this.GLOBALAPIURL}auth/login`, body)
+      );
+
+      this.saveToken(response.token);
+      this.isLoggedIn.next(true);
+       let mockResponse:UserAuthPayload ={
+         user: {
+            catalogId: 1,
+            ...response.user
+         },
+         token: response.token
+       }
+
+      this.currentTokenPayload.next(mockResponse);
+      this.alert.show(6000, `Sesión iniciada con éxito`, AlertsType.SUCCESS);
+
+      return { data: response, error: null };
+    } catch (error) {
+      this.alert.show(
+        6000,
+        `Las credenciales que estás usando no son válidas`,
+        AlertsType.ERROR
+      );
+      return { data: null, error };
+    }
+  }
+
+  logout(
+    menssage: string = 'Sesión cerrada con éxito',
+    status: AlertsType = AlertsType.SUCCESS
+  ) {
+    this.removeToken();
+    this.isLoggedIn.next(false);
+    this.currentTokenPayload.next(null);
+    this.alert.show(6000, menssage, status);
+    this.router.navigate(['/auth']);
+  }
 }

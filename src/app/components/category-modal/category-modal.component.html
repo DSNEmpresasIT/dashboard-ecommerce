@@ -9,20 +9,30 @@
         </button>
       </div>
        
-          <form class="w-full" [formGroup]="categoryForm" (ngSubmit)="onSubmit()" >
+          <form class="w-full flex flex-col gap-2" [formGroup]="categoryForm" (ngSubmit)="onSubmit()" >
             
-            <div class="relative z-0 w-full mb-6 group">
-              <input type="text"  formControlName="category" id="category" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
-              <label for="category" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
+            <div class="relative z-0 w-full group">
+              <input type="text"  formControlName="label" id="label" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "/>
+              <label for="label" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Label</label>
+              <div class="text-red-600 pt-1" *ngIf="categoryForm?.get('label')?.hasError('required')">
+                El "label" es requerido.
+              </div>
             </div>
-            <div class="text-red-600" *ngIf="categoryForm?.get('name')?.hasError('required')">
-              El nombre es requerido.
+           
+
+            <div class="relative z-0 w-full  group">
+              <input type="text"  formControlName="value" id="value" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " />
+              <label for="value" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">value</label>
+              <div class="text-red-600 pt-1" *ngIf="categoryForm?.get('value')?.hasError('required')">
+                El "value" es requerido.
+              </div>
             </div>
+           
 
             <div class="relative z-0 w-full my-6 group">
               <select formControlName="father_category" id="father_category" name="father_category" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer">
                 <option [value]="null" [selected]="!categoryForm.get('father_category')?.value">Categoría padre</option>
-                <option *ngFor="let category of categories" [value]="category.id">{{ category.label }}</option>
+                <option *ngFor="let  category of categoryServ.categories$ | async" [value]="category.id">{{ category.label }}</option>
               </select>
               <label for="father_category" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar Categoría padre</label>
             </div>

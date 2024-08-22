@@ -8,7 +8,8 @@
     </button>
   </div>
   
-  <form class="grid grid-cols-2 gap-5" [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
+  <form class="flex flex-col gap-5" [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
+
     <div>
       <div class="relative z-0 w-full  group">
         <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
@@ -18,11 +19,21 @@
         El nombre es requerido.
       </div> 
     </div>
-    <div class="relative z-0 w-full  group">
+
+    <div>
+      <div class="relative z-0 w-full  group">
+        <input type="text"  formControlName="description" id="description" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
+        <label for="description" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Descripcion</label>
+      </div>
+      <div class="text-red-600" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
+        La description es requerida.
+      </div> 
+    </div>
+    
+    <!-- <div class="relative z-0 w-full  group">
       <input   formControlName="formulacion" type="text" id="formulacion" name="floating_formulacion" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
       <label for="formulacion" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Formulacion</label>
     </div>
-
 
     <div class="relative z-0 w-full  group">
       <input type="number"  formControlName="stock" id="stock" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
@@ -37,8 +48,7 @@
     <div class="relative z-0 w-full  group">
       <input type="text"  formControlName="unid" id="unid" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
       <label for="unid" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Unidad</label>
-    </div>
-
+    </div> -->
 
     <div>
       <div class="relative z-0 w-full  group ">
@@ -77,16 +87,59 @@
       </div> 
     </div>
 
-    <div class=" col-span-2 flex flex-col justify-center items-center  w-full">
-      <div class="flex mt-2  max-w-[250px] min-w-[400px] max-h-[200px] ">
-        <img class="w-full aspect-square object-cover" [src]="productNewForm.get('img')?.value" alt="Imagen del producto">
-      </div>
+    <div class="">
+      
+      <div class="h-[400px] overflow-y-scroll scroll-smooth snap-y snap-mandatory" formArrayName="images">
+        <div class="grid grid-cols-3 gap-8">
+        <div class="flex flex-col gap-2 snap-always snap-center"  *ngFor="let imageControl of imagesArray.controls; let i = index" [formGroupName]="i">
+          
+            <div class="flex mt-2 w-full max-h-[200px]">
+              <img [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' " alt="Imagen subida">
+            </div>
+            
+            <div class="relative z-0 w-full  group">
+              <input type="text"  formControlName="cloudinary_id" id="cloudinary_id" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
+              <label for="cloudinary_id" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Cloudinary ID</label>
+            </div>
 
-      <div>
-        <input type="file" class=" rounded-lg hover:bg-Pine bg-HighLightLow  border  text-Text" (change)="onImageSelected($event)" id="img" formControlName="img">
+            <div class="relative z-0 w-full  group">
+              <input type="text"  formControlName="url" id="url" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
+              <label for="url" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">URL</label>
+            </div>
+        </div>
       </div>
-   </div>
+      </div>
+      
+      <div class=" border-t-Pine border-t pt-2 mt-2 flex items-center gap-2">
+        <button type="button" class="hover:bg-Pine bg-HighLightLow  border  text-Text justify-center p-2 px-4 rounded-lg " (click)="addImage()">Agregar Link de imagen</button>
+        <label class="text-Text" for="file">Elegir Archivo</label>
+        <input name="file" type="file" class="rounded-lg hover:bg-Pine bg-HighLightLow border text-Text" (change)="onImageSelected($event)" id="img" placeholder="Agregar archivo" multiple>
+      </div>
+    </div>
 
+    <div >
+      <div class="flex flex-col gap-2">
+        <h5 class="text-Text text-xl">Product Feature</h5>
+        <p class="text-Text">Si desea crear un product feature junto al producto agregue características y rellene los datos</p>
+  
+        <div class="flex flex-col gap-2" *ngFor="let itemControl of featuresArray?.controls; let i = index" [formGroupName]="i">
+          
+          <div class="relative z-0 w-full  group">
+            <input type="text"  formControlName="title" id="title" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
+            <label for="title" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Titulo</label>
+          </div>
+          <div class="relative z-0 w-full  group">
+            <input type="text"  formControlName="text" id="text" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
+            <label for="text" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Texto</label>
+          </div>
+          
+        </div>
+      </div>
+      
+
+      <button type="button"class="hover:bg-Pine bg-HighLightLow  border mt-3 text-Text justify-center p-2 px-4 rounded-lg " (click)="addFeatureItem()">Agregar Característica</button>
+    </div>
+  
     <!-- Botón de submit -->
    <div class="flex w-full justify-center items-center">
       @if (!isLoading) {

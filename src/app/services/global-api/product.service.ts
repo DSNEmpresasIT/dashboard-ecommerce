@@ -4,6 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Product } from '../../interfaces/product';
 
+import { AuthService } from '../auth.service';
+import { UserAuthPayload } from '../../interfaces/auth';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +14,14 @@ export class ProductService {
   GLOBALAPIURL = environment.GLOBALAPIURL;
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products = this.productsSubject.asObservable();
-  constructor(private http: HttpClient) { }
+  payload: UserAuthPayload | null = null;
 
+  constructor(private http: HttpClient, authService: AuthService) {
+    authService.currentTokenPayload.subscribe(res => this.payload = res)
+   }
+   
   async fetchAllProducts(){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/3`)
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}`)
     .subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products:', error)
@@ -24,7 +31,7 @@ export class ProductService {
   }
 
   async fetchProductById(id: number){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/3/${id}`)
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/2/${id}`)
     .subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products by id:', error)
