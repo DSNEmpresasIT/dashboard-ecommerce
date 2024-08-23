@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AlertService, AlertsType } from './alert.service';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserAuthPayload } from '../interfaces/auth';
 import { environment } from '../../environments/environment.development';
 
@@ -37,19 +37,19 @@ export class AuthService {
   async checkToken(): Promise<boolean> {
     const token = this.getToken();
 
-    if (!token) {
-      this.isLoggedIn.next(false);
-      this.currentTokenPayload.next(null);
-      this.router.navigate(['/auth']);
-      return false;
-    }
-
     try {
+      console.log(token, "token before to check");
+
       const response = await firstValueFrom(
-        this.http.get<UserAuthPayload>(
+        this.http.post<UserAuthPayload>(
           `${this.GLOBALAPIURL}auth/verify-token`,
+          {},
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Accept': 'application/json',
+              'authorization': `${token}`,
+            },
           }
         )
       );
@@ -63,7 +63,6 @@ export class AuthService {
       if (this.isLoggedIn.value) {
         return true;
       } else {
-        this.logout('La sesión ha caducado', AlertsType.ERROR);
         return false;
       }
     }
