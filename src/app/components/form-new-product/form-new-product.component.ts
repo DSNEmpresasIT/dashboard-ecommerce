@@ -8,7 +8,7 @@ import { ModalNewProductService } from '../../services/modal-new-product.service
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
-import { CategoryService } from '../../services/supabase/category.service';
+import { CategoryService } from '../../services/global-api/category.service';
 import { SupplierService } from '../../services/supabase/supplier.service';
 import { Supplier } from '../../interfaces/supplier';
 
@@ -26,36 +26,61 @@ export class FormNewProductComponent implements OnInit {
   subCategories : Category[] | null = []; 
   suppliers: Supplier[] | null = []; 
   @Output() newproductNewForm: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  
   constructor(
     private formBuilder: FormBuilder,
-    private categoryServ : CategoryService,
+    private categoryServ: CategoryService,
     private supplierServ: SupplierService,
-    private cloudinaryService : CloudinaryService,
-    private modalToggleService : ModalNewProductService,
-    private alertServ: AlertService) {
-
+    private cloudinaryService: CloudinaryService,
+    private modalToggleService: ModalNewProductService,
+    private alertServ: AlertService
+  ) {
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: [''],
       formulacion: [''],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryId: ['', [Validators.required]],
-      catalogId: ['', [Validators.required]],
+      categoryId: [''],
+      catalogId: ['1'],
       is_active_substance: [false],
       stock: [null],
       code: [''],
       unid: [''],
       env: [null],
-      supplierId: [null, [Validators.required]],
+      supplierId: [''],
       productFeatures: this.formBuilder.group({
-        items: this.formBuilder.array([]),
-        specs: this.formBuilder.array([])
+        specs: this.formBuilder.array([]),
+        items: this.formBuilder.array([])
       })
     });
   }
-
+  
+  addFeatureItem() {
+    const items = this.productNewForm.get('productFeatures.items') as FormArray;
+    if (items) {
+      items.push(this.formBuilder.group({
+        title: ['', Validators.required],
+        text: ['', Validators.required]
+      }));
+    }
+  }
+  
+  addSpec() {
+    const specs = this.productNewForm.get('productFeatures.specs') as FormArray;
+    if (specs) {
+      specs.push(this.formBuilder.control(''));
+    }
+  }
+  
+  get featuresArray(): FormArray {
+    return this.productNewForm.get('productFeatures.items') as FormArray;
+  }
+  
+  get featureSpects(): FormArray {
+    return this.productNewForm.get('productFeatures.specs') as FormArray;
+  }
+  
   addImage() {
     const images = this.productNewForm.get('images') as FormArray;
     images.push(this.formBuilder.group({
@@ -66,20 +91,7 @@ export class FormNewProductComponent implements OnInit {
   get imagesArray(): FormArray {
     return this.productNewForm.get('images') as FormArray;
   }
-  addFeatureItem() {
-    const items = this.productNewForm.get('productFeatures.items') as FormArray;
-    items.push(this.formBuilder.group({
-      title: ['', Validators.required],
-      text: ['', Validators.required]
-    }));
-  }
-  get featuresArray(): FormArray {
-    return this.productNewForm.get('productFeatures.items') as FormArray;
-  }
-  addSpec() {
-    const specs = this.productNewForm.get('productFeatures.specs') as FormArray;
-    specs.push(this.formBuilder.control(''));
-  }
+  
 
   async onImageSelected(event: Event): Promise<void> {
     const inputElement = event.target as HTMLInputElement;
@@ -99,9 +111,10 @@ export class FormNewProductComponent implements OnInit {
           reader.onload = async (e: any) => {
             const imageData = e.target.result;
             const cloudinaryResponse = await this.uploadToCloudinary(imageData);
+            console.log(cloudinaryResponse, 'cloudinary')
 
             if (cloudinaryResponse) {
-              this.addImageWithUrl(cloudinaryResponse.cloudinary_id, cloudinaryResponse.url);
+              this.addImageWithUrl(cloudinaryResponse.asset_id, cloudinaryResponse.url);
             }
 
             resolve();
@@ -140,7 +153,7 @@ export class FormNewProductComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.productNewForm.valid) {
+
       this.toggleLoading();
 
       try {
@@ -154,7 +167,7 @@ export class FormNewProductComponent implements OnInit {
         this.toggleLoading();
         this.toggleModal(false);
       }
-    }
+    
   }
 
   private prepareProductData(): any {
@@ -172,6 +185,7 @@ export class FormNewProductComponent implements OnInit {
       //   this.alertServ.show(6000, "Producto agregado con éxito", AlertsType.SUCCESS);
       //   // this.cloudinaryService.updateProducts();
       // }
+      console.log(productData, ' creando producto')
     } catch (error) {
       this.alertServ.show(6000, "Error al agregar el producto", AlertsType.ERROR);
     }
@@ -186,14 +200,10 @@ export class FormNewProductComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.categoryServ.getAllFhaterCategories()
-      .then((arg: Category[] | null)=>{
+    this.categoryServ.category
+      .subscribe((arg: Category[] | null)=>{
         this.categories = arg;
       })
-      .catch(error =>{
-        console.log('Error fetching categories:', error);
-      });
-
     this.fetchAllSuppliers();
   }
 
@@ -212,14 +222,11 @@ export class FormNewProductComponent implements OnInit {
     const target = event.target as HTMLSelectElement;
     const categoryId = parseInt(target.value);
 
-    this.categoryServ.getChildrenCategories(categoryId)
-    .then((arg: Category[] | null)=>{
+    this.categoryServ.fetchCategories(categoryId)
+    .subscribe((arg: Category[] | null)=>{
       this.subCategories = arg;
       console.log(this.subCategories)
     })
-    .catch(error =>{
-      console.log('Error fetching categories:', error);
-    });
 
   }
 

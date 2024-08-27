@@ -16,7 +16,7 @@ export interface Product {
 
 export interface Category {
     id: number;
-    label?: string | null;
+    label: string;
     value?: string | null;
     created_at: Date;
     father_category?: number;

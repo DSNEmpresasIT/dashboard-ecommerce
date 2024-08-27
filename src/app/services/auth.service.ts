@@ -55,7 +55,16 @@ export class AuthService {
       );
 
       this.isLoggedIn.next(true);
-      this.currentTokenPayload.next(response);
+      let mockResponse:UserAuthPayload ={
+        user: {
+           catalogId: 1,
+           ...response.user
+        },
+        token: response.token
+      }
+
+     this.currentTokenPayload.next(mockResponse);
+     
       return true;
     } catch (error) {
       console.error('Token verification failed:', error);

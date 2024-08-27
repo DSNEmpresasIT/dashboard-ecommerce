@@ -21,11 +21,12 @@
   </div>
  
   <ul class="flex mt-4 flex-col gap-1">
-    <li  *ngFor="let category of categories"   
+    
+    <li  *ngFor="let category of categories$ | async"   
         class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
       <details class="w-full "  name="category">
         <summary class="flex w-full items-center hover:text-Pine justify-between  pe-2" 
-        [class.text-Pine]="selectedCategory === category.label" (click)="getProducts(category.label || '')">
+        [class.text-Pine]="selectedCategory === category.label" (click)="getProducts(category)">
        <span class=" flex gap-2 items-center">
         <i class="fa-solid  fa-caret-right "></i>
         {{category.label}}
@@ -37,7 +38,7 @@
             @for(chilCategory of chilCategorys; track chilCategory.id) {
          
               <div class="flex justify-between items-center">
-                <a [class.text-Pine]="selectedSubCategory === chilCategory.label"  (click)="getCategories(chilCategory.label || '')" class="hover:text-Pine ">{{chilCategory.label}}</a>
+                <a [class.text-Pine]="selectedSubCategory === chilCategory.label"  (click)="getCategories(chilCategory)" class="hover:text-Pine ">{{chilCategory.label}}</a>
                 <button [cdkMenuTriggerFor]="menuChilCategories" class="inline-flex aria-expanded:bg-Pine justify-center  items-center rounded-md border border-gray-300 shadow-sm px-2 py-1 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
               </div>
 

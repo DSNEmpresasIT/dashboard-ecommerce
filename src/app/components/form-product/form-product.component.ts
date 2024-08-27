@@ -152,7 +152,7 @@ export class FormProductComponent implements OnInit {
       const file = inputElement.files[0];
       const reader = new FileReader();
   
-      const maxSizeInBytes = 500 * 1024; // 500kb
+      const maxSizeInBytes = 500 * 1024;
   
       if (file.size > maxSizeInBytes) {
         console.error('The file exceeds the maximum allowed size.');
@@ -163,7 +163,6 @@ export class FormProductComponent implements OnInit {
       await new Promise<void>((resolve, reject) => {
         reader.onload = async (e: any) => {
           if (this.renderProduct?.img) {
-            // Elimina la imagen antigua de Cloudinary antes de asignar la nueva
             await this.cloudinaryService.onEditImageSelected(this.renderProduct.img);
           }
           this.productForm.get('img')?.setValue(e.target.result);
@@ -187,18 +186,13 @@ export class FormProductComponent implements OnInit {
       try {
         let cloudinaryUrl: string | undefined;
   
-        // Check if an image is selected
         const imgBase64 = this.productForm.get('img')?.value;
         if (imgBase64) {
           cloudinaryUrl = await this.uploadImageToCloudinary();
         }
   
-
-
-        // Prepare product data with or without the Cloudinary URL
         const productData = this.prepareProductData(cloudinaryUrl as string);
   
-        // Save product to Supabase
         await this.saveProductToSupabase(productData);
   
       } catch (error) {
@@ -230,13 +224,11 @@ export class FormProductComponent implements OnInit {
       const imgBase64 = this.productForm.get('img')?.value;
       if (imgBase64) {
         if (this.renderProduct?.img) {
-          // Elimina la imagen antigua de Cloudinary antes de cargar la nueva
           await this.cloudinaryService.onEditImageSelected(this.renderProduct.img);
         }
         const cloudinaryResponse = await this.uploadToCloudinary(imgBase64);
         return cloudinaryResponse?.url;
       } else {
-        // Image is not available, return undefined
         return undefined;
       }
     } catch (error) {

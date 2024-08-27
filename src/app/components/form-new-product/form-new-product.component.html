@@ -12,7 +12,7 @@
 
     <div>
       <div class="relative z-0 w-full  group">
-        <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
+        <input type="text"  formControlName="name" id="name" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
         <label for="name" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nombre</label>
       </div>
       <div class="text-red-600" *ngIf="productNewForm?.get('name')?.hasError('required') && productNewForm.touched">
@@ -22,7 +22,7 @@
 
     <div>
       <div class="relative z-0 w-full  group">
-        <input type="text"  formControlName="description" id="description" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" " required />
+        <input type="text"  formControlName="description" id="description" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
         <label for="description" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Descripcion</label>
       </div>
       <div class="text-red-600" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
@@ -65,19 +65,19 @@
     <div>
       <div class="relative z-0 w-full  group ">
     
-        <select formControlName="selectedCategory"  (change)="getChillCategories($event)" id="selectedCategory" name="selectedCategory" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" required>
+        <select formControlName="categoryId"  (change)="getChillCategories($event)" id="categoryId" name="categoryId" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" >
           <option *ngFor="let category of categories"  [value]="category.id">{{ category.label }}</option>
         </select>
-        <label for="selectedCategory" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar categoria</label>
+        <label for="categoryId" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar categoria</label>
       </div>
-      <div class="text-red-600" *ngIf="productNewForm?.get('selectedCategory')?.hasError('required') && productNewForm.touched">
+      <div class="text-red-600" *ngIf="productNewForm?.get('categoryId')?.hasError('required') && productNewForm.touched">
         La categoria es requerida.
       </div> 
     </div>
 
     <div>
       <div class="relative z-0 w-full  group ">
-        <select formControlName="selectedSubCategories" id="selectedSubCategories" name="selectedSubCategories" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" required>
+        <select formControlName="selectedSubCategories" id="selectedSubCategories" name="selectedSubCategories" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" >
           <option *ngFor="let category of subCategories" [value]="category.id">{{ category.label }}</option>
         </select>
         <label for="selectedSubCategories" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Seleccionar sub categoria</label>
@@ -122,22 +122,37 @@
         <h5 class="text-Text text-xl">Product Feature</h5>
         <p class="text-Text">Si desea crear un product feature junto al producto agregue características y rellene los datos</p>
   
-        <div class="flex flex-col gap-2" *ngFor="let itemControl of featuresArray?.controls; let i = index" [formGroupName]="i">
-          
-          <div class="relative z-0 w-full  group">
-            <input type="text"  formControlName="title" id="title" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
-            <label for="title" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Titulo</label>
-          </div>
-          <div class="relative z-0 w-full  group">
-            <input type="text"  formControlName="text" id="text" name="floating_name" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=""  />
-            <label for="text" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine  peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Texto</label>
-          </div>
-          
+    <!-- Product Feature Items -->
+    <h4 class="text-Text">Items</h4>
+    <div formArrayName="items" class="flex flex-col gap-2">
+      <div *ngFor="let itemControl of featuresArray.controls; let i = index" [formGroupName]="i">
+        <div class="relative z-0 w-full group">
+          <input type="text" formControlName="title" id="title-{{i}}" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder="" />
+          <label for="title-{{i}}" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Titulo</label>
         </div>
+        <div class="relative z-0 w-full group">
+          <input type="text" formControlName="text" id="text-{{i}}" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder="" />
+          <label for="text-{{i}}" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Texto</label>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="hover:bg-Pine bg-HighLightLow border mt-3 text-Text justify-center p-2 px-4 rounded-lg" (click)="addFeatureItem()">Agregar items</button>
+
+    <!-- Product Specs -->
+    <h4 class="text-Text">Specs</h4>
+    <div formArrayName="specs" class="flex flex-col gap-2">
+      <div *ngFor="let specControl of featureSpects.controls; let i = index" class="relative z-0 w-full group">
+        <input type="text" [formControlName]="i" id="specs-{{i}}" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder="" />
+        <label for="specs-{{i}}" class="peer-focus:font-medium absolute text-sm text-Text duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-Pine peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Specs</label>
+      </div>
+    </div>
+    <button type="button" class="hover:bg-Pine bg-HighLightLow border mt-3 text-Text justify-center p-2 px-4 rounded-lg" (click)="addSpec()">Agregar Spec</button>
+
+        
       </div>
       
 
-      <button type="button"class="hover:bg-Pine bg-HighLightLow  border mt-3 text-Text justify-center p-2 px-4 rounded-lg " (click)="addFeatureItem()">Agregar Característica</button>
+      <button type="button"class="hover:bg-Pine bg-HighLightLow  border mt-3 text-Text justify-center p-2 px-4 rounded-lg " (click)="addSpec()">Agregar specs</button>
     </div>
   
     <!-- Botón de submit -->

@@ -3,7 +3,7 @@ import { environment } from '../../../environments/environment.development';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 import { Category } from '../../interfaces/product';
-import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
 import { CategoryDTO } from '../../interfaces/catalogsDTO';
 import { UserAuthPayload } from '../../interfaces/auth';
 
@@ -21,22 +21,30 @@ export class CategoryService {
     authService.currentTokenPayload.subscribe(res => this.payload = res)
   }
 
-  async fetchCategories(categoryId?: number) {
+
+  fetchCategories(categoryId?: number): Observable<Category[]> {
     let params = new HttpParams();
-    if (categoryId) {
+    if (categoryId !== undefined) {
       params = params.set('categoryId', categoryId.toString());
     }
-    
-    this.http.get<Category[]>(`${this.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`, { params })
-      .pipe(
-        catchError(error => {
-          console.error('Error fetching categories:', error);
-          throw error;
-        })
-      )
-      .subscribe({
-        next: (categories) => this.categorySubject.next(categories)
-      });
+
+    const url = `${this.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
+
+    return this.http.get<Category[]>(url, { params }).pipe(
+      catchError(error => {
+       throw new Error(`Error fetching categories: ${error.message}`)
+      }),
+      map(categories => {
+        if (categoryId !== undefined) {
+          console.log(categories, ' categories en map')
+          return categories; 
+        } else {
+          console.log(categories, ' categories en else')
+          this.categorySubject.next(categories);
+          return [];
+        }
+      })
+    );
   }
 
   get categories$() {

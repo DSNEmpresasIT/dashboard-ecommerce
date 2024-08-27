@@ -5,11 +5,12 @@ import { Category } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { CategoryModalComponent } from "../category-modal/category-modal.component";
-import { CategoryService } from '../../services/supabase/category.service';
+
 import { CdkMenuModule } from '@angular/cdk/menu'
 import { DeletCheckComponent } from "../delet-check/delet-check.component";
 
-import { CategoryService as ApiCategoryService} from '../../services/global-api/category.service';
+import { CategoryService} from '../../services/global-api/category.service';
+import { ProductService } from '../../services/global-api/product.service';
 
 @Component({
     selector: 'app-category-explore',
@@ -20,8 +21,7 @@ import { CategoryService as ApiCategoryService} from '../../services/global-api/
 })
 export class CategoryExploreComponent implements OnInit {
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
-  categories: Category[] | null = null;
-  private categorySubscription: Subscription = new Subscription();
+  categories$ = this.categoryServ.categories$;
   
   selectedCategory: string = '';
   selectedCategoryId!: number | null ;
@@ -54,9 +54,9 @@ export class CategoryExploreComponent implements OnInit {
 
 
   constructor(
-    private supaBase: SupabaseService,
+    private productServ: ProductService,
     private categoryServ: CategoryService,
-    private categoryApiServ: ApiCategoryService  ) {
+  ) {
       this.searcherCategory.valueChanges
       .pipe(
         debounceTime(600),
@@ -71,26 +71,20 @@ export class CategoryExploreComponent implements OnInit {
             this.getCategoryByName(queryString)
           }
         })
-        this.supaBase.updateNotification$.subscribe(async () => {
-          await this.resetSelect(); 
-        });
+       
         
     }
 
   ngOnInit() {
     this.getAllCategory()
-    this.categorySubscription = this.categoryApiServ.category.subscribe((res: Category[]) => {
-      this.categories = res;
-      console.log(this.categories)
-    });
   }
 
 
-  getCategories(category: string, isFather?: boolean){
+  getCategories(category: Category, isFather?: boolean){
     if(!isFather){
-      this.selectedSubCategory = category;
+      this.selectedSubCategory = category.label;
     }
-    this.supaBase.fetchByCategory(category)
+    this.categoryServ.fetchCategories(category.id)
 
   }
 
@@ -105,34 +99,34 @@ export class CategoryExploreComponent implements OnInit {
       }
     });
 
-    this.supaBase.fetchAllProducts()
+    this.productServ.fetchAllProducts()
   }
 
-  getProducts(category: string){
-    this.selectedSubCategory = ''
-    this.getCategories(category, true)
-    this.selectedCategory = category;
+  getProducts(category: Category){
+    if(category){
+      this.selectedSubCategory = ''
+      this.getCategories(category, true)
+      this.selectedCategory = category.label;
+    }
+    
     console.log(category, 'getProducts ')
-    this.getChillCategory(category);
   }
 
   resetSelect() {
     this.selectedCategory = '';
   }
 
-  async getAllCategory(){
-    try {
-      this.categoryApiServ.fetchCategories()
-    } catch (error) {
-      console.log('Error al cargar categorías', error);
-    }
+  getAllCategory(){
+      console.log('llamado a categorias')
+     this.categoryServ.fetchCategories().subscribe()
   }
 
-  async getChillCategory(categoryName: string){
+  async getChillCategory(categoryName: string) {
     try {
-      this.chilCategorys = await this.categoryServ.getCategoriesChildren(categoryName);
+      this.categoryServ.fetchCategories(parseInt(categoryName)).subscribe((res) => 
+        this.chilCategorys = res);
     } catch (error) {
-      console.log('Error al cargar categorías', error);
+      console.log('Error loading subcategories:', error);
     }
   }
 
@@ -145,7 +139,7 @@ export class CategoryExploreComponent implements OnInit {
 
   async getCategoryByName(query:string){
     try {
-      this.categories = await this.supaBase.fetchCategoryByName(query);
+    //  this.categories = await this.supaBase.fetchCategoryByName(query);
     } catch (error) {
       console.log('Error al cargar categorías', error);
     }
