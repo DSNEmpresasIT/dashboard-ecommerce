@@ -8,7 +8,7 @@
       <app-form-product (booleanOutput)="handleBooleanValue($event)" ></app-form-product>
       
     </div>
-    <div class="w-full min-h-screen " *ngIf="toggleFormNewProduct" >
+    <div class="fixed inset-0 z-[9000] bg-Overlay  overflow-auto" *ngIf="toggleFormNewProduct" >
       <app-form-new-product (newProductForm)="toggleModal(true)"></app-form-new-product>
     </div>
 

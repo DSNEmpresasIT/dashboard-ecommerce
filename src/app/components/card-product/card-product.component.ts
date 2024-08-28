@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
     imports: [CommonModule, ModalDeletComponent, RouterModule]
 })
 export class CardProductComponent {
-  @Input() renderProduct: Product | undefined;
+  @Input() renderProduct!: Product;
   @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
   constructor(private supaBase : SupabaseService) { }
   toggleForm: boolean= false;

@@ -30,7 +30,7 @@ export class CategoryModalComponent implements OnInit {
     this.categoryForm = this.formBuilder.group({
       label: ['', Validators.required],
       value: ['', Validators.required],
-      father_category: [null],
+      fatherCategoryId: [null],
       is_substance_active: [false],
     });
   }

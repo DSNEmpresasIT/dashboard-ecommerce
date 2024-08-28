@@ -11,6 +11,9 @@ import { AlertService, AlertsType } from '../../services/alert.service';
 import { CategoryService } from '../../services/global-api/category.service';
 import { SupplierService } from '../../services/supabase/supplier.service';
 import { Supplier } from '../../interfaces/supplier';
+import { AuthService } from '../../services/auth.service';
+import { UserAuthPayload } from '../../interfaces/auth';
+import { ProductService } from '../../services/global-api/product.service';
 
 @Component({
   selector: 'app-form-new-product',
@@ -25,30 +28,34 @@ export class FormNewProductComponent implements OnInit {
   categories: Category[] | null = []; 
   subCategories : Category[] | null = []; 
   suppliers: Supplier[] | null = []; 
-  @Output() newproductNewForm: EventEmitter<boolean> = new EventEmitter<boolean>();
-  
+  payload: UserAuthPayload | null = null;
+
+
   constructor(
     private formBuilder: FormBuilder,
     private categoryServ: CategoryService,
     private supplierServ: SupplierService,
     private cloudinaryService: CloudinaryService,
-    private modalToggleService: ModalNewProductService,
-    private alertServ: AlertService
+    public modalToggleService: ModalNewProductService,
+    private alertServ: AlertService,
+    authService: AuthService,
+    private productServ: ProductService
   ) {
+    authService.currentTokenPayload.subscribe(res => this.payload = res)
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
-      description: [''],
-      formulacion: [''],
+      description: ['', [Validators.required]],
+      // formulacion: [''],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryId: [''],
-      catalogId: ['1'],
+      categoryId: [0, [Validators.required]],
+      catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
-      code: [''],
-      unid: [''],
-      env: [null],
-      supplierId: [''],
+      // code: [''],
+      // unid: [''],
+      // env: [null],
+      // supplierId: [''],
       productFeatures: this.formBuilder.group({
         specs: this.formBuilder.array([]),
         items: this.formBuilder.array([])
@@ -64,6 +71,11 @@ export class FormNewProductComponent implements OnInit {
         text: ['', Validators.required]
       }));
     }
+  }
+
+  removeFormItems(id: number, form: string){
+    const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
+    itemToDelet.removeAt(id);
   }
   
   addSpec() {
@@ -171,7 +183,11 @@ export class FormNewProductComponent implements OnInit {
   }
 
   private prepareProductData(): any {
-    const productData = { ...this.productNewForm.value };
+    if (!this.productNewForm.valid){
+      throw new Error('form is not valid :c') 
+    }
+    const category = parseInt(this.productNewForm.get('categoryId')?.getRawValue())
+    const productData = { ...this.productNewForm.value,categoryId: category };
     
     delete productData.img; // Remove the img field used for previewing
 
@@ -180,11 +196,11 @@ export class FormNewProductComponent implements OnInit {
 
   private async saveProductToAPI(productData: any): Promise<void> {
     try {
-      // const newProduct = await this.productServ.saveProduct(productData);
-      // if (newProduct) {
-      //   this.alertServ.show(6000, "Producto agregado con éxito", AlertsType.SUCCESS);
-      //   // this.cloudinaryService.updateProducts();
-      // }
+      const newProduct = await this.productServ.create(productData);
+      if (newProduct) {
+        this.alertServ.show(6000, "Producto agregado con éxito", AlertsType.SUCCESS);
+        // this.cloudinaryService.updateProducts();
+      }
       console.log(productData, ' creando producto')
     } catch (error) {
       this.alertServ.show(6000, "Error al agregar el producto", AlertsType.ERROR);

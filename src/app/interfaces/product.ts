@@ -5,13 +5,22 @@ export interface Product {
     stock?: number | null;
     code?: string  | null;
     formulacion?: string | null;
-    img?: string | null;
+    images: image[];
     created_at: Date;
     is_active_substance?: boolean | null;
     supplier?: {
         name: string;
       } | null;
     supplier_id: number | undefined;
+}
+
+export interface image {
+    id: number,
+    created_at: string,
+    is_active: boolean,
+    deactivated_at: Date,
+    cloudinary_id: number,
+    url: string
 }
 
 export interface Category {

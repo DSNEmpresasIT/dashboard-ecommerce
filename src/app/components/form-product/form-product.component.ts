@@ -52,7 +52,7 @@ export class FormProductComponent implements OnInit {
       code:[ null ],
       unid: [''],
       formulacion: [this.renderProduct?.formulacion],
-      img: [this.renderProduct?.img],
+      images: [this.renderProduct?.images],
       supplier_id: [ null , [Validators.required]],
       category_id: [ null , [Validators.required]],
       sub_category_id: [ null , [Validators.required]],
@@ -162,10 +162,10 @@ export class FormProductComponent implements OnInit {
   
       await new Promise<void>((resolve, reject) => {
         reader.onload = async (e: any) => {
-          if (this.renderProduct?.img) {
-            await this.cloudinaryService.onEditImageSelected(this.renderProduct.img);
+          if (this.renderProduct?.images) {
+            await this.cloudinaryService.onEditImageSelected(this.renderProduct.images[0].url);
           }
-          this.productForm.get('img')?.setValue(e.target.result);
+          this.productForm.get('images')?.setValue(e.target.result);
           resolve();
         };
   
@@ -186,8 +186,8 @@ export class FormProductComponent implements OnInit {
       try {
         let cloudinaryUrl: string | undefined;
   
-        const imgBase64 = this.productForm.get('img')?.value;
-        if (imgBase64) {
+        const imagesBase64 = this.productForm.get('images')?.value;
+        if (imagesBase64) {
           cloudinaryUrl = await this.uploadImageToCloudinary();
         }
   
@@ -221,12 +221,12 @@ export class FormProductComponent implements OnInit {
   
   private async uploadImageToCloudinary(): Promise<string | undefined> {
     try {
-      const imgBase64 = this.productForm.get('img')?.value;
-      if (imgBase64) {
-        if (this.renderProduct?.img) {
-          await this.cloudinaryService.onEditImageSelected(this.renderProduct.img);
+      const imagesBase64 = this.productForm.get('images')?.value;
+      if (imagesBase64) {
+        if (this.renderProduct?.images) {
+          await this.cloudinaryService.onEditImageSelected(this.renderProduct.images[0].url);
         }
-        const cloudinaryResponse = await this.uploadToCloudinary(imgBase64);
+        const cloudinaryResponse = await this.uploadToCloudinary(imagesBase64);
         return cloudinaryResponse?.url;
       } else {
         return undefined;
@@ -239,7 +239,7 @@ export class FormProductComponent implements OnInit {
   
   private prepareProductData(cloudinaryUrl: string): any {
     const productData = { ...this.productForm.value };
-    productData.img = cloudinaryUrl;
+    productData.images = cloudinaryUrl;
   
     if ('category_id' in productData) {
       delete productData.category_id;
@@ -290,7 +290,7 @@ export class FormProductComponent implements OnInit {
       id: this.renderProduct?.id,
       name: this.renderProduct?.name,
       formulacion: this.renderProduct?.formulacion,
-      img: this.renderProduct?.img,
+      images: this.renderProduct?.images,
       stock: this.renderProduct?.stock,
       code: this.renderProduct?.code,
       category_id: this.selectedCategory?.id,

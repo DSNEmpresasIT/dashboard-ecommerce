@@ -20,4 +20,8 @@ export class ModalNewProductService {
   toggleModal(value: boolean) {
     this._toggleSource.next(value);
   }
+
+  get toggle() {
+    return this.toggle$;
+  }
 }
