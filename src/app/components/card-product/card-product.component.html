@@ -13,7 +13,9 @@
     <button class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border " (click)="getProductId(renderProduct.id || 0)">Editar</button>
     <a [routerLink]="['/product-details']" [queryParams]="{ id: renderProduct.id, name: renderProduct.name}" class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border ">ir a Detalle</a>
   </div>
-    <app-modal-delet [id]="renderProduct.id" />
+  
+  <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()"></app-delet-check>
+
   <!-- <p class="absolute top-8 right-3 flex text-base items-center bg-green-400 rounded-full px-3 py-1 text-white font-semibold">
     {{renderProduct?.is_active_substance ? 'Principio activo' : 'Sin principio activo'}}
     <span class="p-2 flex ms-2 w-2 h-2 rounded-full  bg-green-400" ngClass="{{renderProduct?.is_active_substance ? 'bg-green-500' : 'bg-red-500'}}"></span>

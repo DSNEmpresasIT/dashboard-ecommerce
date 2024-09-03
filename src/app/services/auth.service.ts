@@ -16,6 +16,7 @@ export class AuthService {
   private GLOBALAPIURL = environment.GLOBALAPIURL;
   private readonly TOKEN_KEY = 'auth_token';
 
+  
   constructor(
     private alert: AlertService,
     private router: Router,
@@ -26,7 +27,7 @@ export class AuthService {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
-  private getToken(): string | null {
+  getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
@@ -34,12 +35,21 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
+  getAuthHeaders() {
+    const token = this.getToken();
+    let header ={
+      'Content-Type': 'application/json; charset=utf-8',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+
+    return  header
+  }
+
   async checkToken(): Promise<boolean> {
     const token = this.getToken();
 
     try {
-      console.log(token, "token before to check");
-
       const response = await firstValueFrom(
         this.http.post<UserAuthPayload>(
           `${this.GLOBALAPIURL}auth/verify-token`,

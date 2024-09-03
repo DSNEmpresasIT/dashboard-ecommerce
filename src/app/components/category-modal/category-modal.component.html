@@ -1,7 +1,7 @@
 <div *ngIf="isOpen" class="fixed inset-0 z-10 bg-black/50 h-full w-full flex justify-center items-center ">
     <div class="bg-Overlay p-6 rounded-md shadow-lg w-1/2">
       <div class="flex mb-2 justify-between">
-        <h5 class="text-Text text-xl ">{{categoryIdSelected ? 'Editando categoria ' + categoryForm.get('category')?.value : 'Ingrese los datos de la categoria'}}</h5>
+        <h5 class="text-Text text-xl ">{{categoryIdSelected ? 'Editando categoria ' + categoryForm.get('label')?.value : 'Ingrese los datos de la categoria'}}</h5>
         <button class="p-2 group flex ms-auto items-center" (click)="toggleModal()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-red-500" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />

@@ -1,7 +1,8 @@
 export interface CategoryDTO{
-  catalogId: number;
+  id: number;
+  catalogId?: number;
   label: string;
-  value: string;
+  value?: string | null;
   fatherCategoryId?: number;
   isSubstanceActive?: boolean;
 }

@@ -11,6 +11,8 @@ import { DeletCheckComponent } from "../delet-check/delet-check.component";
 
 import { CategoryService} from '../../services/global-api/category.service';
 import { ProductService } from '../../services/global-api/product.service';
+import { DeletTypes } from '../../enums/enums';
+import { deleteConfig } from '../../interfaces/interfaces';
 
 @Component({
     selector: 'app-category-explore',
@@ -20,6 +22,8 @@ import { ProductService } from '../../services/global-api/product.service';
     imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, CdkMenuModule, DeletCheckComponent]
 })
 export class CategoryExploreComponent implements OnInit {
+  DeletTypes: DeletTypes = DeletTypes.CATEGORY;
+
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories$ = this.categoryServ.categories$;
   
@@ -35,17 +39,24 @@ export class CategoryExploreComponent implements OnInit {
   editCategory(categoryId: number): void {
     this.selectedCategoryId = categoryId;
     this.CategoryModalComponent.isOpen = true;
-
+    console.log(categoryId ,this.selectedCategoryId)
     this.CategoryModalComponent.setCategoryId(categoryId)
   }
 
- 
+  deleteConfig: deleteConfig = {
+    id: this.categoryId,
+    itemName: '',
+    toDelete: DeletTypes.CATEGORY,
+    title: '¿Está seguro de que desea eliminar esta categoria?',
+    text: 'Escriba el nombre de la categoria para confirmar:'
+  };
+
 
   deleteCategory(category: Category) {
     const name = category.label
     if(category && name){
-      this.categoryName = name;
-      this.categoryId = category.id;
+      this.deleteConfig.itemName = name;
+      this.deleteConfig.id = category.id;
       this.deletCheckComponent.openDialog()
     }
   }
@@ -130,7 +141,7 @@ export class CategoryExploreComponent implements OnInit {
     }
   }
 
-   handleGetCategories(){
+  handleGetCategories(){
     setTimeout(()=>{
       this.getAllCategory()
       this.resetSelect()
