@@ -91,12 +91,24 @@ export class CategoryExploreComponent implements OnInit {
   }
 
 
-  getCategories(category: Category, isFather?: boolean){
-    if(!isFather){
+  getCategories(category: Category, isFather?: boolean) {
+    if (!isFather) {
       this.selectedSubCategory = category.label;
     }
-    this.categoryServ.fetchCategories(category.id)
+  
+    this.categoryServ.fetchCategories(category.id).subscribe((res: Category[]) => {
 
+      const selectedCategory = res.find(cat => cat.id === category.id);
+  
+      if (selectedCategory && selectedCategory.childrens) {
+        this.chilCategorys = selectedCategory.childrens;
+        console.log(this.chilCategorys, 'llamando sub categories');
+      } else {
+        console.log('No subcategories found');
+      }
+    }, (error) => {
+      console.error('Error fetching subcategories', error);
+    });
   }
 
   removeFilters(){
@@ -128,7 +140,6 @@ export class CategoryExploreComponent implements OnInit {
   }
 
   getAllCategory(){
-      console.log('llamado a categorias')
      this.categoryServ.fetchCategories().subscribe()
   }
 

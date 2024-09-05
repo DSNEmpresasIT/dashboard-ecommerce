@@ -7,7 +7,7 @@ import { CardProductComponent } from "../../components/card-product/card-product
 import { FormProductComponent } from '../../components/form-product/form-product.component';
 import { CategoryExploreComponent } from '../../components/category-explore/category-explore.component';
 import { FormNewProductComponent } from "../../components/form-new-product/form-new-product.component";
-import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { ModalService } from '../../services/modal-new-product.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormSupplierComponent } from "../../components/form-supplier/form-supplier.component";
 import { CategoryService } from '../../services/global-api/category.service';
@@ -29,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy{
   toggleFormNewProduct:boolean = false
   constructor(
      private supaBase: SupabaseService,
-     private modalToggleService: ModalNewProductService,
+     private modalToggleService: ModalService,
      private productApi: ProductService 
     ){ }
 
@@ -46,8 +46,8 @@ export class HomeComponent implements OnInit, OnDestroy{
       this.toggleEditSupplier(value);
     });
 
-    this.modalToggleService.toggle$.subscribe((value) => {
-      this.toggleModal(value);
+    this.modalToggleService.modalState$.subscribe((value) => {
+      this.toggleModal(value.isOpen);
     });
   }
 

@@ -59,14 +59,8 @@ export class ProductService {
     return products
   }
 
-  async fetchProductById(id: number){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/2/${id}`)
-    .subscribe({ 
-      next: (products) => this.productsSubject.next(products),
-      error: (error) => console.error('Error fetching products by id:', error)
-    });
-    
-    return products
+  fetchProductById(id: number): Observable<Product> {
+    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}/${id}`);
   }
 
   deleteProduct(productId: number): Observable<void> {

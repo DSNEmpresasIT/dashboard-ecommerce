@@ -6,6 +6,7 @@ import { ProductService } from '../../services/global-api/product.service';
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { RouterModule } from '@angular/router';
+import { ModalService } from '../../services/modal-new-product.service';
 
 @Component({
   selector: 'app-card-product',
@@ -29,9 +30,15 @@ export class CardProductComponent implements OnInit, OnChanges {
 
   @ViewChild(DeletCheckComponent) deletCheckComponent!: DeletCheckComponent;
 
-  constructor(private productServ: ProductService) {}
+  constructor(private productServ: ProductService,
+    private modalProduct: ModalService
+  ) {}
 
   ngOnInit() {}
+
+  editProduct(id:number){
+    this.modalProduct.toggleModal(true,id)
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['renderProduct'] && this.renderProduct && this.renderProduct.name) {

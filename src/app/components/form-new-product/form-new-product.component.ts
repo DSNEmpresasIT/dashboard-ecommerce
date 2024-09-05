@@ -1,10 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SupabaseService } from '../../services/supabase/supabase.service';
-import { Category } from '../../interfaces/product';
+import { Category, Product } from '../../interfaces/product';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { ModalService } from '../../services/modal-new-product.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
@@ -14,54 +14,82 @@ import { Supplier } from '../../interfaces/supplier';
 import { AuthService } from '../../services/auth.service';
 import { UserAuthPayload } from '../../interfaces/auth';
 import { ProductService } from '../../services/global-api/product.service';
+import { firstValueFrom, take } from 'rxjs';
 
 @Component({
   selector: 'app-form-new-product',
   standalone: true,
   templateUrl: './form-new-product.component.html',
-  styleUrl: './form-new-product.component.css',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, ButtonSpinerComponent, HttpClientModule]
+  styleUrls: ['./form-new-product.component.css'], // Corrected from styleUrl to styleUrls
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent]
 })
 export class FormNewProductComponent implements OnInit {
-  productNewForm: FormGroup ;
-  isLoading: boolean= false;
-  categories: Category[] | null = []; 
-  subCategories : Category[] | null = []; 
-  suppliers: Supplier[] | null = []; 
+  productNewForm: FormGroup;
+  isLoading = false;
+  categories: Category[] | null = [];
+  subCategories: Category[] | null = [];
+  suppliers: Supplier[] | null = [];
   payload: UserAuthPayload | null = null;
-
+  selectedId: number | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
     private categoryServ: CategoryService,
     private supplierServ: SupplierService,
     private cloudinaryService: CloudinaryService,
-    public modalToggleService: ModalNewProductService,
+    public modalToggleService: ModalService,
     private alertServ: AlertService,
-    authService: AuthService,
+    private authService: AuthService,
     private productServ: ProductService
   ) {
-    authService.currentTokenPayload.subscribe(res => this.payload = res)
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      // formulacion: [''],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
       categoryId: [0, [Validators.required]],
       catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
-      // code: [''],
-      // unid: [''],
-      // env: [null],
-      // supplierId: [''],
       productFeatures: this.formBuilder.group({
         specs: this.formBuilder.array([]),
         items: this.formBuilder.array([])
       })
     });
   }
+
+  ngOnInit() {
+    this.modalToggleService.modalState$.subscribe((state) => {
+      console.log(state.id, 'id de servicio')
+      if (state.isOpen && state.id) {
+        this.loadProduct(state.id);
+      }
+    });
+
+    this.categoryServ.category
+    .subscribe((arg: Category[] | null)=>{
+      this.categories = arg;
+    })
+   this.fetchAllSuppliers();
+
+    this.authService.currentTokenPayload.subscribe(res => this.payload = res);
+  }
+
+  private async loadProduct(id: number) {
+    this.selectedId = id;
+    try {
+      const product: Product = await firstValueFrom(this.productServ.fetchProductById(id));
+      this.productNewForm.patchValue({
+        name: product.name,
+        description: product.description,
+        // Add other fields here
+      });
+    } catch (error) {
+      console.error('Error fetching product', error);
+    }
+  }
+  
+
   
   addFeatureItem() {
     const items = this.productNewForm.get('productFeatures.items') as FormArray;
@@ -215,13 +243,6 @@ export class FormNewProductComponent implements OnInit {
     this.isLoading = !this.isLoading;
   }
 
-  ngOnInit(): void {
-    this.categoryServ.category
-      .subscribe((arg: Category[] | null)=>{
-        this.categories = arg;
-      })
-    this.fetchAllSuppliers();
-  }
 
   fetchAllSuppliers(){
     this.supplierServ.getSuppliers()

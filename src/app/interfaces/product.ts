@@ -1,6 +1,7 @@
 export interface Product {
     id: number;
     name?: string | null;
+    description: string;
     brand?: string | null;
     stock?: number | null;
     code?: string  | null;
@@ -30,6 +31,7 @@ export interface Category {
     created_at: Date;
     father_category?: number;
     is_substance_active?: boolean;
+    childrens?: Category[]
 }
 
 export interface selecdedCategories{

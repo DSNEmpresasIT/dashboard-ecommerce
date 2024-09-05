@@ -1,27 +1,32 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
+export interface EditOptions {
+  id?: number;
+  isOpen: boolean; 
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class ModalNewProductService {
-  private _toggleSource = new BehaviorSubject<boolean>(false);
-  toggle$ = this._toggleSource.asObservable();
+export class ModalService {
+  private _modalState = new BehaviorSubject<EditOptions>({ isOpen: false });
+  modalState$ = this._modalState.asObservable();
 
-  private _toggleEditSupplier = new BehaviorSubject<boolean>(false);
-  toggleEditSupplier$ = this._toggleEditSupplier.asObservable();
+  private _editSupplierState = new BehaviorSubject<boolean>(false);
+  toggleEditSupplier$ = this._editSupplierState.asObservable();
 
   constructor() {}
 
   toggleEditSupplier(value: boolean) {
-    this._toggleEditSupplier.next(value);
+    this._editSupplierState.next(value);
   }
 
-  toggleModal(value: boolean) {
-    this._toggleSource.next(value);
+  toggleModal(isOpen: boolean, id?: number) {
+    this._modalState.next({ id, isOpen });
   }
 
-  get toggle() {
-    return this.toggle$;
+  get modalState() {
+    return this.modalState$;
   }
 }
