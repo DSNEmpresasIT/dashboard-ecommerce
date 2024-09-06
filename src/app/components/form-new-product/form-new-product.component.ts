@@ -60,7 +60,6 @@ export class FormNewProductComponent implements OnInit {
 
   ngOnInit() {
     this.modalToggleService.modalState$.subscribe((state) => {
-      console.log(state.id, 'id de servicio')
       if (state.isOpen && state.id) {
         this.loadProduct(state.id);
       }
@@ -211,9 +210,9 @@ export class FormNewProductComponent implements OnInit {
   }
 
   private prepareProductData(): any {
-    if (!this.productNewForm.valid){
-      throw new Error('form is not valid :c') 
-    }
+    // if (!this.productNewForm.valid){
+    //   throw new Error('form is not valid :c') 
+    // }
     const category = parseInt(this.productNewForm.get('categoryId')?.getRawValue())
     const productData = { ...this.productNewForm.value,categoryId: category };
     

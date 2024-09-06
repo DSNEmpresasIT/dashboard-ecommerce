@@ -17,6 +17,8 @@ export class ProductService {
   products = this.productsSubject.asObservable();
   payload: UserAuthPayload | null = null;
 
+
+  
   constructor(private http: HttpClient,
      private authService: AuthService,
      private alertServ: AlertService) {
@@ -30,13 +32,24 @@ export class ProductService {
    }
    
    async create(product: any) {
-    const products = this.http.post(`${this.GLOBALAPIURL}products`, { ...product },
+
+    if (!this.payload) {
+      throw new Error('The catalog ID was not defined');
+    }
+
+    const data = {
+      ...product,
+      catalogId: this.payload.user.catalogId,
+    };
+
+    const products = this.http.post(`${this.GLOBALAPIURL}products`, { ...data },
       {
         headers: this.authService.getAuthHeaders(),
       })
       .subscribe({
         next: (products) => {
           this.alertServ.show(6000, 'Producto creado exitosamente', AlertsType.SUCCESS);
+          this.fetchAllProducts();
           return products;
         },
         error: (error) => {

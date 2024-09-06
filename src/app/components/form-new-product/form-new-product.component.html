@@ -1,4 +1,4 @@
-<div   class="animate-fade-down animate-duration-300 min-h-screen w-full pb-10 mt-20 px-20     justify-center  bg-Base">
+<div   class="animate-fade-down animate-duration-300 min-h-screen w-full pb-10  px-20     justify-center  bg-Base">
 
   <div class="flex mb-10 pt-10">
     <button  (click)="toggleModal(false)" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
@@ -6,12 +6,11 @@
     </button>
   </div>
   <div class="flex mb-2 justify-between">
-    <h5 class="text-Text text-xl ">Ingrese los datos del producto</h5>
-    <button class="p-2 group flex ms-auto items-center" (click)="toggleModal(false)">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-      </svg>
-    </button>
+    @if ((modalToggleService.modalState$ | async)?.id){
+        <h5 class="text-Text text-3xl pb-2">Editando el Producto {{productNewForm.get('name')?.getRawValue()}}</h5>
+    } @else {
+      <h5 class="text-Text text-3xl pb-2">Ingrese los datos del producto</h5>
+    }
   </div>
   
   <form class="flex flex-col gap-5  mt-2 p-4 rounded-lg bg-Overlay  " [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
@@ -91,7 +90,7 @@
 
     <div class="">
       
-      <div class="h-[400px] overflow-y-scroll scroll-smooth snap-y snap-mandatory" formArrayName="images">
+      <div  [class.h-400]="imagesArray.controls.length > 0" class=" overflow-y-scroll scroll-smooth snap-y snap-mandatory" formArrayName="images">
         <div class="grid grid-cols-3 gap-8">
         <div class="flex flex-col gap-2 snap-always snap-center"  *ngFor="let imageControl of imagesArray.controls; let i = index" [formGroupName]="i">
            
