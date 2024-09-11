@@ -137,7 +137,7 @@ export class CategoryService {
         .from('categories')
         .update({
           'category':dataToEdit.label ,
-          'father_category': dataToEdit.father_category,
+          'father_category': dataToEdit.parentId,
           'is_substance_active': dataToEdit.is_substance_active
         })
         .eq('id', categoryID);

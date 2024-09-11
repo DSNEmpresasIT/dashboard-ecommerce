@@ -59,7 +59,7 @@ export class CategoryModalComponent implements OnInit {
         this.categoryForm.patchValue({
           label: category.label,
           value: category.value,
-          fatherCategoryId: category.father_category,
+          fatherCategoryId: category.parentId,
           is_substance_active: category.is_substance_active,
         });
       }
@@ -146,6 +146,7 @@ export class CategoryModalComponent implements OnInit {
 
   toggleModal(): void {
     this.resetForm();
+    this.categoryIdSelected = null
     this._categoryIdSubject.next(null);
     this.isOpen = !this.isOpen;
     if(this.isOpen){

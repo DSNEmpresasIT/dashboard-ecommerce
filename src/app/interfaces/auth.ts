@@ -14,6 +14,7 @@ export interface AuthenticatedUser {
 }
 
 export interface UserAuthPayload {
+  status: boolean;
   user: AuthenticatedUser;
   token: string;
 }

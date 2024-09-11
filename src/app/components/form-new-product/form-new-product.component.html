@@ -7,7 +7,7 @@
   </div>
   <div class="flex mb-2 justify-between">
     @if ((modalToggleService.modalState$ | async)?.id){
-        <h5 class="text-Text text-3xl pb-2">Editando el Producto {{productNewForm.get('name')?.getRawValue()}}</h5>
+        <h5 class="text-Text text-3xl pb-2">Editando Producto "{{productNewForm.get('name')?.getRawValue()}}"</h5>
     } @else {
       <h5 class="text-Text text-3xl pb-2">Ingrese los datos del producto</h5>
     }
@@ -66,16 +66,28 @@
       </div> 
     </div> -->
 
+
     <div class="mb-4">
-      <label for="categoryId" class="block text-Text font-bold mb-2">Categoria relacionada</label>
-      <select formControlName="categoryId"  (change)="getChillCategories($event)" id="categoryId" name="categoryId"   class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine" >
+      <label for="categoryParentId" class="block text-Text font-bold mb-2">Categoría principal</label>
+      <select formControlName="categoryParentId" (change)="onParentCategoryChange($event)" id="categoryParentId" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
         <option *ngFor="let category of categories" [value]="category.id">{{ category.label }}</option>
       </select>
-        <div class="text-Rose" *ngIf="productNewForm?.get('categoryId')?.hasError('required') && productNewForm.touched">
-          La categoria es requerida.
-        </div> 
     </div>
-
+    
+    <div class="mb-4" *ngIf="subCategories && subCategories.length > 0">
+      <label for="subCategoryIds" class="block text-Text font-bold mb-2">Subcategorías</label>
+      <select multiple formControlName="subCategoryIds" id="subCategoryIds" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+        <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.label }}</option>
+      </select>
+    </div>
+    
+    <div class="text-Rose" *ngIf="productNewForm.get('categoryParentId')?.hasError('required') && productNewForm.touched">
+      La categoría principal es requerida.
+    </div>
+    <div class="text-Rose" *ngIf="productNewForm.get('subCategoryIds')?.hasError('required') && productNewForm.touched">
+      Al menos una subcategoría es requerida.
+    </div>
+    
     <!-- <div>
       <div class="relative z-0 w-full  group ">
         <select formControlName="selectedSubCategories" id="selectedSubCategories" name="selectedSubCategories" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" >
@@ -199,7 +211,7 @@
       @if (!isLoading) {
         <button (click)="toggleModal(false)" type="button" class="hover:bg-Pine bg-Rose/20  border  text-Text justify-center p-2 px-4 rounded-lg " >Cancelar</button>
 
-        <button type="submit" class="hover:bg-Pine bg-Iris/20  border  text-Text justify-center p-2 px-4 rounded-lg ">Crear Producto</button>
+        <button type="submit" class="hover:bg-Pine bg-Iris/20  border  text-Text justify-center p-2 px-4 rounded-lg ">{{(modalToggleService.modalState$ | async)?.id ? 'Editar Producto' : 'Crear Producto'}}</button>
       } @else {
         <app-button-spiner></app-button-spiner>
       }

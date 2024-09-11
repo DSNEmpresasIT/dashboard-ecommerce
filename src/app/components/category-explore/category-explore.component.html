@@ -1,7 +1,7 @@
-<div class="flex flex-col mr-10">
-  <div class="p">
+<div class="flex flex-col mr-10 w-[200px]">
+  <!-- <div class="p">
     <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-Pine focus:border-Pine">
-  </div>
+  </div> -->
 
   <div class="flex flex-col ">
     <div class="border-b-2 flex my-2 py-2 flex-wrap gap-2 border-spacing-1">
@@ -21,11 +21,10 @@
   </div>
  
   <ul class="flex mt-4 flex-col gap-1">
-    
-    <li  *ngFor="let category of categories$ | async"   
-        class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
+    @for(category of categories$ | async; track category.id){
+    <li class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
       <details class="w-full "  name="category">
-        <summary class="flex w-full items-center hover:text-Pine justify-between  pe-2" 
+        <summary class="flex w-full items-center hover:text-Pine justify-between  " 
         [class.text-Pine]="selectedCategory === category.label" (click)="getProducts(category)">
        <span class=" flex gap-2 items-center">
         <i class="fa-solid  fa-caret-right "></i>
@@ -58,6 +57,7 @@
         </div>
       </ng-template>
     </li>
+  }
   </ul>
   <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()" ></app-category-modal>
   <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>

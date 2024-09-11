@@ -66,6 +66,7 @@ export class AuthService {
 
       this.isLoggedIn.next(true);
       let mockResponse:UserAuthPayload ={
+        status: true,
         user: {
            catalogId: 1,
            ...response.user
@@ -98,6 +99,7 @@ export class AuthService {
       this.saveToken(response.token);
       this.isLoggedIn.next(true);
        let mockResponse:UserAuthPayload ={
+        status: true,
          user: {
             catalogId: 1,
             ...response.user

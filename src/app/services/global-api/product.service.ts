@@ -60,6 +60,33 @@ export class ProductService {
   
     return products;
   }
+
+
+  async edit(id: number, product: any){
+      try {
+        if (!this.payload) {
+          throw new Error('The catalog ID was not defined');
+        }
+
+        let data = {
+          ...product,
+          catalogId: this.payload.user.catalogId,
+          productId: id,
+        }
+        console.log(data, 'editando')
+        const products = this.http.put<Product[]>(`${this.GLOBALAPIURL}products`,{...data},{
+          headers: this.authService.getAuthHeaders(),
+        }).subscribe()
+
+        if(product)
+          this.alertServ.show(9000, `Producto creado con exito`, AlertsType.SUCCESS);
+        
+        return products
+      } catch (error: any) {
+        this.alertServ.show(9000, `Error al editar el producto: ${error.message}`, AlertsType.ERROR);
+        return console.error(`Error al editar el producto: ${error.message}`)
+      }
+  }
   
 
   async fetchAllProducts(){

@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../services/supabase/supabase.service';
-import { Category, Product } from '../../interfaces/product';
+import { Category, Product, ProductFeatures } from '../../interfaces/product';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ModalService } from '../../services/modal-new-product.service';
+import {  ModalService } from '../../services/modal-new-product.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
@@ -14,13 +13,13 @@ import { Supplier } from '../../interfaces/supplier';
 import { AuthService } from '../../services/auth.service';
 import { UserAuthPayload } from '../../interfaces/auth';
 import { ProductService } from '../../services/global-api/product.service';
-import { firstValueFrom, take } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-form-new-product',
   standalone: true,
   templateUrl: './form-new-product.component.html',
-  styleUrls: ['./form-new-product.component.css'], // Corrected from styleUrl to styleUrls
+  styleUrls: ['./form-new-product.component.css'],
   imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent]
 })
 export class FormNewProductComponent implements OnInit {
@@ -47,7 +46,8 @@ export class FormNewProductComponent implements OnInit {
       description: ['', [Validators.required]],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryId: [0, [Validators.required]],
+      categoryParentId: [0, [Validators.required]],
+      subCategoryIds: [[]],
       catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
@@ -69,26 +69,93 @@ export class FormNewProductComponent implements OnInit {
     .subscribe((arg: Category[] | null)=>{
       this.categories = arg;
     })
+
    this.fetchAllSuppliers();
 
     this.authService.currentTokenPayload.subscribe(res => this.payload = res);
   }
 
+  onParentCategoryChange(event: Event) {
+    const parentId = (event.target as HTMLSelectElement).value;
+    
+    if (parentId) {
+      this.categoryServ.fetchCategories(parseInt(parentId)).subscribe((categories: Category[]) => {
+        const selectedCategory = categories.find(category => category.id === parseInt(parentId));
+    
+        if (selectedCategory && selectedCategory.childrens) {
+          this.subCategories = selectedCategory.childrens;
+    
+          const currentSubCategoryIds = this.productNewForm.get('subCategoryIds')?.value || [];
+          const validSubCategories = this.subCategories.filter(subCategory =>
+            currentSubCategoryIds.includes(subCategory.id)
+          ).map(subCategory => subCategory.id);
+    
+          this.productNewForm.patchValue({ subCategoryIds: validSubCategories });
+        } else {
+          this.subCategories = [];
+          this.productNewForm.patchValue({ subCategoryIds: [] });
+        }
+      });
+    }
+  }
+  
+
   private async loadProduct(id: number) {
     this.selectedId = id;
     try {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(id));
+  
       this.productNewForm.patchValue({
         name: product.name,
         description: product.description,
-        // Add other fields here
+        is_active_substance: product.is_active_substance,
+        stock: product.stock,
+        catalogId: product.catalog?.id || null,
+  
+        categoryParentId: product?.categories?.length ?  product.categories[0].id : null,
+        subCategoryIds: product?.categories?.slice(1).map(cat => cat.id)
       });
+  
+      this.onParentCategoryChange({
+        target: { value: product?.categories?.[0]?.id }
+      } as unknown as Event);
+  
+      const imagesFormArray = this.productNewForm.get('images') as FormArray;
+      imagesFormArray.clear();
+      product.images.forEach((image) => {
+        imagesFormArray.push(this.formBuilder.group({
+          id: [image.id],
+          url: [image.url],
+          cloudinary_id: [image.cloudinary_id]
+        }));
+      });
+  
+      this.setProductFeaturesFormArrays(product.product_features);
+  
     } catch (error) {
       console.error('Error fetching product', error);
     }
   }
   
+  
+  private setProductFeaturesFormArrays(productFeatures: ProductFeatures | null | undefined) {
+    const productFeaturesForm = this.productNewForm.get('productFeatures') as FormGroup;
+  
+    const specsFormArray = productFeaturesForm.get('specs') as FormArray;
+    specsFormArray.clear();
+    productFeatures?.specs?.forEach((spec) => {
+      specsFormArray.push(this.formBuilder.control(spec));
+    });
 
+    const itemsFormArray = productFeaturesForm.get('items') as FormArray;
+    itemsFormArray.clear();
+    productFeatures?.items?.forEach((item) => {
+      itemsFormArray.push(this.formBuilder.group({
+        title: [item.title, Validators.required],
+        text: [item.text, Validators.required]
+      }));
+    });
+  }
   
   addFeatureItem() {
     const items = this.productNewForm.get('productFeatures.items') as FormArray;
@@ -192,13 +259,10 @@ export class FormNewProductComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-
       this.toggleLoading();
-
       try {
         const productData = this.prepareProductData();
 
-        // Save product to API
         await this.saveProductToAPI(productData);
       } catch (error) {
         console.error('Error processing the form:', error);
@@ -213,24 +277,37 @@ export class FormNewProductComponent implements OnInit {
     // if (!this.productNewForm.valid){
     //   throw new Error('form is not valid :c') 
     // }
-    const category = parseInt(this.productNewForm.get('categoryId')?.getRawValue())
-    const productData = { ...this.productNewForm.value,categoryId: category };
+      const categoryParentId = parseInt(this.productNewForm.get('categoryParentId')?.getRawValue());
+      const subCategoryIds = this.productNewForm.get('subCategoryIds')?.getRawValue();
     
-    delete productData.img; // Remove the img field used for previewing
-
-    return productData;
+      const category = subCategoryIds && subCategoryIds.length > 0
+        ? [categoryParentId, ...subCategoryIds.map((id: string) => parseInt(id))]
+        : [categoryParentId];
+    
+      const productData = {
+        ...this.productNewForm.value,
+        categoryIds: category
+      };
+    
+      delete productData.img;
+      delete productData.categoryParentId;
+      delete productData.subCategoryIds;
+    
+      return productData;
+    
   }
 
   private async saveProductToAPI(productData: any): Promise<void> {
     try {
-      const newProduct = await this.productServ.create(productData);
-      if (newProduct) {
-        this.alertServ.show(6000, "Producto agregado con éxito", AlertsType.SUCCESS);
-        // this.cloudinaryService.updateProducts();
+      const res = await firstValueFrom(this.modalToggleService.modalState$);
+  
+      if (res.id) {
+        await this.productServ.edit(res.id, productData);
+      } else {
+        await this.productServ.create(productData);
       }
-      console.log(productData, ' creando producto')
-    } catch (error) {
-      this.alertServ.show(6000, "Error al agregar el producto", AlertsType.ERROR);
+    } catch (error: any) {
+      console.error(error.message);
     }
   }
 
