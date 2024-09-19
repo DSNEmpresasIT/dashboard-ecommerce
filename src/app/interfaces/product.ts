@@ -16,6 +16,7 @@ export interface Product {
     categories?: Category[]; // Array de categorías, opcional
     catalog?: Catalog | null; // Catálogo puede ser null
     product_features?: ProductFeatures | null; // Características del producto opcional
+    relatedCategoriesMarked?:Category[]
   }
   
   export interface ProductFeatures {
@@ -62,6 +63,7 @@ export interface Category {
     parentId?: number;
     is_substance_active?: boolean;
     childrens?: Category[]
+    selected?: boolean;
 }
 
 export interface selecdedCategories{

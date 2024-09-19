@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Category, Product, ProductFeatures } from '../../interfaces/product';
+import {  Category, Product, ProductFeatures } from '../../interfaces/product';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import {  ModalService } from '../../services/modal-new-product.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
 import { CategoryService } from '../../services/global-api/category.service';
 import { SupplierService } from '../../services/supabase/supplier.service';
@@ -15,22 +15,42 @@ import { UserAuthPayload } from '../../interfaces/auth';
 import { ProductService } from '../../services/global-api/product.service';
 import { firstValueFrom } from 'rxjs';
 
+
+import { environment } from '../../../environments/environment.development';
+
+import { CategoryTreeService } from '../../services/category-tree.service';
+import { CategoryTreeComponent } from "../category-tree/category-tree.component";
+
+
+
 @Component({
   selector: 'app-form-new-product',
   standalone: true,
   templateUrl: './form-new-product.component.html',
   styleUrls: ['./form-new-product.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent, CategoryTreeComponent]
 })
 export class FormNewProductComponent implements OnInit {
   productNewForm: FormGroup;
   isLoading = false;
-  categories: Category[] | null = [];
-  subCategories: Category[] | null = [];
+  product!: any
   suppliers: Supplier[] | null = [];
   payload: UserAuthPayload | null = null;
   selectedId: number | null = null;
+  
 
+  private collectSelectedCategories(categories: Category[]): Category[] {
+    let selectedCategories: Category[] = [];
+    categories.forEach(category => {
+      if (category.selected) {
+        selectedCategories.push(category);
+      }
+      if (category.childrens) {
+        selectedCategories = selectedCategories.concat(this.collectSelectedCategories(category.childrens));
+      }
+    });
+    return selectedCategories;
+  }
   constructor(
     private formBuilder: FormBuilder,
     private categoryServ: CategoryService,
@@ -39,7 +59,11 @@ export class FormNewProductComponent implements OnInit {
     public modalToggleService: ModalService,
     private alertServ: AlertService,
     private authService: AuthService,
-    private productServ: ProductService
+    private productServ: ProductService,
+   
+
+    private treeCategoryTestServ: CategoryTreeService,
+    private http: HttpClient
   ) {
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -62,40 +86,46 @@ export class FormNewProductComponent implements OnInit {
     this.modalToggleService.modalState$.subscribe((state) => {
       if (state.isOpen && state.id) {
         this.loadProduct(state.id);
+      }else {
+        this.treeCategoryTestServ.getCategoryChildren().subscribe((res)=>{
+          this.product = res
+        })
       }
     });
 
-    this.categoryServ.category
-    .subscribe((arg: Category[] | null)=>{
-      this.categories = arg;
-    })
+    // this.categoryServ.category
+    // .subscribe((arg: Category[] | null)=>{
+    //   this.categories = arg;
+    // })
 
    this.fetchAllSuppliers();
 
     this.authService.currentTokenPayload.subscribe(res => this.payload = res);
   }
 
-  onParentCategoryChange(event: Event) {
+  async onParentCategoryChange(event: Event) {
     const parentId = (event.target as HTMLSelectElement).value;
     
     if (parentId) {
-      this.categoryServ.fetchCategories(parseInt(parentId)).subscribe((categories: Category[]) => {
-        const selectedCategory = categories.find(category => category.id === parseInt(parentId));
+      // this.categoryServ.fetchCategories(parseInt(parentId)).subscribe((categories: Category[]) => {
+      //   const selectedCategory = categories.find(category => category.id === parseInt(parentId));
     
-        if (selectedCategory && selectedCategory.childrens) {
-          this.subCategories = selectedCategory.childrens;
+      //   if (selectedCategory && selectedCategory.childrens) {
+      //     this.subCategories = selectedCategory.childrens;
     
-          const currentSubCategoryIds = this.productNewForm.get('subCategoryIds')?.value || [];
-          const validSubCategories = this.subCategories.filter(subCategory =>
-            currentSubCategoryIds.includes(subCategory.id)
-          ).map(subCategory => subCategory.id);
+      //     const currentSubCategoryIds = this.productNewForm.get('subCategoryIds')?.value || [];
+      //     const validSubCategories = this.subCategories.filter(subCategory =>
+      //       currentSubCategoryIds.includes(subCategory.id)
+      //     ).map(subCategory => subCategory.id);
     
-          this.productNewForm.patchValue({ subCategoryIds: validSubCategories });
-        } else {
-          this.subCategories = [];
-          this.productNewForm.patchValue({ subCategoryIds: [] });
-        }
-      });
+      //     this.productNewForm.patchValue({ subCategoryIds: validSubCategories });
+      //   } else {
+      //     this.subCategories = [];
+      //     this.productNewForm.patchValue({ subCategoryIds: [] });
+      //   }
+      // });
+      
+
     }
   }
   
@@ -104,7 +134,7 @@ export class FormNewProductComponent implements OnInit {
     this.selectedId = id;
     try {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(id));
-  
+      this.product = product.relatedCategoriesMarked
       this.productNewForm.patchValue({
         name: product.name,
         description: product.description,
@@ -115,6 +145,10 @@ export class FormNewProductComponent implements OnInit {
         categoryParentId: product?.categories?.length ?  product.categories[0].id : null,
         subCategoryIds: product?.categories?.slice(1).map(cat => cat.id)
       });
+      if(product.categories){
+        this.treeCategoryTestServ.setSelectedCategories(product.categories.map(cat => cat.id))
+
+      }
   
       this.onParentCategoryChange({
         target: { value: product?.categories?.[0]?.id }
@@ -312,6 +346,7 @@ export class FormNewProductComponent implements OnInit {
   }
 
   toggleModal(value: boolean) {
+    this.treeCategoryTestServ.setSelectedCategories([])
     this.modalToggleService.toggleModal(value);
   }
 
@@ -331,16 +366,16 @@ export class FormNewProductComponent implements OnInit {
   }
 
 
-  getChillCategories(event : Event) {
-    const target = event.target as HTMLSelectElement;
-    const categoryId = parseInt(target.value);
+  // getChillCategories(event : Event) {
+  //   const target = event.target as HTMLSelectElement;
+  //   const categoryId = parseInt(target.value);
 
-    this.categoryServ.fetchCategories(categoryId)
-    .subscribe((arg: Category[] | null)=>{
-      this.subCategories = arg;
-      console.log(this.subCategories)
-    })
+  //   this.categoryServ.fetchCategories(categoryId)
+  //   .subscribe((arg: Category[] | null)=>{
+  //     this.subCategories = arg;
+  //     console.log(this.subCategories)
+  //   })
 
-  }
+  // }
 
 }

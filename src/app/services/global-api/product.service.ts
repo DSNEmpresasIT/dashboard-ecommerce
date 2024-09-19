@@ -100,7 +100,17 @@ export class ProductService {
   }
 
   fetchProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}/${id}`);
+    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}/${id}?withCategoryRoot=true`);
+  }
+
+  fetchProductsByName(query: string){
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.payload?.user.catalogId}/${query}`)
+    .subscribe({ 
+      next: (products) => this.productsSubject.next(products),
+      error: (error) => console.error('Error fetching products:', error)
+    });
+    
+    return products
   }
 
   deleteProduct(productId: number): Observable<void> {

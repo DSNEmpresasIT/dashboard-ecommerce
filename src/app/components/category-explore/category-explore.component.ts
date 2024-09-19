@@ -98,10 +98,9 @@ export class CategoryExploreComponent implements OnInit {
   
     this.categoryServ.fetchCategories(category.id).subscribe((res: Category[]) => {
 
-      const selectedCategory = res.find(cat => cat.id === category.id);
-  
-      if (selectedCategory && selectedCategory.childrens) {
-        this.chilCategorys = selectedCategory.childrens;
+      const selectedCategory = res
+      if (selectedCategory && selectedCategory) {
+        this.chilCategorys = selectedCategory;
         console.log(this.chilCategorys, 'llamando sub categories');
       } else {
         console.log('No subcategories found');

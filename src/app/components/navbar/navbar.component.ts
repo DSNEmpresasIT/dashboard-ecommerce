@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { FormNewProductComponent } from '../form-new-product/form-new-product.component';
 import { ModalService } from '../../services/modal-new-product.service';
 import { Router, RouterModule } from '@angular/router';
+import { ProductService } from '../../services/global-api/product.service';
 
 @Component({
   selector: 'app-navbar',
@@ -17,9 +18,10 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class NavbarComponent implements OnInit{
   searcherProducts:FormControl<string | null> = new FormControl<string>('');
-  constructor(private supaBase: SupabaseService,
+  constructor(
      public authServ: AuthService,
      private modalToggleService: ModalService,
+     private productServ: ProductService
      ) {
     this.searcherProducts.valueChanges.pipe(
       debounceTime(600),
@@ -28,9 +30,9 @@ export class NavbarComponent implements OnInit{
     .subscribe((query)=>{
       const queryString = query || '';
       if(query == ''){
-        this.supaBase.fetchAllProducts();
+        this.productServ.fetchAllProducts();
       }else {
-        this.supaBase.fetchProductsByName(query || '');
+        this.productServ.fetchProductsByName(query || '');
       }
     })
    }

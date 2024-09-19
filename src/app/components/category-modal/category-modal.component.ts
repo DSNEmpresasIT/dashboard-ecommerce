@@ -88,7 +88,8 @@ export class CategoryModalComponent implements OnInit {
     if (this.categoryForm.valid) {
       const data: CategoryDTO = {
         id: this.categoryIdSelected,
-        ...this.categoryForm.value
+        ...this.categoryForm.value,
+        fatherCategoryId: parseInt(this.categoryForm.get('fatherCategoryId')?.getRawValue())
       };
       if (this.categoryIdSelected) {
         console.log('actualizar')

@@ -6,33 +6,11 @@
     </button>
   </div>
   <div class="flex mb-2 justify-between">
-    @if ((modalToggleService.modalState$ | async)?.id){
-        <h5 class="text-Text text-3xl pb-2">Editando Producto "{{productNewForm.get('name')?.getRawValue()}}"</h5>
-    } @else {
-      <h5 class="text-Text text-3xl pb-2">Ingrese los datos del producto</h5>
-    }
+        <h5 class="text-Text text-3xl pb-2">{{(modalToggleService.modalState$ | async)?.id ? "Editando Producto " + productNewForm.get('name')?.getRawValue() : 'Ingrese los datos del producto' }}</h5>
   </div>
   
   <form class="flex flex-col gap-5  mt-2 p-4 rounded-lg bg-Overlay  " [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
 
-      <div class="mb-4">
-        <label for="name" class="block text-Text font-bold mb-2">Nombre</label>
-        <input id="name" name="name" type="text" formControlName="name"
-          class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-          <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') && productNewForm.touched">
-            El nombre es requerido.
-          </div> 
-      </div>
-
-
-    <div class="mb-4">
-      <label for="description" class="block text-Text font-bold mb-2">Description</label>
-      <input id="description" name="description" type="text" formControlName="description"
-        class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-        <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
-          La description es requerida.
-        </div> 
-    </div>
     
     <!-- <div class="relative z-0 w-full  group">
       <input   formControlName="formulacion" type="text" id="formulacion" name="floating_formulacion" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none    focus:outline-none focus:ring-0 focus:text-Pine peer" placeholder=" "  />
@@ -66,8 +44,8 @@
       </div> 
     </div> -->
 
-
-    <div class="mb-4">
+        <!-- Selector de categorias antiguo  -->
+    <!-- <div class="mb-4">
       <label for="categoryParentId" class="block text-Text font-bold mb-2">Categoría principal</label>
       <select formControlName="categoryParentId" (change)="onParentCategoryChange($event)" id="categoryParentId" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
         <option *ngFor="let category of categories" [value]="category.id">{{ category.label }}</option>
@@ -79,15 +57,43 @@
       <select multiple formControlName="subCategoryIds" id="subCategoryIds" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
         <option *ngFor="let subCategory of subCategories" [value]="subCategory.id">{{ subCategory.label }}</option>
       </select>
-    </div>
+    </div> -->
     
-    <div class="text-Rose" *ngIf="productNewForm.get('categoryParentId')?.hasError('required') && productNewForm.touched">
-      La categoría principal es requerida.
-    </div>
-    <div class="text-Rose" *ngIf="productNewForm.get('subCategoryIds')?.hasError('required') && productNewForm.touched">
-      Al menos una subcategoría es requerida.
-    </div>
-    
+    <div class="flex gap-3  justify-between">
+      <div class="flex w-full flex-col">
+        <div>
+                
+            <div class="mb-4">
+              <label for="name" class="block text-Text font-bold mb-2">Nombre</label>
+              <input id="name" name="name" type="text" formControlName="name"
+                class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') && productNewForm.touched">
+                  El nombre es requerido.
+                </div> 
+            </div>
+
+
+          <div class="mb-4">
+            <label for="description" class="block text-Text font-bold mb-2">Description</label>
+            <input id="description" name="description" type="text" formControlName="description"
+              class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+              <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
+                La description es requerida.
+              </div> 
+          </div>
+        </div>
+        <h3 class="text-Text text-2xl mb-2">Seleccionar Categorías</h3>
+      
+        <app-category-tree [categories]="product"/>
+
+
+        <div class="text-Rose" *ngIf="productNewForm.get('categoryParentId')?.hasError('required') && productNewForm.touched">
+          La categoría principal es requerida.
+        </div>
+        <div class="text-Rose" *ngIf="productNewForm.get('subCategoryIds')?.hasError('required') && productNewForm.touched">
+          Al menos una subcategoría es requerida.
+        </div>
+      </div>
     <!-- <div>
       <div class="relative z-0 w-full  group ">
         <select formControlName="selectedSubCategories" id="selectedSubCategories" name="selectedSubCategories" class="block py-2.5 px-0 w-full text-sm text-Text bg-transparent border-0 border-b-2 border-Pine appearance-none focus:outline-none focus:ring-0 focus:text-Pine peer" >
@@ -100,107 +106,111 @@
       </div> 
     </div> -->
 
-    <div class="">
-      
-      <div  [class.h-400]="imagesArray.controls.length > 0" class=" overflow-y-scroll scroll-smooth snap-y snap-mandatory" formArrayName="images">
-        <div class="grid grid-cols-3 gap-8">
-        <div class="flex flex-col gap-2 snap-always snap-center"  *ngFor="let imageControl of imagesArray.controls; let i = index" [formGroupName]="i">
-           
-            <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'images')">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-              </svg>
-            </button>
-            <div class="flex mt-2 w-full max-h-[200px]">
-              <img [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' " alt="Imagen subida">
-            </div>
-            
-            <div class="mb-4">
-              <label for="url" class="block text-Text font-bold mb-2">URL de la imagen</label>
-              <input id="url" name="url" type="text" formControlName="url"
-                class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                <div class="text-Rose" *ngIf="productNewForm?.get('url')?.hasError('required') && productNewForm.touched">
-                  La URL es requerida.
-                </div> 
-            </div>
+      <div class="flex w-full flex-col">
+        <h5 class="block text-Text font-bold mb-2">Cargar imagenes </h5>
+        <div  class="" formArrayName="images">
+          <div class="grid grid-cols-1 gap-8 max-h-[700px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll scroll-smooth snap-y snap-mandatory ">
+            <div class="flex flex-col gap-2 p-4 justify-center bg-Overlay rounded-xl snap-always snap-center"  *ngFor="let imageControl of imagesArray.controls; let i = index" [formGroupName]="i">
+              
+                <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'images')">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-white group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                  </svg>
+                </button>
+             
+                  <img class="aspect-video object-contain max-h-[200px]" [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' " alt="Imagen subida">
+               
+                
+                <div class="mb-4">
+                  <label for="url" class="block text-Text font-bold mb-2">URL de la imagen</label>
+                  <input id="url" name="url" type="text" formControlName="url"
+                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                    <div class="text-Rose" *ngIf="productNewForm?.get('url')?.hasError('required') && productNewForm.touched">
+                      La URL es requerida.
+                    </div> 
+                </div>
 
+            </div>
+          </div>
+        </div>
+        
+        <div class=" pt-2 mt-2 flex items-center gap-2">
+          <button type="button" class="hover:bg-Pine bg-HighLightLow  border  text-Text justify-center p-2 px-4 rounded-lg " (click)="addImage()"><i class="fa-solid fa-plus-minus pe-2"></i>Agregar Link de imagen</button>
+          <label class="text-Text" for="file">O agregar archivo</label>
+          <input name="file" type="file" class="rounded-lg hover:bg-Pine bg-HighLightLow border text-Text" (change)="onImageSelected($event)" id="img" placeholder="O agregar archivo" multiple>
         </div>
       </div>
-      </div>
-      
-      <div class=" border-t-Pine border-t pt-2 mt-2 flex items-center gap-2">
-        <button type="button" class="hover:bg-Pine bg-HighLightLow  border  text-Text justify-center p-2 px-4 rounded-lg " (click)="addImage()"><i class="fa-solid fa-plus-minus pe-2"></i>Agregar Link de imagen</button>
-        <label class="text-Text" for="file">O agregar archivo</label>
-        <input name="file" type="file" class="rounded-lg hover:bg-Pine bg-HighLightLow border text-Text" (change)="onImageSelected($event)" id="img" placeholder="O agregar archivo" multiple>
-      </div>
-    </div>
-
+  </div>
     <div >
-      <div formGroupName="productFeatures"  class="flex flex-col gap-2">
-        <h5 class="text-Text text-xl">Detalle de producto</h5>
-        <p class="text-Text mb-4">Si desea crear un detalle de producto junto a el agregue características/especificación  y rellene los datos</p>
+      <div formGroupName="productFeatures"  class="flex flex-col gap-8">
+        <div>
+          <h5 class="text-Text text-3xl pb-2">Detalle de producto</h5>
+          <p class="text-Text ms-2 mb-4">Si desea crear un detalle de producto junto a el agregue características/especificación  y rellene los datos</p>  
+        </div>
+       
+        <div>
+          <h4 class="text-Text mb-3 text-2xl">Caracteristicas</h4>
+          <div formArrayName="items" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll  ">
+            <div class="bg-Overlay p-4 rounded-xl " *ngFor="let itemControl of featuresArray.controls; let i = index" [formGroupName]="i">
+              <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.items')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                </svg>
+              </button>
   
-        <h4 class="text-Text text-xl">Caracteristicas</h4>
-        <div formArrayName="items" class="flex flex-col gap-2">
-          <div *ngFor="let itemControl of featuresArray.controls; let i = index" [formGroupName]="i">
-            <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.items')">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-              </svg>
-            </button>
-
-
-            <div class="mb-4">
-              <label for="title-{{i}}" class="block text-Text font-bold mb-2">Titulo</label>
-              <input id="title-{{i}}" name="title" type="text" formControlName="title"
-                class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
-                  El titulo es requerido.
-                </div> 
+  
+              <div class="mb-4">
+                <label for="title-{{i}}" class="block text-Text font-bold mb-2">Titulo</label>
+                <input id="title-{{i}}" name="title" type="text" formControlName="title"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                  <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
+                    El titulo es requerido.
+                  </div> 
+              </div>
+  
+              <div class="mb-4">
+                <label for="text-{{i}}" class="block text-Text font-bold mb-2">Texto</label>
+                <input id="text-{{i}}" name="text" type="text" formControlName="text"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                  <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
+                    El texto es requerido.
+                  </div> 
+              </div>
+  
             </div>
-
-            <div class="mb-4">
-              <label for="text-{{i}}" class="block text-Text font-bold mb-2">Texto</label>
-              <input id="text-{{i}}" name="text" type="text" formControlName="text"
-                class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
-                  El texto es requerido.
-                </div> 
-            </div>
-
+            
+              <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[260px] text-Text justify-center  px-4 " (click)="addFeatureItem()"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar característica</button>
+            
           </div>
         </div>
         <div>
-          <button type="button" class="hover:bg-Pine bg-HighLightLow border mt-3 text-Text justify-center p-2 px-4 rounded-lg" (click)="addFeatureItem()"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar característica</button>
-        </div>
+          <h4 class="text-Text mb-3 text-2xl">Especificación</h4>
+          <div formArrayName="specs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll ">
+            
+            <div *ngFor="let specControl of featureSpects.controls; let i = index" class="bg-Overlay p-4 rounded-xl w-full">
 
-        <h4 class="text-Text text-xl">Especificación</h4>
-        <div formArrayName="specs" class="flex flex-col gap-2">
-          
-          <div *ngFor="let specControl of featureSpects.controls; let i = index" class="relative z-0 w-full group">
+              <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.specs')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                </svg>
+              </button>
 
-            <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.specs')">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-              </svg>
-            </button>
+              <div class="mb-4">
+                <label for="specs-{{i}}" class="block text-Text font-bold mb-2">Especificacion</label>
+                <input id="specs-{{i}}" name="specs" type="text" [formControlName]="i"
+                  class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                  <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
+                    La especificacion es requerida.
+                  </div> 
+              </div>
 
-            <div class="mb-4">
-              <label for="specs-{{i}}" class="block text-Text font-bold mb-2">Especificacion</label>
-              <input id="specs-{{i}}" name="specs" type="text" [formControlName]="i"
-                class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
-                  La especificacion es requerida.
-                </div> 
             </div>
+            
+            <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[164px] text-Text justify-center  px-4" (click)="addSpec()"> <i class="fa-solid fa-plus-minus pe-2"> </i>Agregar especificación</button>
+            
 
           </div>
-          <div>
-            <button type="button" class="hover:bg-Pine bg-HighLightLow border mt-3 text-Text justify-center  p-2 px-4 rounded-lg" (click)="addSpec()"> <i class="fa-solid fa-plus-minus pe-2"> </i>Agregar especificación</button>
-          </div>
-
         </div>
-
         
       </div>
       

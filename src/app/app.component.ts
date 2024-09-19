@@ -13,6 +13,6 @@ import { CdkTreeModule } from '@angular/cdk/tree';
     imports: [CommonModule, RouterOutlet, NavbarComponent, AlertsComponent, CdkTreeModule]
 })
 export class AppComponent  {
-  title = 'admDashBoardFelix';
+  title = 'Aluplast-Dashboard';
   
 }
