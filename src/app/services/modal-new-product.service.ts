@@ -10,7 +10,7 @@ export interface EditOptions {
   providedIn: 'root'
 })
 export class ModalService {
-  private _modalState = new BehaviorSubject<EditOptions>({ isOpen: true });
+  private _modalState = new BehaviorSubject<EditOptions>({ isOpen: false });
   modalState$ = this._modalState.asObservable();
 
   private _editSupplierState = new BehaviorSubject<boolean>(false);

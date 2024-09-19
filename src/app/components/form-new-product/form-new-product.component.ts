@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, OnInit, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {  Category, Product, ProductFeatures } from '../../interfaces/product';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
@@ -37,20 +37,9 @@ export class FormNewProductComponent implements OnInit {
   suppliers: Supplier[] | null = [];
   payload: UserAuthPayload | null = null;
   selectedId: number | null = null;
+  selectedCategoriesSignal: Signal<number[]>;
   
 
-  private collectSelectedCategories(categories: Category[]): Category[] {
-    let selectedCategories: Category[] = [];
-    categories.forEach(category => {
-      if (category.selected) {
-        selectedCategories.push(category);
-      }
-      if (category.childrens) {
-        selectedCategories = selectedCategories.concat(this.collectSelectedCategories(category.childrens));
-      }
-    });
-    return selectedCategories;
-  }
   constructor(
     private formBuilder: FormBuilder,
     private categoryServ: CategoryService,
@@ -65,13 +54,15 @@ export class FormNewProductComponent implements OnInit {
     private treeCategoryTestServ: CategoryTreeService,
     private http: HttpClient
   ) {
+
+    this.selectedCategoriesSignal = this.treeCategoryTestServ.selectedCategoriesSignal;
+
     this.productNewForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: ['', [Validators.required]],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryParentId: [0, [Validators.required]],
-      subCategoryIds: [[]],
+      categoryIds: [[], [Validators.required]],
       catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
@@ -80,7 +71,22 @@ export class FormNewProductComponent implements OnInit {
         items: this.formBuilder.array([])
       })
     });
+    effect(() => {
+      let value = this.selectedCategoriesSignal()
+      this.productNewForm.patchValue({ categoryIds: value });
+    })
+     
   }
+
+  getModalTitle(): string {
+    if (this.selectedId) {
+      const productName = this.productNewForm.get('name')?.getRawValue() || '';
+      return `Editando Producto "${productName}"`;
+    } else {
+      return 'Ingrese los datos del producto';
+    }
+  }
+  
 
   ngOnInit() {
     this.modalToggleService.modalState$.subscribe((state) => {
@@ -92,7 +98,7 @@ export class FormNewProductComponent implements OnInit {
         })
       }
     });
-
+    
     // this.categoryServ.category
     // .subscribe((arg: Category[] | null)=>{
     //   this.categories = arg;
@@ -103,32 +109,7 @@ export class FormNewProductComponent implements OnInit {
     this.authService.currentTokenPayload.subscribe(res => this.payload = res);
   }
 
-  async onParentCategoryChange(event: Event) {
-    const parentId = (event.target as HTMLSelectElement).value;
-    
-    if (parentId) {
-      // this.categoryServ.fetchCategories(parseInt(parentId)).subscribe((categories: Category[]) => {
-      //   const selectedCategory = categories.find(category => category.id === parseInt(parentId));
-    
-      //   if (selectedCategory && selectedCategory.childrens) {
-      //     this.subCategories = selectedCategory.childrens;
-    
-      //     const currentSubCategoryIds = this.productNewForm.get('subCategoryIds')?.value || [];
-      //     const validSubCategories = this.subCategories.filter(subCategory =>
-      //       currentSubCategoryIds.includes(subCategory.id)
-      //     ).map(subCategory => subCategory.id);
-    
-      //     this.productNewForm.patchValue({ subCategoryIds: validSubCategories });
-      //   } else {
-      //     this.subCategories = [];
-      //     this.productNewForm.patchValue({ subCategoryIds: [] });
-      //   }
-      // });
-      
 
-    }
-  }
-  
 
   private async loadProduct(id: number) {
     this.selectedId = id;
@@ -141,18 +122,12 @@ export class FormNewProductComponent implements OnInit {
         is_active_substance: product.is_active_substance,
         stock: product.stock,
         catalogId: product.catalog?.id || null,
-  
-        categoryParentId: product?.categories?.length ?  product.categories[0].id : null,
-        subCategoryIds: product?.categories?.slice(1).map(cat => cat.id)
       });
       if(product.categories){
         this.treeCategoryTestServ.setSelectedCategories(product.categories.map(cat => cat.id))
 
       }
   
-      this.onParentCategoryChange({
-        target: { value: product?.categories?.[0]?.id }
-      } as unknown as Event);
   
       const imagesFormArray = this.productNewForm.get('images') as FormArray;
       imagesFormArray.clear();
@@ -311,12 +286,10 @@ export class FormNewProductComponent implements OnInit {
     // if (!this.productNewForm.valid){
     //   throw new Error('form is not valid :c') 
     // }
-      const categoryParentId = parseInt(this.productNewForm.get('categoryParentId')?.getRawValue());
-      const subCategoryIds = this.productNewForm.get('subCategoryIds')?.getRawValue();
+
+      const categoryIds = this.productNewForm.get('categoryIds')?.getRawValue();
     
-      const category = subCategoryIds && subCategoryIds.length > 0
-        ? [categoryParentId, ...subCategoryIds.map((id: string) => parseInt(id))]
-        : [categoryParentId];
+      const category = [...categoryIds.map((id: string) => parseInt(id))];
     
       const productData = {
         ...this.productNewForm.value,

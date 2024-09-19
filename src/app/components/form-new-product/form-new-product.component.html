@@ -1,15 +1,15 @@
 <div   class="animate-fade-down animate-duration-300 min-h-screen w-full pb-10  px-20     justify-center  bg-Base">
 
-  <div class="flex mb-10 pt-10">
+  <div class="flex mb-6 pt-3">
     <button  (click)="toggleModal(false)" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
       Cancelar
     </button>
   </div>
   <div class="flex mb-2 justify-between">
-        <h5 class="text-Text text-3xl pb-2">{{(modalToggleService.modalState$ | async)?.id ? "Editando Producto " + productNewForm.get('name')?.getRawValue() : 'Ingrese los datos del producto' }}</h5>
+        <h5 class="text-Text text-3xl pb-2">{{getModalTitle()}}</h5>
   </div>
   
-  <form class="flex flex-col gap-5  mt-2 p-4 rounded-lg bg-Overlay  " [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
+  <form class="flex flex-col gap-5  mt-2 p-6 rounded-lg bg-Overlay  " [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
 
     
     <!-- <div class="relative z-0 w-full  group">
@@ -75,8 +75,8 @@
 
           <div class="mb-4">
             <label for="description" class="block text-Text font-bold mb-2">Description</label>
-            <input id="description" name="description" type="text" formControlName="description"
-              class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+            <textarea rows="10" cols="30"  id="description" name="description" type="text" formControlName="description"
+              class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine"></textarea>
               <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
                 La description es requerida.
               </div> 

@@ -41,7 +41,7 @@
       </div>
       
         <button *ngIf="authServ.isLoggedIn | async" (click)="toggleModal()" class="p-2 mt-1 flex  text-white font-semibold rounded-md hover:bg-Pine items-center  focus:outline-none"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar Producto</button>
-        <button *ngIf="authServ.isLoggedIn | async" (click)="toggleEditSupplier()" class="p-2 mt-1 flex  text-white font-semibold rounded-md hover:bg-Pine items-center   focus:outline-none"><i class="fa-solid fa-parachute-box pe-2"></i> Administrar proveedores</button>
+        <!-- <button *ngIf="authServ.isLoggedIn | async" (click)="toggleEditSupplier()" class="p-2 mt-1 flex  text-white font-semibold rounded-md hover:bg-Pine items-center   focus:outline-none"><i class="fa-solid fa-parachute-box pe-2"></i> Administrar proveedores</button> -->
         @if(authServ.isLoggedIn | async){
           <button (click)="logout()" class="flex p-2 mt-1 items-center   text-white font-semibold rounded-md hover:bg-Pine    focus:outline-none"><i class="fa-solid fa-right-from-bracket pe-2"></i> Cerrar sesión</button>
         }
