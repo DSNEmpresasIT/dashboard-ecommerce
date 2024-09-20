@@ -16,9 +16,6 @@ import { ProductService } from '../../services/global-api/product.service';
 export class DeletCheckComponent {
   @Input({ required: true }) config!: deleteConfig;
   @Output() handleGetCategories = new EventEmitter<any>();
-
-  @ViewChild('updateButton') updateButton!: ElementRef;
-  @ViewChild('cancelButton') cancelButton!: ElementRef;
   @ViewChild('favDialog') favDialog!: ElementRef;
   
   load: boolean = false;
@@ -27,16 +24,6 @@ export class DeletCheckComponent {
 
   constructor(private categoriServ: CategoryService,
      private productServ: ProductService) {}
-
-  ngAfterViewInit() {
-    this.updateButton.nativeElement.addEventListener('click', () => {
-      this.favDialog.nativeElement.showModal();
-    });
-
-    this.cancelButton.nativeElement.addEventListener('click', () => {
-      this.favDialog.nativeElement.close();
-    });
-  }
 
   openDialog() {
     this.favDialog.nativeElement.showModal();

@@ -1,9 +1,9 @@
-<div class="flex flex-col mr-10 w-[200px]">
+<div class="flex flex-col mr-10 w-[300px]">
   <!-- <div class="p">
     <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-Pine focus:border-Pine">
   </div> -->
 
-  <div class="flex flex-col ">
+  <!-- <div class="flex flex-col ">
     <div class="border-b-2 flex my-2 py-2 flex-wrap gap-2 border-spacing-1">
       @if(selectedCategory && !selectedSubCategory){
         <h5 class="text-Pine border rounded-lg border-Text p-1 text-lg font-bold"> {{selectedCategory}} </h5>
@@ -58,9 +58,13 @@
       </ng-template>
     </li>
   }
-  </ul>
-  <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()" ></app-category-modal>
-  <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>
+  </ul> -->
+  
+    <app-category-tree [categories]="(categories$ | async)"></app-category-tree>
+  <button (click)="toggleModal()" class="p-3 mt-1 hover:bg-Pine bg-HighLightLow  border  text-Text font-semibold rounded-lg focus:outline-none">Agregar Categoria</button>
+  
+   <app-category-modal #categoryModal  ></app-category-modal>
+  <!-- <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>  -->
 
  
   

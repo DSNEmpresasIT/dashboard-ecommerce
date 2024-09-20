@@ -48,6 +48,17 @@ export class CategoryService {
     );
   }
 
+  getCategories(categoryId?: number): Observable<Category[]> {
+    let params = new HttpParams();
+    if (categoryId !== undefined) {
+      params = params.set('categoryId', categoryId.toString());
+    }
+
+    const url = `${this.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
+
+    return this.http.get<Category[]>(url, { params })
+  }
+
   get categories$() {
     return this.categorySubject.asObservable();
   }
@@ -94,11 +105,11 @@ export class CategoryService {
     return this.http.patch<CategoryDTO>(`${this.GLOBALAPIURL}catalog/categories`, data, { headers: this.authService.getAuthHeaders() })
       .pipe(
         catchError(error => {
-          this.alertServ.show(9000, `Error al crear categoría: ${error.message}`, AlertsType.ERROR);
-          return throwError(() => new Error('Error al crear categoría: ' + error.message));
+          this.alertServ.show(9000, `Error al editar la categoría: ${error.message}`, AlertsType.ERROR);
+          return throwError(() => new Error('Error al editar la categoría: ' + error.message));
         }),
         map(response => {
-          this.alertServ.show(6000, 'Categoría creada correctamente', AlertsType.SUCCESS);
+          this.alertServ.show(6000, 'Categoría edidata correctamente', AlertsType.SUCCESS);
           return response;
         })
       );

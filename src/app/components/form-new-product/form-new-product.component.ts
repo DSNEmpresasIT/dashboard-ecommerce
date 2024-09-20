@@ -20,6 +20,7 @@ import { environment } from '../../../environments/environment.development';
 
 import { CategoryTreeService } from '../../services/category-tree.service';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
+import { CdkMenuModule } from '@angular/cdk/menu';
 
 
 
@@ -28,7 +29,7 @@ import { CategoryTreeComponent } from "../category-tree/category-tree.component"
   standalone: true,
   templateUrl: './form-new-product.component.html',
   styleUrls: ['./form-new-product.component.css'],
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent, CategoryTreeComponent]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HttpClientModule, ButtonSpinerComponent, CategoryTreeComponent, CdkMenuModule]
 })
 export class FormNewProductComponent implements OnInit {
   productNewForm: FormGroup;

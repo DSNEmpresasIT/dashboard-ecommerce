@@ -103,6 +103,15 @@ export class ProductService {
     return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}/${id}?withCategoryRoot=true`);
   }
 
+  fetchProductByCategoryId(id: number){
+    const product = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/${this.payload?.user.catalogId}/${id}`).subscribe({ 
+      next: (products) => this.productsSubject.next(products),
+      error: (error) => console.error('Error fetching products by categoryId:', error)
+    });;
+
+    return product
+  }
+
   fetchProductsByName(query: string){
     const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.payload?.user.catalogId}/${query}`)
     .subscribe({ 
