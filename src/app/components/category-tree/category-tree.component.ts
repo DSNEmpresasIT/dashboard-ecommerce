@@ -24,23 +24,24 @@ export interface CategoryTreeDTO {
     <ul class="ml-4">
       @for (category of categories; track $index) {
       <li class="mb-2">
-        <summary class="flex items-center">
+        <summary  class="flex  justify-between transition-colors duration-300 hover:bg-Overlay p-1 rounded-lg group/bg items-center">
+          <div  (click)="toggleChildren(category)" class="group/title w-full cursor-pointer">
+            <span  class="cursor-pointer mr-2">
+              <i class="transition-transform duration-200 {{category.showChildren && 'rotate-90'}}" class="text-Pine  fa-solid fa-angle-right fa-bounce"></i>
+            </span>
 
-          <span (click)="toggleChildren(category)" class="cursor-pointer mr-2">
-            <i class="transition-transform duration-200 {{category.showChildren && 'rotate-90'}}" class="text-Pine  fa-solid fa-angle-right fa-bounce"></i>
-          </span>
+            <input
+              type="checkbox"
+              [checked]="isSelected(category.id)"
+              (change)="onCategoryToggle(category.id)"
+              class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
+            />
 
-          <input
-            type="checkbox"
-            [checked]="isSelected(category.id)"
-            (change)="onCategoryToggle(category.id)"
-            class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
-          />
-
-          <span (click)="toggleChildren(category)" class="cursor-pointer hover:text-Pine text-Text text-lg">
-            {{ category.label }}
-          </span>
-        <button [cdkMenuTriggerFor]="menu" class="inline-flex justify-center aria-expanded:bg-Pine  items-center rounded-md border border-gray-300 shadow-sm px-3 py-2 bg-Overlay text-md font-medium text-Text hover:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
+            <span  class="cursor-pointer transition-colors duration-300 group-hover/title:text-Pine text-Text text-lg">
+              {{ category.label }}
+            </span>
+          </div>
+        <button [cdkMenuTriggerFor]="menu" class="opacity-0 group-hover/bg:opacity-100 focus:flex transition-opacity duration-300 justify-center aria-expanded:bg-Pine  items-center rounded-md px-3 py-2 text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
 
         </summary>
         <ng-template #menu>
