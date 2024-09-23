@@ -19,3 +19,21 @@
   scale: 0;
 
 }
+
+
+.mat-mdc-paginator-container, .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper .mdc-text-field .mdc-text-field--outlined .mdc-text-field--no-label {
+  background-color: #393552;
+  color: white
+
+}
+
+#mat-select-0-panel{
+  background-color: #393552;
+  color: white
+
+}
+
+#mat-select-value-1 , .mat-mdc-select-trigger{
+  padding: 5px;
+  border: none
+}

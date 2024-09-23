@@ -15,6 +15,7 @@ import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
 import { CategoryTreeService } from '../../services/category-tree.service';
+import { ModalService } from '../../services/modal-new-product.service';
 
 @Component({
     selector: 'app-category-explore',
@@ -72,6 +73,7 @@ export class CategoryExploreComponent implements OnInit {
     private productServ: ProductService,
     private categoryServ: CategoryService,
     private categoryTreeServ: CategoryTreeService,
+    private modalToggleService: ModalService,
   ) {
       this.selectedCategoriesSignal = this.categoryTreeServ.selectedCategoriesSignal;
 
@@ -193,5 +195,8 @@ export class CategoryExploreComponent implements OnInit {
     this.CategoryModalComponent.openDialog()
     this.CategoryModalComponent.loadFatherCategories()
   }
-
+  
+  toggleModalNewProduct() {
+    this.modalToggleService.toggleModal(true); 
+  }
 }

@@ -40,10 +40,9 @@
         <input  type="text" [formControl]="searcherProducts"  id="search-navbar" class="block w-full p-2 py-3 pl-10 text-sm text-gray-900  border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Buscar productos...">
       </div>
       
-        <button *ngIf="authServ.isLoggedIn | async" (click)="toggleModal()" class="p-2 mt-1 flex  text-white font-semibold rounded-md hover:bg-Pine items-center  focus:outline-none"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar Producto</button>
         <!-- <button *ngIf="authServ.isLoggedIn | async" (click)="toggleEditSupplier()" class="p-2 mt-1 flex  text-white font-semibold rounded-md hover:bg-Pine items-center   focus:outline-none"><i class="fa-solid fa-parachute-box pe-2"></i> Administrar proveedores</button> -->
         @if(authServ.isLoggedIn | async){
-          <button (click)="logout()" class="flex p-2 mt-1 items-center   text-white font-semibold rounded-md hover:bg-Pine    focus:outline-none"><i class="fa-solid fa-right-from-bracket pe-2"></i> Cerrar sesión</button>
+          <button (click)="logout()" class="flex p-2 mt-1 items-center ms-10   text-white font-semibold rounded-md hover:bg-Pine    focus:outline-none"><i class="fa-solid fa-right-from-bracket pe-2"></i> Cerrar sesión</button>
         }
   
     </div>

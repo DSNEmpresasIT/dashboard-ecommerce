@@ -25,19 +25,21 @@ export interface CategoryTreeDTO {
       @for (category of categories; track $index) {
       <li class="mb-2">
         <summary  class="flex  justify-between transition-colors duration-300 hover:bg-Overlay p-1 rounded-lg group/bg items-center">
-          <div  (click)="toggleChildren(category)" class="group/title w-full cursor-pointer">
+          <div  (click)="handleToggleChildren(category)" class="group/title w-full cursor-pointer">
             <span  class="cursor-pointer mr-2">
               <i class="transition-transform duration-200 {{category.showChildren && 'rotate-90'}}" class="text-Pine  fa-solid fa-angle-right fa-bounce"></i>
             </span>
 
-            <input
-              type="checkbox"
-              [checked]="isSelected(category.id)"
-              (change)="onCategoryToggle(category.id)"
-              class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
-            />
+            @if(!isNavigation){
+              <input
+                type="checkbox"
+                [checked]="isSelected(category.id)"
+                (change)="onCategoryToggle(category.id)"
+                class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
+              />
+            }
 
-            <span  class="cursor-pointer transition-colors duration-300 group-hover/title:text-Pine text-Text text-lg">
+            <span [class.text-[#3e8fb0]]="isSelected(category.id)"  class="cursor-pointer group-hover/title:text-Pine transition-colors duration-300  text-Text text-lg">
               {{ category.label }}
             </span>
           </div>
@@ -53,7 +55,7 @@ export interface CategoryTreeDTO {
       </ng-template>
          @if(category.showChildren && category.childrens && category.childrens[0].label  !== 'no tiene hijos'){
         <ul  class="ml-6 border-l border-gray-300 pl-4">
-          <app-category-tree [categories]="category.childrens"></app-category-tree>
+          <app-category-tree [isNavigation]="isNavigation" [categories]="category.childrens"></app-category-tree>
         </ul>} @else if(category.childrens && category.childrens[0].label  === 'no tiene hijos') {
           <span  class="ps-11 text-Text cursor-not-allowed">
             sin subcategoria
@@ -76,6 +78,7 @@ export interface CategoryTreeDTO {
 })
 export class CategoryTreeComponent implements OnInit, AfterViewInit  {
   @Input() categories: CategoryTreeDTO[] | null = [];
+  @Input() isNavigation: boolean = false;
 
   selectedCategoriesSignal: Signal<number[]>;
 
@@ -94,6 +97,16 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
   onCategoryToggle(categoryId: number): void {
     this.treeCategoryServ.toggleCategorySelection(categoryId);
   }
+
+  handleToggleChildren(category: CategoryTreeDTO){
+    if(this.isNavigation){
+      this.toggleChildren(category);
+      this.onCategoryToggle(category.id)
+    } else {
+      this.toggleChildren(category)
+    }
+  }
+
 
   toggleChildren(category: CategoryTreeDTO): void { 
     if (category.showChildren) {
@@ -149,10 +162,8 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
   };
 
   handleGetCategories(){
-    setTimeout(()=>{
       this.categoryServ.fetchCategories().subscribe()
       // this.resetSelect()
-    },1000)
   }
 
   // resetSelect() {

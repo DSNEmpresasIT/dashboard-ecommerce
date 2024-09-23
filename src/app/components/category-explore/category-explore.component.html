@@ -3,7 +3,7 @@
     <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-Pine focus:border-Pine">
   </div> -->
 
-  <!-- <div class="flex flex-col ">
+   <div class="flex flex-col ">
     <div class="border-b-2 flex my-2 py-2 flex-wrap gap-2 border-spacing-1">
       @if(selectedCategory && !selectedSubCategory){
         <h5 class="text-Pine border rounded-lg border-Text p-1 text-lg font-bold"> {{selectedCategory}} </h5>
@@ -19,7 +19,7 @@
       <button class="text-Text text-start flex border-Text pb-1 hover:text-Pine" (click)="removeFilters()">Ver Todos</button>
     }
   </div>
- 
+ <!--
   <ul class="flex mt-4 flex-col gap-1">
     @for(category of categories$ | async; track category.id){
     <li class="p-2 flex rounded-lg cursor-pointer font-semibold   text-Text hover:text-white">
@@ -60,8 +60,10 @@
   }
   </ul> -->
   
-    <app-category-tree [categories]="(categories$ | async)"></app-category-tree>
-  <button (click)="toggleModal()" class="p-3 mt-1 hover:bg-Pine bg-HighLightLow  border  text-Text font-semibold rounded-lg focus:outline-none">Agregar Categoria</button>
+    <app-category-tree [categories]="(categories$ | async)" [isNavigation]="true"></app-category-tree>
+  <button (click)="toggleModal()" class="p-3 mt-1  bg-Iris/80 hover:bg-Iris  text-Text font-semibold rounded-lg focus:outline-none"><i class="fa-solid fa-indent pe-2"></i>Agregar Categoria</button>
+  <button (click)="toggleModalNewProduct()" class="p-3 mt-2 hover:bg-Pine bg-Pine/80    text-Text font-semibold rounded-lg focus:outline-none"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar Producto</button>
+
   
    <app-category-modal #categoryModal  ></app-category-modal>
   <!-- <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>  -->
