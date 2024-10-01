@@ -56,6 +56,7 @@ export class FormProductComponent implements OnInit {
       supplier_id: [ null , [Validators.required]],
       category_id: [ null , [Validators.required]],
       sub_category_id: [ null , [Validators.required]],
+      is_highlighted: [false]
     });
   }
 
@@ -293,7 +294,6 @@ export class FormProductComponent implements OnInit {
   }
 
   private updateFormValues() {
-    // Actualizar los valores del formulario cuando se recibe un nuevo producto editado
     this.productForm.patchValue({
       id: this.renderProduct?.id,
       name: this.renderProduct?.name,
@@ -303,7 +303,8 @@ export class FormProductComponent implements OnInit {
       code: this.renderProduct?.code,
       category_id: this.selectedCategory?.id,
       sub_category_id : this.selectedSubCategory?.id,
-      supplier_id: this.renderProduct?.supplier_id 
+      supplier_id: this.renderProduct?.supplier_id,
+      is_highlighted: this.renderProduct?.is_highlighted
     });
   }
 

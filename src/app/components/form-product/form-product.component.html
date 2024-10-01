@@ -79,6 +79,15 @@
         <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine" (change)="onImageSelected($event)" id="img" formControlName="img">
       </div>
    </div>
+   <div class="flex items-center flex-row-reverse gap-2">
+    <label for="is_highlighted" class="text-sm text-Text hover:text-Pine peer-hover:text-Pine">
+      ¿ Es un producto destacado ?
+    </label>
+    <input id="is_highlighted" formControlName="is_highlighted" name="is_highlighted" 
+      class="peer peer-hover:text-Pine rounded-lg hover:bg-Pine bg-HighLightLow border text-Text" 
+      type="checkbox">
+  </div>
+  
 
     <div class="flex w-full justify-center items-center">
       @if (!isLoading) {

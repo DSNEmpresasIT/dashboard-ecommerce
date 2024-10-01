@@ -12,6 +12,7 @@ export interface Product {
         name: string;
       } | null;
     supplier_id: number | undefined;
+    is_highlighted: boolean;
 }
 
 export interface Category {

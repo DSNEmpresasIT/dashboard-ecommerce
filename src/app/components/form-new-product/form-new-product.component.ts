@@ -43,7 +43,8 @@ import { Supplier } from '../../interfaces/supplier';
       unid: [''],
       selectedCategory: ['', [Validators.required]],
       selectedSubCategories: [ '' , [Validators.required]],
-      supplier_id: [ null ,[Validators.required]]
+      supplier_id: [ null ,[Validators.required]],
+      is_highlighted: [false]
     });
   }
   
