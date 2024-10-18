@@ -2,3 +2,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.popupAnimationIn {
+  scale: 1;
+  transition: scale 0.3s ease;
+  @starting-style {
+    scale: 0
+  }
+
+}
+
+.popupAnimationOut {
+  transition: scale 0.3s ease,
+  display .3s ease allow-discrete;
+  scale: 0;
+
+}
+
+
+.mat-mdc-paginator-container, .mat-mdc-form-field-flex, .mat-mdc-text-field-wrapper .mdc-text-field .mdc-text-field--outlined .mdc-text-field--no-label {
+  background-color: #393552;
+  color: white
+
+}
+
+#mat-select-0-panel{
+  background-color: #393552;
+  color: white
+
+}
+
+#mat-select-value-1 , .mat-mdc-select-trigger{
+  padding: 5px;
+  border: none
+}

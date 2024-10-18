@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CategoryService } from '../../services/supabase/category.service';
+import { CategoryService } from '../../services/global-api/category.service';
 import { Category } from '../../interfaces/product';
 import { BehaviorSubject, take } from 'rxjs';
+import { CategoryDTO } from '../../interfaces/catalogsDTO';
 
 @Component({
     selector: 'app-category-modal',
@@ -12,10 +13,12 @@ import { BehaviorSubject, take } from 'rxjs';
     templateUrl: './category-modal.component.html',
     imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonSpinerComponent]
 })
-export class CategoryModalComponent implements OnInit {
+export class CategoryModalComponent  {
   private _categoryIdSubject = new BehaviorSubject<number | null>(null);
-  categoryId$ = this._categoryIdSubject.asObservable();
+  categoryId$ = this._categoryIdSubject.asObservable();// TODO:BORRAR A LA MIERDA
   categoryIdSelected = this._categoryIdSubject.value
+
+
   isOpen: boolean = false;
   categoryForm: FormGroup;
   isLoading: boolean = false;
@@ -24,70 +27,85 @@ export class CategoryModalComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private categoryServ: CategoryService
+    public categoryServ: CategoryService
   ) {
     this.categoryForm = this.formBuilder.group({
-      category: ['', Validators.required],
-      father_category: [null],
+      label: ['', Validators.required],
+      value: ['', Validators.required],
+      fatherCategoryId: [null],
       is_substance_active: [false],
     });
   }
 
-  ngOnInit(): void {
-    this.loadFatherCategories();
+  // ngOnInit(): void {
+  //   this.loadFatherCategories();
+  // }
+  fatherCategoryName: string | undefined;
+  loadFatherCategories(category?: Category): void {
+    console.log('category', category)
+      
+      this.fatherCategoryName = category?.label
+ 
+      this.categoryServ.getCategories(category?.id).subscribe((res)=>{
+        this.categories = res
+      })
+    
+  }
+
+  // loadCategory(categoryId: number): void {
+  //   this.categoryServ.fetchCategories(categoryId).pipe(
+  //     take(1)
+  //   ).subscribe((result: Category | Category[] | null) => {
+  //     let category: Category | null = null;
+  //     if (Array.isArray(result)) {
+  //       category = result.length > 0 ? result[0] : null;
+  //     } else {
+  //       category = result;
+  //     }
   
-  }
+  //     if (category) {
+  //       console.log(category);
+  //       this.categoryForm.patchValue({
+  //         label: category.label,
+  //         value: category.value,
+  //         fatherCategoryId: category.parentId,
+  //         is_substance_active: category.is_substance_active,
+  //       });
+  //     }
+  //   }, (error) => {
+  //     console.error("Error fetching category", error);
+  //   });
+  // }
+  
 
-  loadFatherCategories(): void {
-    this.categoryServ.getAllFhaterCategories().then((res: Category[] | null) => {
-      this.categories = res;
-    }).catch((error) => {
-      console.error("Error fetching father categories", error);
+  setCategory(category: Category): void {
+    console.log(category, ' category id recibida ')
+    this.categoryIdSelected = category.id
+    this.categoryForm.patchValue({
+      label: category.label,
+      value: category.value,
+      // fatherCategoryId: category.id,
+      is_substance_active: category.is_substance_active,
     });
-  }
-
-  loadCategory(categoryId: number): void {
-    this.categoryServ.getCategoryById(categoryId).pipe(
-      take(1) 
-    ).subscribe((category: Category | null) => {
-      if (category) {
-        console.log(category)
-        this.categoryForm.patchValue({
-          category: category.category,
-          father_category: category.father_category,
-          is_substance_active: category.is_substance_active,
-        });
-      }
-    }, (error) => {
-      console.error("Error fetching category", error);
-    });
-  }
-
-  setCategoryId(categoryId: number | null): void {
-    this._categoryIdSubject.next(categoryId);
-    if(categoryId) {
-      this.loadCategory(categoryId)
-      this.categoryIdSelected = categoryId
-      this.categoryId$.subscribe(categoryId => {
-        if (categoryId !== null) {
-          this.loadCategory(categoryId);
-        }
-      });
-    }
     
   }
 
   onSubmit(): void {
     console.log('aca llegue ')
     if (this.categoryForm.valid) {
-      const data = this.categoryForm.value;
+      const data: CategoryDTO = {
+        id: this.categoryIdSelected,
+        ...this.categoryForm.value,
+        fatherCategoryId: parseInt(this.categoryForm.get('fatherCategoryId')?.getRawValue())
+      };
       if (this.categoryIdSelected) {
-        console.log('actualizar')
+       
+      
         this.updateCategory(data);
         this.handleGetCategories.emit();
 
       } else {
-        console.log('crear', this._categoryIdSubject.value, this.categoryIdSelected)
+       
         this.createCategory(data);
         this.handleGetCategories.emit();
 
@@ -95,23 +113,37 @@ export class CategoryModalComponent implements OnInit {
     }
   }
 
-  createCategory(data: Category): void {
-    this.categoryServ.addCategory(data).then(() => {
-      this.toggleModal();
-      
-    }).catch((error) => {
-      console.error("Error creating category", error);
+  createCategory(data: CategoryDTO): void {
+   let preparedData: CategoryDTO = {
+    ...data,
+    fatherCategoryId: parseInt(this.categoryForm.get('fatherCategoryId')?.getRawValue())
+   }
+
+    this.categoryServ.create(preparedData).subscribe({
+      next: () => {
+        this.closeDialog();
+      },
+      error: (error) => {
+        console.error("Error creating category", error);
+      }
     });
   }
 
-  updateCategory(data: Category): void {
+  updateCategory(data: CategoryDTO): void {
     const categoryId = this.categoryIdSelected;
+
+
     if (categoryId) {
-      this.categoryServ.editCategory(categoryId, data).then(() => {
-        this.toggleModal();
-      }).catch((error) => {
-        console.error("Error updating category", error);
+      this.categoryServ.updateCategory(data).subscribe({
+        next: () => {
+          this.closeDialog();
+        },
+        error: (error) => {
+          console.error("Error updating category", error);
+        }
       });
+    } else {
+      console.error("No category ID selected");
     }
   }
 
@@ -123,16 +155,34 @@ export class CategoryModalComponent implements OnInit {
     });
   }
 
-  toggleModal(): void {
-    this.resetForm();
-    this._categoryIdSubject.next(null);
-    this.isOpen = !this.isOpen;
-    if(this.isOpen){
-      this.loadFatherCategories();
-    }
-  }
+  // toggleModal(): void {
+  //   this.resetForm();
+  //   this.categoryIdSelected = null
+  //   this._categoryIdSubject.next(null);
+  //   this.isOpen = !this.isOpen;
+  //   if(this.isOpen){
+  //     this.loadFatherCategories();
+  //   }
+  // }
 
   toggleLoading(): void {
     this.isLoading = !this.isLoading;
   }
+
+  // ????
+  @ViewChild('categoryDialog') favDialog!: ElementRef;
+
+  openDialog() {
+
+    this.favDialog.nativeElement.showModal();
+  }
+
+  closeDialog() {
+    this.resetForm();
+    this.categoryIdSelected = null
+    this._categoryIdSubject.next(null);
+    this.favDialog.nativeElement.close();
+  }
+
+
 }

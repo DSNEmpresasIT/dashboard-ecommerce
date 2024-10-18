@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AlertService, AlertsType } from '../../services/alert.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase/supabase.service';
-import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { ModalService } from '../../services/modal-new-product.service';
 import { Supplier } from '../../interfaces/supplier';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { SupplierService } from '../../services/supabase/supplier.service';
@@ -27,7 +27,7 @@ export class FormSupplierComponent {
 
   constructor(private formBuilder: FormBuilder,
     private supabase: SupabaseService,
-    private modalToggleService : ModalNewProductService,
+    private modalToggleService : ModalService,
     private supplierServ: SupplierService,
     private alertServ: AlertService
     ) {

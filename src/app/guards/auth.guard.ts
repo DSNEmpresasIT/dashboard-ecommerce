@@ -12,11 +12,12 @@ export class AuthGuard implements CanActivate {
  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):Promise<boolean> {
     await this.authService.checkToken();
     let isLoggedIn = false;
-    this.authService.isLoggedIn.subscribe((value) => {
-        isLoggedIn = value
+    this.authService.currentTokenPayload.subscribe((value) => {
+        if(value){
+          isLoggedIn = value.status
+        }
     });
   
-
     if (isLoggedIn) {
       return true;
     } else {

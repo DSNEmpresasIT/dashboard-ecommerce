@@ -7,39 +7,57 @@ import { CardProductComponent } from "../../components/card-product/card-product
 import { FormProductComponent } from '../../components/form-product/form-product.component';
 import { CategoryExploreComponent } from '../../components/category-explore/category-explore.component';
 import { FormNewProductComponent } from "../../components/form-new-product/form-new-product.component";
-import { ModalNewProductService } from '../../services/modal-new-product.service';
+import { ModalService } from '../../services/modal-new-product.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormSupplierComponent } from "../../components/form-supplier/form-supplier.component";
-
+import { CategoryService } from '../../services/global-api/category.service';
+import { ProductService } from '../../services/global-api/product.service';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
-    imports: [CommonModule, CardProductComponent, FormProductComponent, CategoryExploreComponent, FormNewProductComponent, HttpClientModule, FormSupplierComponent]
+    imports: [CommonModule, CardProductComponent,
+              FormProductComponent, CategoryExploreComponent,
+              FormNewProductComponent, HttpClientModule,
+              FormSupplierComponent, MatPaginatorModule]
 })
 export class HomeComponent implements OnInit, OnDestroy{
-
-  products: Product[] | undefined;
+  products!: Product[];
   private productsSubscription: Subscription = new Subscription();
   toggleFormSupplier:boolean = false;
   toggleForm:boolean = false;
   toggleFormNewProduct:boolean = false
-  constructor(private supaBase: SupabaseService, private modalToggleService: ModalNewProductService) { }
+
+  // Mat paginator vars
+  paginatedProducts: Product[] = [];
+  totalProducts = 0;
+  productsPerPage = 8;
+  currentPage = 0;
+
+  constructor(
+     private supaBase: SupabaseService,
+     private modalToggleService: ModalService,
+     private productApi: ProductService 
+    ){ }
 
   ngOnInit() {
-   this.supaBase.fetchAllProducts();
-    this.productsSubscription = this.supaBase.products.subscribe((res: Product[]) => {
+    console.log(
+   this.productApi.fetchAllProducts(), 'products'
+    )
+    this.productsSubscription = this.productApi.products.subscribe((res: Product[]) => {
       this.products = res;
-      console.log(this.products)
+      this.totalProducts = res.length;
+      this.paginateProducts();
     });
 
     this.modalToggleService.toggleEditSupplier$.subscribe((value) => {
       this.toggleEditSupplier(value);
     });
 
-    this.modalToggleService.toggle$.subscribe((value) => {
-      this.toggleModal(value);
+    this.modalToggleService.modalState$.subscribe((value) => {
+      this.toggleModal(value.isOpen);
     });
   }
 
@@ -61,4 +79,17 @@ export class HomeComponent implements OnInit, OnDestroy{
   toggleModal(value: boolean) {
     this.toggleFormNewProduct = value;
   }
+
+  paginateProducts() {
+    const startIndex = this.currentPage * this.productsPerPage;
+    const endIndex = startIndex + this.productsPerPage;
+    this.paginatedProducts = this.products.slice(startIndex, endIndex);
+  }
+
+  onPageChange(event: PageEvent) {
+    this.currentPage = event.pageIndex;
+    this.productsPerPage = event.pageSize;
+    this.paginateProducts();
+  }
+
 }
