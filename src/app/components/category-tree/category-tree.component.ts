@@ -71,7 +71,7 @@ export interface CategoryTreeDTO {
       <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()" ></app-category-modal>
 
     
-    <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>
+      <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>
 
   
   `,
