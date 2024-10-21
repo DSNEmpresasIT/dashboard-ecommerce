@@ -7,13 +7,14 @@ import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { RouterModule } from '@angular/router';
 import { ModalService } from '../../services/modal-new-product.service';
+import { CdkMenuModule } from '@angular/cdk/menu';
 
 @Component({
   selector: 'app-card-product',
   standalone: true,
   templateUrl: './card-product.component.html',
   styleUrls: ['./card-product.component.css'],
-  imports: [CommonModule, DeletCheckComponent, RouterModule]
+  imports: [CommonModule, DeletCheckComponent, RouterModule, CdkMenuModule]
 })
 export class CardProductComponent implements OnInit, OnChanges {
   @Input() renderProduct!: Product;
@@ -51,6 +52,15 @@ export class CardProductComponent implements OnInit, OnChanges {
     this.productServ.fetchAllProducts().then(() => {
       console.log('Productos obtenidos');
     });
+  }
+
+  deleteProduct(product: Product) {
+    const name = product.name
+    if(product && name){
+      this.deleteConfig.itemName = name;
+      this.deleteConfig.id = product.id;
+      this.deletCheckComponent.openDialog()
+    }
   }
 
   resetSelect() {

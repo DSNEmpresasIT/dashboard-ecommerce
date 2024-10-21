@@ -1,5 +1,5 @@
-<div class="max-w-sm bg-Surface rounded overflow-hidden shadow-xl p-2 relative">
-  <img class="w-full aspect-square object-cover rounded-sm" [src]="renderProduct.images.length > 0 ? renderProduct.images[0].url : './assets/img/placeholder.png'" alt="Sunset in the mountains">
+<summary  class="max-w-sm bg-Surface rounded overflow-hidden shadow-xl p-2 relative">
+  <img class="w-full aspect-square object-cover rounded-sm" [src]="renderProduct.images.length > 0 ? renderProduct.images[0].url : './assets/img/placeholder.webp'" alt="Sunset in the mountains">
   <div class="min-h-[120px]">
     <div class="px-6 pt-4">
       <div class=" text-Text font-bold text-md mb-1">{{ renderProduct.supplier?.name  ?? "*"}}</div>
@@ -9,16 +9,29 @@
       <span class="inline-block bg-Pine rounded-full px-3 py-1 text-Text font-semibold text-sm  mr-2 " *ngIf="renderProduct?.formulacion !== ''" >{{renderProduct.formulacion}}</span>
     </div>
   </div>
-  <div class="flex  items-center">
-    <button class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border " (click)="editProduct(renderProduct.id)">Editar</button>
+
+    <!-- <button class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border " (click)="editProduct(renderProduct.id)">Editar</button> -->
     <!-- <a [routerLink]="['/product-details']" [queryParams]="{ id: renderProduct.id, name: renderProduct.name}" class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border ">ir a Detalle</a> -->
-  </div>
   
+    <button  [cdkMenuTriggerFor]="menu" class="inline-block absolute hover:text-Pine px-3 py-2  bg-HighLightLow/60  top-4 right-3 rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
+      <i class="fa-solid fa-ellipsis  text-white"></i>
+    </button>
+
+  <ng-template #menu>
+    <div class=" mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+      <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editProduct(renderProduct.id)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+      <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteProduct(renderProduct)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
+
+    </div>
+  </ng-template>
+
+
+
   <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()"></app-delet-check>
 
   <!-- <p class="absolute top-8 right-3 flex text-base items-center bg-green-400 rounded-full px-3 py-1 text-white font-semibold">
     {{renderProduct?.is_active_substance ? 'Principio activo' : 'Sin principio activo'}}
     <span class="p-2 flex ms-2 w-2 h-2 rounded-full  bg-green-400" ngClass="{{renderProduct?.is_active_substance ? 'bg-green-500' : 'bg-red-500'}}"></span>
   </p> -->
-</div>
+</summary>
 
