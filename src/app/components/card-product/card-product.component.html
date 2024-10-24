@@ -1,24 +1,26 @@
-<summary  class="max-w-sm bg-Surface rounded overflow-hidden shadow-xl p-2 relative">
-  <img class="w-full aspect-square object-cover rounded-sm" [src]="renderProduct.images.length > 0 ? renderProduct.images[0].url : './assets/img/placeholder.webp'" alt="Sunset in the mountains">
-  <div class="min-h-[120px]">
+<summary  class="max-w-sm bg-Overlay rounded-lg group/bg overflow-hidden shadow-xl p-2 relative">
+  <!-- <img class="w-full aspect-square object-cover rounded-sm" [src]="renderProduct.images.length > 0 ? renderProduct.images[0].url : './assets/img/placeholder.webp'" alt="Sunset in the mountains"> -->
+    <app-product-preview 
+     [renderProduct]="renderProduct"
+    />
     <div class="px-6 pt-4">
-      <div class=" text-Text font-bold text-md mb-1">{{ renderProduct.supplier?.name  ?? "*"}}</div>
+      <!-- <div class=" text-Text font-bold text-md mb-1">{{ renderProduct.supplier?.name  ?? "*"}}</div> -->
       <div class="font-bold text-Text text-xl mb-2 truncate line-clamp-2">{{renderProduct.name}}</div>
     </div>
     <div class="px-6 pb-1">
       <span class="inline-block bg-Pine rounded-full px-3 py-1 text-Text font-semibold text-sm  mr-2 " *ngIf="renderProduct?.formulacion !== ''" >{{renderProduct.formulacion}}</span>
     </div>
-  </div>
+  
 
     <!-- <button class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border " (click)="editProduct(renderProduct.id)">Editar</button> -->
     <!-- <a [routerLink]="['/product-details']" [queryParams]="{ id: renderProduct.id, name: renderProduct.name}" class="flex px-4 py-1 mb-2 ml-2  text-Text font-semibold rounded-lg hover:bg-Pine bg-HighLightLow  border ">ir a Detalle</a> -->
   
-    <button  [cdkMenuTriggerFor]="menu" class="inline-block absolute hover:text-Pine px-3 py-2  bg-HighLightLow/60  top-4 right-3 rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
+    <button type="button" [cdkMenuTriggerFor]="menu" class="opacity-0 group-hover/bg:opacity-100 peer-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 inline-block absolute hover:text-Pine px-3 py-2  bg-HighLightLow/60  top-4 right-3 rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
       <i class="fa-solid fa-ellipsis  text-white"></i>
     </button>
 
-  <ng-template #menu>
-    <div class=" mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+  <ng-template   #menu>
+    <div class=" mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
       <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editProduct(renderProduct.id)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
       <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteProduct(renderProduct)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
 

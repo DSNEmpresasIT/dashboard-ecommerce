@@ -1,0 +1,53 @@
+@if(categories){
+    <ul class="ml-4">
+      @for (category of categories; track $index) {
+        <li class="mb-2">
+          <summary class="flex justify-between transition-colors duration-300 hover:bg-Overlay p-1 rounded-lg group/bg items-center">
+            <div (click)="handleToggleChildren(category)" class="group/title w-full cursor-pointer">
+              <span class="cursor-pointer mr-2">
+                <i class="transition-transform duration-200 {{category.showChildren && 'rotate-90'}}" class="text-Pine fa-solid fa-angle-right fa-bounce"></i>
+              </span>
+
+              @if(!isNavigation){
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(category.id)"
+                  (change)="onCategoryToggle(category)"
+                  class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
+                />
+              }
+
+              <span [class.text-[#3e8fb0]]="isSelected(category.id)" class="cursor-pointer group-hover/title:text-Pine transition-colors duration-300 text-Text text-lg">
+                {{ category.label }}
+              </span>
+            </div>
+            <button [cdkMenuTriggerFor]="menu" class="opacity-0 group-hover/bg:opacity-100 transition-opacity duration-300 justify-center aria-expanded:bg-Pine items-center rounded-md px-3 py-2 text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none">
+              <i class="fa-solid fa-ellipsis text-white"></i>
+            </button>
+          </summary>
+          <ng-template #menu>
+            <div class="mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+              <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editCategory(category)" cdkMenuItem>
+                <i class="fa-solid fa-pen ps-1"></i> Editar
+              </button>
+              <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="addSubCategory(category)" cdkMenuItem>
+                <i class="fa-solid fa-pen ps-1"></i> Agregar subcategoria
+              </button>
+              <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteCategory(category)" cdkMenuItem>
+                <i class="fa-solid fa-xmark ps-1"></i> Borrar
+              </button>
+            </div>
+          </ng-template>
+          @if(category.showChildren && category.childrens && category.childrens[0].label !== 'no tiene hijos'){
+            <ul class="ml-6 border-l border-gray-300 pl-4">
+              <app-category-tree [isNavigation]="isNavigation" [categories]="category.childrens"></app-category-tree>
+            </ul>
+          } @else if(category.childrens && category.childrens[0].label === 'no tiene hijos') {
+            <span class="ps-11 text-Text cursor-not-allowed">sin subcategoria</span>
+          }
+        </li>
+      }
+    </ul>
+  }
+  <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()"></app-category-modal>
+  <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()"></app-delet-check>

@@ -14,7 +14,7 @@ import { ProductService } from '../../services/global-api/product.service';
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
-import { CategoryTreeService } from '../../services/category-tree.service';
+import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
 import { ModalService } from '../../services/modal-new-product.service';
 
 @Component({
@@ -29,7 +29,7 @@ export class CategoryExploreComponent implements OnInit {
 
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories$ = this.categoryServ.categories$;
-  selectedCategoriesSignal: Signal<number[]>;
+  selectedCategoriesSignal: Signal<SelectedCategory[]>;
   
 
   selectedCategory: string = '';
@@ -39,35 +39,18 @@ export class CategoryExploreComponent implements OnInit {
   categoryId!: number;
   categoryName!: string ;
   @ViewChild(CategoryModalComponent) CategoryModalComponent!: CategoryModalComponent;
-  // @ViewChild(DeletCheckComponent) deletCheckComponent!: DeletCheckComponent;
-
-  // editCategory(categoryId: number): void {
-  //   this.selectedCategoryId = categoryId;
-  //   this.CategoryModalComponent.isOpen = true;
-  //   console.log(categoryId ,this.selectedCategoryId)
-  //   this.CategoryModalComponent.setCategory(categoryId)
-  // }
-
-  // deleteConfig: deleteConfig = {
-  //   id: this.categoryId,
-  //   itemName: '',
-  //   toDelete: DeletTypes.CATEGORY,
-  //   title: '¿Está seguro de que desea eliminar esta categoria?',
-  //   text: 'Escriba el nombre de la categoria para confirmar:'
-  // };
-
-
-  // deleteCategory(category: Category) {
-  //   const name = category.label
-  //   if(category && name){
-  //     this.deleteConfig.itemName = name;
-  //     this.deleteConfig.id = category.id;
-  //     this.deletCheckComponent.openDialog()
-  //   }
-  // }
 
 
 
+  removeCategory(category?: SelectedCategory): void {
+    if(!category){
+      this.categoryTreeServ.setSelectedCategories([]);
+    }
+    const currentCategories = this.selectedCategoriesSignal();
+    const updatedCategories = currentCategories.filter(cat => cat.id !== category?.id);
+    
+    this.categoryTreeServ.setSelectedCategories(updatedCategories);
+  }
 
   constructor(
     private productServ: ProductService,
@@ -92,17 +75,19 @@ export class CategoryExploreComponent implements OnInit {
           }
         })
         effect(() => {
-          let value = this.selectedCategoriesSignal()
-          console.log('hubo cambios ', value)
-    
+          let value = this.selectedCategoriesSignal();
+          console.log('hubo cambios ', value);
+        
           if (value.length > 0) {
-            
-            const lastValue = value[value.length - 1];
-            this.productServ.fetchProductByCategoryId(lastValue);
+            const lastCategory = value[value.length - 1];
+            const lastCategoryId = lastCategory.id;
+        
+            this.productServ.fetchProductByCategoryId(lastCategoryId);
           } else {
-            this.productServ.fetchAllProducts()
+            this.productServ.fetchAllProducts();
           }
-        })
+        });
+        
         
     }
 
@@ -111,7 +96,7 @@ export class CategoryExploreComponent implements OnInit {
 
   ngOnInit() {
     this.getAllCategory()
-  
+   
   }
 
 

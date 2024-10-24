@@ -1,7 +1,7 @@
-<div   class="animate-fade-down animate-duration-300 min-h-screen w-full pb-10  px-20     justify-center  bg-Base">
+<div   class="animate-fade-down animate-duration-300 min-h-screen w-full pb-10  px-20  justify-center  bg-Base">
 
   <div class="flex mb-6 pt-3">
-    <button  (click)="toggleModal(false)" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
+    <button  (click)="toggleModal(false)" class="text-xl  font-bold text-Text p-2  rounded-lg hover:bg-Pine bg-HighLightLow  border ">
       Cancelar
     </button>
   </div>
@@ -67,7 +67,7 @@
               <label for="name" class="block text-Text font-bold mb-2">Nombre</label>
               <input id="name" name="name" type="text" formControlName="name"
                 class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') && productNewForm.touched">
+                <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') ">
                   El nombre es requerido.
                 </div> 
             </div>
@@ -77,7 +77,7 @@
             <label for="description" class="block text-Text font-bold mb-2">Description</label>
             <textarea rows="10" cols="30"  id="description" name="description" type="text" formControlName="description"
               class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine"></textarea>
-              <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') && productNewForm.touched">
+              <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') ">
                 La description es requerida.
               </div> 
           </div>
@@ -87,12 +87,10 @@
         <app-category-tree [categories]="product"/>
 
 
-        <div class="text-Rose" *ngIf="productNewForm.get('categoryParentId')?.hasError('required') && productNewForm.touched">
-          La categoría principal es requerida.
+        <div class="text-Rose" *ngIf="productNewForm.get('categoryIds')?.hasError('required') ">
+          Al menos una categoría debe ser seleccionada.
         </div>
-        <div class="text-Rose" *ngIf="productNewForm.get('subCategoryIds')?.hasError('required') && productNewForm.touched">
-          Al menos una subcategoría es requerida.
-        </div>
+        
       </div>
     <!-- <div>
       <div class="relative z-0 w-full  group ">
@@ -219,9 +217,16 @@
   
    <div class="flex w-full gap-2 justify-end items-center">
       @if (!isLoading) {
-        <button (click)="toggleModal(false)" type="button" class="hover:bg-Pine bg-Rose/20  border  text-Text justify-center p-2 px-4 rounded-lg " >Cancelar</button>
+        <button (click)="toggleModal(false)" type="button" class="hover:bg-Pine  bg-Rose/20  border  text-Text justify-center p-2 px-4 rounded-lg " >Cancelar</button>
 
-        <button type="submit" class="hover:bg-Pine bg-Iris/20  border  text-Text justify-center p-2 px-4 rounded-lg ">{{(modalToggleService.modalState$ | async)?.id ? 'Editar Producto' : 'Crear Producto'}}</button>
+        <button 
+        type="submit" 
+        [class.cursor-not-allowed]="productNewForm.invalid" 
+        [disabled]="productNewForm.invalid" 
+        class="hover:bg-Pine bg-Iris/20 border text-Text justify-center p-2 px-4 rounded-lg">
+        {{(modalToggleService.modalState$ | async)?.id ? 'Editar Producto' : 'Crear Producto'}}
+      </button>
+
       } @else {
         <app-button-spiner></app-button-spiner>
       }

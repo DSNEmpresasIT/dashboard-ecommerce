@@ -17,6 +17,7 @@ export interface Product {
     catalog?: Catalog | null; // Catálogo puede ser null
     product_features?: ProductFeatures | null; // Características del producto opcional
     relatedCategoriesMarked?:Category[]
+    is_highlighted?: boolean 
   }
   
   export interface ProductFeatures {

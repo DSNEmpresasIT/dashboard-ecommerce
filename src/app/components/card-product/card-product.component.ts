@@ -8,13 +8,14 @@ import { deleteConfig } from '../../interfaces/interfaces';
 import { RouterModule } from '@angular/router';
 import { ModalService } from '../../services/modal-new-product.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
+import { ProductPreviewComponent } from "../product-preview/product-preview.component";
 
 @Component({
   selector: 'app-card-product',
   standalone: true,
   templateUrl: './card-product.component.html',
   styleUrls: ['./card-product.component.css'],
-  imports: [CommonModule, DeletCheckComponent, RouterModule, CdkMenuModule]
+  imports: [CommonModule, DeletCheckComponent, RouterModule, CdkMenuModule, ProductPreviewComponent]
 })
 export class CardProductComponent implements OnInit, OnChanges {
   @Input() renderProduct!: Product;

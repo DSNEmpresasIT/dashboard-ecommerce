@@ -14,15 +14,9 @@ import { AuthService } from '../../services/auth.service';
 import { UserAuthPayload } from '../../interfaces/auth';
 import { ProductService } from '../../services/global-api/product.service';
 import { firstValueFrom } from 'rxjs';
-
-
-import { environment } from '../../../environments/environment.development';
-
-import { CategoryTreeService } from '../../services/category-tree.service';
+import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
 import { CdkMenuModule } from '@angular/cdk/menu';
-
-
 
 @Component({
   selector: 'app-form-new-product',
@@ -38,7 +32,7 @@ export class FormNewProductComponent implements OnInit {
   suppliers: Supplier[] | null = [];
   payload: UserAuthPayload | null = null;
   selectedId: number | null = null;
-  selectedCategoriesSignal: Signal<number[]>;
+  selectedCategoriesSignal: Signal<SelectedCategory[]>;
   
 
   constructor(
@@ -50,10 +44,7 @@ export class FormNewProductComponent implements OnInit {
     private alertServ: AlertService,
     private authService: AuthService,
     private productServ: ProductService,
-   
-
     private treeCategoryTestServ: CategoryTreeService,
-    private http: HttpClient
   ) {
 
     this.selectedCategoriesSignal = this.treeCategoryTestServ.selectedCategoriesSignal;
@@ -99,11 +90,7 @@ export class FormNewProductComponent implements OnInit {
         })
       }
     });
-    
-    // this.categoryServ.category
-    // .subscribe((arg: Category[] | null)=>{
-    //   this.categories = arg;
-    // })
+  
 
    this.fetchAllSuppliers();
 
@@ -125,7 +112,12 @@ export class FormNewProductComponent implements OnInit {
         catalogId: product.catalog?.id || null,
       });
       if(product.categories){
-        this.treeCategoryTestServ.setSelectedCategories(product.categories.map(cat => cat.id))
+        this.treeCategoryTestServ.setSelectedCategories(
+          product.categories.map(cat => ({
+            id: cat.id,
+            label: cat.label
+          }))
+        );
 
       }
   
@@ -272,29 +264,42 @@ export class FormNewProductComponent implements OnInit {
       this.toggleLoading();
       try {
         const productData = this.prepareProductData();
-
+        console.log(productData, 'data antes de enviar con el nuevo arbol ')
         await this.saveProductToAPI(productData);
-      } catch (error) {
+        this.toggleModal(false);
+
+      } catch (error:any) {
         console.error('Error processing the form:', error);
+        this.alertServ.show(10000, `Hubo un error al procesar el formulario. Corrige los errores e intenta nuevamente. ${error.message}` , AlertsType.ERROR);
+
       } finally {
         this.toggleLoading();
-        this.toggleModal(false);
       }
     
   }
 
   private prepareProductData(): any {
-    // if (!this.productNewForm.valid){
-    //   throw new Error('form is not valid :c') 
-    // }
+    if (!this.productNewForm.valid){
+    const errors: string[] = [];
 
-      const categoryIds = this.productNewForm.get('categoryIds')?.getRawValue();
-    
-      const category = [...categoryIds.map((id: string) => parseInt(id))];
+    Object.keys(this.productNewForm.controls).forEach((key) => {
+      const control = this.productNewForm.get(key);
+      
+      if (control && control.invalid) {
+        const fieldName = key; 
+        errors.push(`El campo "${fieldName}" es obligatorio.`);
+      }
+    });
+
+    throw new Error(`\n${errors.join('\n')}`);
+    }
+
+      const categories = this.productNewForm.get('categoryIds')?.getRawValue();
+      const categoryIds = [...categories.map((item:any) => parseInt(item.id))];
     
       const productData = {
         ...this.productNewForm.value,
-        categoryIds: category
+        categoryIds:  categoryIds
       };
     
       delete productData.img;
@@ -338,18 +343,5 @@ export class FormNewProductComponent implements OnInit {
         console.log('Error fetching suppliers', error);
       });
   }
-
-
-  // getChillCategories(event : Event) {
-  //   const target = event.target as HTMLSelectElement;
-  //   const categoryId = parseInt(target.value);
-
-  //   this.categoryServ.fetchCategories(categoryId)
-  //   .subscribe((arg: Category[] | null)=>{
-  //     this.subCategories = arg;
-  //     console.log(this.subCategories)
-  //   })
-
-  // }
 
 }

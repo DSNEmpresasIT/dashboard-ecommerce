@@ -18,95 +18,35 @@ export interface CategoryTreeDTO {
 @Component({
   selector: 'app-category-tree',
   standalone: true,
-  imports: [CommonModule, CategoryModalComponent, DeletCheckComponent,CdkMenuModule],
-  template: `
-  @if(categories){
-    <ul class="ml-4">
-      @for (category of categories; track $index) {
-      <li class="mb-2">
-        <summary  class="flex  justify-between transition-colors duration-300 hover:bg-Overlay p-1 rounded-lg group/bg items-center">
-          <div  (click)="handleToggleChildren(category)" class="group/title w-full cursor-pointer">
-            <span  class="cursor-pointer mr-2">
-              <i class="transition-transform duration-200 {{category.showChildren && 'rotate-90'}}" class="text-Pine  fa-solid fa-angle-right fa-bounce"></i>
-            </span>
-
-            @if(!isNavigation){
-              <input
-                type="checkbox"
-                [checked]="isSelected(category.id)"
-                (change)="onCategoryToggle(category.id)"
-                class="mr-2 form-checkbox h-4 w-4 text-yellow-500"
-              />
-            }
-
-            <span [class.text-[#3e8fb0]]="isSelected(category.id)"  class="cursor-pointer group-hover/title:text-Pine transition-colors duration-300  text-Text text-lg">
-              {{ category.label }}
-            </span>
-          </div>
-        <button [cdkMenuTriggerFor]="menu" class="opacity-0 group-hover/bg:opacity-100 focus:flex transition-opacity duration-300 justify-center aria-expanded:bg-Pine  items-center rounded-md px-3 py-2 text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none"><i class="fa-solid fa-ellipsis text-white"></i></button>
-
-        </summary>
-        <ng-template #menu>
-        <div class=" mt-2 p-2 rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
-          <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editCategory(category)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
-          <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="addSubCategory(category, category.showChildren)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i> Agregar subcategoria</button>
-          <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteCategory(category)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
-        </div>
-      </ng-template>
-         @if(category.showChildren && category.childrens && category.childrens[0].label  !== 'no tiene hijos'){
-        <ul  class="ml-6 border-l border-gray-300 pl-4">
-          <app-category-tree [isNavigation]="isNavigation" [categories]="category.childrens"></app-category-tree>
-        </ul>} @else if(category.childrens && category.childrens[0].label  === 'no tiene hijos') {
-          <span  class="ps-11 text-Text cursor-not-allowed">
-            sin subcategoria
-          </span>
-        }
-      </li>
-      
-      }
-    </ul>
-    
-  }
- 
-      <app-category-modal #categoryModal (handleGetCategories)="handleGetCategories()" ></app-category-modal>
-
-    
-      <app-delet-check [config]="deleteConfig" (handleGetCategories)="handleGetCategories()" ></app-delet-check>
-
-  
-  `,
+  imports: [CommonModule, CategoryModalComponent, DeletCheckComponent, CdkMenuModule],
+  templateUrl: './category-tree.component.html'
 })
-export class CategoryTreeComponent implements OnInit, AfterViewInit  {
+export class CategoryTreeComponent implements OnInit, AfterViewInit {
   @Input() categories: CategoryTreeDTO[] | null = [];
   @Input() isNavigation: boolean = false;
 
-  selectedCategoriesSignal: Signal<number[]>;
+  selectedCategoriesSignal = this.treeCategoryServ.selectedCategoriesSignal;
 
-  constructor(private treeCategoryServ: CategoryTreeService,
-    private categoryServ: CategoryService
-  ) {
-    this.selectedCategoriesSignal = this.treeCategoryServ.selectedCategoriesSignal;
-  }
- 
+  constructor(private treeCategoryServ: CategoryTreeService, private categoryServ: CategoryService) {}
+
   ngOnInit(): void {}
 
   isSelected(categoryId: number): boolean {
-    return this.selectedCategoriesSignal().includes(categoryId);
+    return this.selectedCategoriesSignal().some(cat => cat.id === categoryId);
   }
 
-  onCategoryToggle(categoryId: number): void {
-    this.treeCategoryServ.toggleCategorySelection(categoryId);
+  onCategoryToggle(category: CategoryTreeDTO): void {
+    this.treeCategoryServ.toggleCategorySelection({ id: category.id, label: category.label });
   }
 
-  handleToggleChildren(category: CategoryTreeDTO){
-    if(this.isNavigation){
+  handleToggleChildren(category: CategoryTreeDTO) {
+    if (this.isNavigation) {
       this.toggleChildren(category);
-      this.onCategoryToggle(category.id)
+      this.onCategoryToggle(category);
     } else {
-      this.toggleChildren(category)
+      this.toggleChildren(category);
     }
   }
-
 
   toggleChildren(category: CategoryTreeDTO): void { 
     if (category.showChildren) {
@@ -124,24 +64,19 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
       return;
     }
 
-
     this.treeCategoryServ.getCategoryChildren(category.id).subscribe(children => {
       if (children && children.length > 0) {
         category.childrens = children
           .filter(child => child.id !== category.id)
           .map(child => this.treeCategoryServ.markCategoryTree(child));
       } else {
-        category.childrens = [{id: category.id, label: 'no tiene hijos'}];
-        
+        category.childrens = [{ id: category.id, label: 'no tiene hijos' }];
       }
       category.showChildren = true;
     });
-  } 
+  }
 
   // =============== Delete and edit categories ================== //
-
- 
-
   @ViewChild(CategoryModalComponent ) CategoryModalComponent!: CategoryModalComponent;
   @ViewChild(DeletCheckComponent) deletCheckComponent!: DeletCheckComponent;
   DeletTypes: DeletTypes = DeletTypes.CATEGORY;
@@ -163,21 +98,12 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
 
   handleGetCategories(){
       this.categoryServ.fetchCategories().subscribe()
-      // this.resetSelect()
   }
 
-  // resetSelect() {
-  //   this.selectedCategory = '';
-  // }
-  
   editCategory(category: Category): void {
       this.selectedCategoryId = category.id;
-    
       this.CategoryModalComponent.openDialog();
-      // this.CategoryModalComponent.loadFatherCategories()
       this.CategoryModalComponent.setCategory(category);
-      
-  
   }
 
   deleteCategory(category: Category) {
@@ -189,9 +115,8 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
     }
   }
 
-  addSubCategory(category: Category, showChildren?: boolean){
+  addSubCategory(category: Category){
       if(category?.id){
-        
       this.CategoryModalComponent.openDialog();
       this.CategoryModalComponent.loadFatherCategories()
       this.CategoryModalComponent.categoryForm.patchValue({fatherCategoryId: category.id});
@@ -200,5 +125,4 @@ export class CategoryTreeComponent implements OnInit, AfterViewInit  {
     }
 
   }
-
 }

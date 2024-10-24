@@ -1,0 +1,36 @@
+<div class="relative">
+    <img 
+      class="w-full aspect-square cursor-pointer object-cover rounded-sm transition-opacity duration-300 ease-in-out"
+      [src]="renderProduct.images.length > 0 ? renderProduct.images[currentImageIndex].url : './assets/img/placeholder.webp'" 
+      alt="Imagen del producto"
+      (mouseenter)="startImageHover()"
+      (mouseleave)="stopImageHover()"
+      (click)="openDialog()"
+    >
+</div>
+
+<dialog #imageDialog >
+    <div class="fixed inset-0 z-[9000] bg-black/50 h-full w-full flex justify-center items-center" (click)="closeDialog($event)">
+        <button  class="absolute  outline-none top-8 right-8 bg-black/60  p-3 px-5 text-white" (click)="closeDialog($event)">
+            <i (click)="closeDialog($event)" class="fa-solid text-lg fa-xmark"></i>
+        </button>
+
+        <div class=" text-white absolute   top-8 left-8 bg-black/60  p-3 px-5 text-lg rounded-lg">
+            {{currentImageIndex + 1}} / {{renderProduct.images.length}}
+        </div>
+
+        <div class="bg-white  rounded-lg p-4 max-w-xl relative">
+        <img 
+            class="w-full aspect-[700/800] h-auto" 
+            [src]="renderProduct.images.length > 0 ? renderProduct.images[currentImageIndex].url : './assets/img/placeholder.webp'" 
+            alt="Imagen completa">
+        
+        </div>
+        <button (click)="prevImage()" class="absolute  text-2xl left-12 bg-black/60  p-3 px-5 text-white">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button (click)="nextImage()" class="absolute  text-2xl right-12 bg-black/60  p-3 px-5 text-white">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+</dialog>
