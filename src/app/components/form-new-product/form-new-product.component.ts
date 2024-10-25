@@ -172,6 +172,8 @@ export class FormNewProductComponent implements OnInit {
   removeFormItems(id: number, form: string){
     const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
     itemToDelet.removeAt(id);
+
+    
   }
   
   addSpec() {

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CategoryTreeDTO } from '../components/category-tree/category-tree.component';
 import { environment } from '../../environments/environment.development';
+import { UserAuthPayload } from '../interfaces/auth';
+import { AuthService } from './auth.service';
 
 export interface SelectedCategory {
   id: number;
@@ -14,8 +16,12 @@ export interface SelectedCategory {
 })
 export class CategoryTreeService {
   private selectedCategories = signal<SelectedCategory[]>([]);
-
-  constructor(private http: HttpClient) {}
+  payload: UserAuthPayload | null = null;
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService) {
+    authService.currentTokenPayload.subscribe(res => this.payload = res)
+  }
 
   getProductWithCategories(catalogId: number, productId: number): Observable<any> {
     return this.http.get<any>(`/api/products/catalog/${catalogId}/${productId}?withCategoryRoot=true`);
@@ -23,7 +29,7 @@ export class CategoryTreeService {
 
   getCategoryChildren(categoryId?: number): Observable<any[]> {
     let option = `?categoryId=${categoryId}`;
-    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/1`;
+    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
     return this.http.get<any[]>(categoryId ? `${baseSetting + option}` : `${baseSetting}`);
   }
 
