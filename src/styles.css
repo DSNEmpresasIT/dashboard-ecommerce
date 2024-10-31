@@ -37,3 +37,26 @@
   padding: 5px;
   border: none
 }
+
+.tree-category-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.tree-category-scroll::-webkit-scrollbar {
+  width: 8px;
+  direction: rtl;
+}
+
+.tree-category-scroll::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.tree-category-scroll::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 4px;
+}
+
+.tree-category-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}

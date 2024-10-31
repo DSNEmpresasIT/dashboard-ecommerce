@@ -1,5 +1,5 @@
 @if(categories){
-    <ul class="ml-4">
+    <ul class="ml-4 ">
       @for (category of categories; track $index) {
         <li class="mb-2">
           <summary class="flex justify-between transition-colors duration-300 hover:bg-Overlay p-1 rounded-lg group/bg items-center">
@@ -39,7 +39,7 @@
             </div>
           </ng-template>
           @if(category.showChildren && category.childrens && category.childrens[0].label !== 'no tiene hijos'){
-            <ul class="ml-6 border-l border-gray-300 pl-4">
+            <ul class="ml-6 pl-4">
               <app-category-tree [isNavigation]="isNavigation" [categories]="category.childrens"></app-category-tree>
             </ul>
           } @else if(category.childrens && category.childrens[0].label === 'no tiene hijos') {

@@ -1,11 +1,7 @@
-<div class="flex flex-col mr-10 w-[300px]">
+<div class="flex flex-col mr-10  w-[300px]">
   <!-- <div class="p">
     <input type="search" [formControl]="searcherCategory" placeholder="Buscar categorias" class="p-2 border border-gray-300 rounded-lg focus:ring-Pine focus:border-Pine">
   </div> -->
-
-
-
-
 
   <div class="border-b-2 flex my-2 items-center py-2 flex-wrap gap-2 border-spacing-1">
    
@@ -32,11 +28,13 @@
      
     
   </div>
-
-  <app-category-tree
-    [categories]="categories$ | async"
-    [isNavigation]="true"
-  />
+    <div class="max-h-[600px] overflow-y-auto tree-category-scroll">
+      <app-category-tree
+      [categories]="categories$ | async"
+      [isNavigation]="true"
+    />
+    </div>
+  
   <button
     (click)="toggleModal()"
     class="p-3 mt-1 bg-Iris/80 hover:bg-Iris text-Text font-semibold rounded-lg focus:outline-none"
