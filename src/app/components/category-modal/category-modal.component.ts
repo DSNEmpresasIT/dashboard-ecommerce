@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { CommonModule } from '@angular/common';
 import { ButtonSpinerComponent } from "../button-spiner/button-spiner.component";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CategoryService } from '../../services/global-api/category.service';
+import { CategoryService } from '../../services/global-api/catalog/category.service';
 import { Category } from '../../interfaces/product';
 import { BehaviorSubject, take } from 'rxjs';
 import { CategoryDTO } from '../../interfaces/catalogsDTO';

@@ -7,16 +7,16 @@ import {  ModalService } from '../../services/modal-new-product.service';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { AlertService, AlertsType } from '../../services/alert.service';
-import { CategoryService } from '../../services/global-api/category.service';
+import { CategoryService } from '../../services/global-api/catalog/category.service';
 import { SupplierService } from '../../services/supabase/supplier.service';
 import { Supplier } from '../../interfaces/supplier';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { UserAuthPayload } from '../../interfaces/auth';
-import { ProductService } from '../../services/global-api/product.service';
 import { firstValueFrom } from 'rxjs';
 import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
 import { CdkMenuModule } from '@angular/cdk/menu';
+import { ProductService } from '../../services/global-api/catalog/product.service';
 
 @Component({
   selector: 'app-form-new-product',

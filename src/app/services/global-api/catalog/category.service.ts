@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { AuthService } from '../auth.service';
-import { Category } from '../../interfaces/product';
+import { AuthService } from '../../auth/auth.service';
+import { Category } from '../../../interfaces/product';
 import { BehaviorSubject, catchError, map, Observable, of, throwError } from 'rxjs';
-import { CategoryDTO } from '../../interfaces/catalogsDTO';
-import { UserAuthPayload } from '../../interfaces/auth';
-import { AlertService, AlertsType } from '../alert.service';
+import { CategoryDTO } from '../../../interfaces/catalogsDTO';
+import { UserAuthPayload } from '../../../interfaces/auth';
+import { AlertService, AlertsType } from '../../alert.service';
+import { CatalogStateService } from './catalog-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,20 +18,24 @@ export class CategoryService {
   private categorySubject = new BehaviorSubject<Category[]>([]);
   category = this.categorySubject.asObservable();
   payload: UserAuthPayload | null = null;
-   
+  catalogId: string | null = null
   constructor(private http: HttpClient,
     private authService: AuthService,
-    private alertServ: AlertService ) {
-    authService.currentTokenPayload.subscribe(res => this.payload = res)
+    private alertServ: AlertService,
+    private catalogState: CatalogStateService) {
+    authService.currentTokenPayload.subscribe(res => this.payload = res);
+    this.catalogState.catalogId$.subscribe(id => {
+      this.catalogId = id;
+    });
   }
-
+  
   fetchCategories(categoryId?: number): Observable<Category[]> {
     let params = new HttpParams();
     if (categoryId !== undefined) {
       params = params.set('categoryId', categoryId.toString());
     }
 
-    const url = `${this.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
+    const url = `${this.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
 
     return this.http.get<Category[]>(url, { params }).pipe(
       catchError(error => {
@@ -54,7 +59,7 @@ export class CategoryService {
       params = params.set('categoryId', categoryId.toString());
     }
 
-    const url = `${this.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
+    const url = `${this.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
 
     return this.http.get<Category[]>(url, { params })
   }

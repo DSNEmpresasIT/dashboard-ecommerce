@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { FormNewProductComponent } from '../form-new-product/form-new-product.component';
 import { ModalService } from '../../services/modal-new-product.service';
 import { Router, RouterModule } from '@angular/router';
-import { ProductService } from '../../services/global-api/product.service';
+import { ProductService } from '../../services/global-api/catalog/product.service';
+
 
 @Component({
   selector: 'app-navbar',

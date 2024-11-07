@@ -5,17 +5,15 @@ import { Category } from '../../interfaces/product';
 import { SupabaseService } from '../../services/supabase/supabase.service';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { CategoryModalComponent } from "../category-modal/category-modal.component";
-
 import { CdkMenuModule } from '@angular/cdk/menu'
 import { DeletCheckComponent } from "../delet-check/delet-check.component";
-
-import { CategoryService} from '../../services/global-api/category.service';
-import { ProductService } from '../../services/global-api/product.service';
+import { CategoryService} from '../../services/global-api/catalog/category.service';
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { CategoryTreeComponent } from "../category-tree/category-tree.component";
 import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
 import { ModalService } from '../../services/modal-new-product.service';
+import { ProductService } from '../../services/global-api/catalog/product.service';
 
 @Component({
     selector: 'app-category-explore',

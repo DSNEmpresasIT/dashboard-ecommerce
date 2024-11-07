@@ -3,3 +3,18 @@ export enum DeletTypes {
   PRODUCT = 'Producto a eliminar',
   COMPANYUSER = 'Eliminar usuario'
 }
+
+export enum Roles {
+  ADMIN='DSN_ADMIN_ACCESS',
+  PREMIUM='DSN_PREMIUM_ACCESS',
+  CUSTOMER='DSN_CUSTOMER_ACCESS',
+}
+
+export enum ContactInfo {
+  SupportEmail = 'solucionesit@dsnempresas.com.ar',
+  SupportPhone = '+54 9 345 406-2217',
+  SupportWhatsApp = '5493454062217',
+  
+  SalesEmail = 'solucionesit@dsnempresas.com.ar',
+  SalesPhone = '+54 9 345 409-9798',
+}

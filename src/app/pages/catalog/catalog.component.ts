@@ -9,10 +9,13 @@ import { FormNewProductComponent } from "../../components/form-new-product/form-
 import { ModalService } from '../../services/modal-new-product.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormSupplierComponent } from "../../components/form-supplier/form-supplier.component";
-import { CategoryService } from '../../services/global-api/category.service';
-import { ProductService } from '../../services/global-api/product.service';
+import { CategoryService } from '../../services/global-api/catalog/category.service';
+
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { UserComponent } from "../company-manager/user/user.component";
+import { ProductService } from '../../services/global-api/catalog/product.service';
+import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
+import { ActivatedRoute, RouterModule, RouterOutlet } from '@angular/router';
 @Component({
     selector: 'app-catalog',
     standalone: true,
@@ -38,10 +41,18 @@ export class CatalogComponent implements OnInit, OnDestroy{
 
   constructor(
      private modalToggleService: ModalService,
-     private productApi: ProductService 
+     private productApi: ProductService,
+     private catalogStateService: CatalogStateService,
+     private route: ActivatedRoute
     ){ }
 
   ngOnInit() {
+    this.route.queryParamMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.catalogStateService.setCatalogId(id);
+      }
+    });
     console.log(
    this.productApi.fetchAllProducts(), 'products'
     )
@@ -68,7 +79,6 @@ export class CatalogComponent implements OnInit, OnDestroy{
 
   handleBooleanValue(value: boolean) {
     this.toggleForm = !this.toggleForm
-    console.log('Valor booleano recibido:', value);
   }
 
   toggleEditSupplier(value: boolean) {

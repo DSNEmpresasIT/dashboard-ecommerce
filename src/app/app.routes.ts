@@ -9,7 +9,7 @@ export const routes: Routes = [
     },
     {
         path: 'catalog',
-        loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent),
+        loadComponent: () => import('./pages/catalog/catalog.component').then(c => c.CatalogComponent),
         title: 'Dashboard',
         canActivate: [AuthGuard]
     },
@@ -24,5 +24,15 @@ export const routes: Routes = [
         title: 'Detalles del producto',
         canActivate: [AuthGuard]
     },
-    { path: 'company-manager', loadChildren: () => import('./pages/company-manager/company-manager.routes').then(m => m.COMPANY_MANAGER) },
+    { 
+        path: 'company-manager',
+        loadChildren: () => import('./pages/company-manager/company-manager.routes').then(m => m.COMPANY_MANAGER),
+        title:'Company',
+        canActivate:[AuthGuard]
+    },
+    {
+      path: 'access-denied',
+      loadComponent: () => import('./pages/access-denied/access-denied.component').then((c)=> c.AccessDeniedComponent),
+      title: 'Acceso denegado',
+    }
 ];
