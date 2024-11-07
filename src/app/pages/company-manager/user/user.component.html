@@ -1,0 +1,42 @@
+<div class="bg-Base text-white min-h-screen mt-16 p-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+    <section class="bg-Overlay  p-4 rounded-lg">
+      <h2 class="font-semibold text-lg mb-4">Company Credentials</h2>
+      <div class="bg-Surface text-Text p-4 rounded-lg">
+        <p><strong>Company Name:</strong> Tech Innovations</p>
+        <p><strong>Address:</strong> 123 Innovation Drive, Tech City</p>
+        <p><strong>Contact:</strong> (123) 456-7890</p>
+      </div>
+    </section>
+
+    <section class="bg-Overlay p-4 rounded-lg">
+      <h2 class="font-semibold text-lg mb-4">Users</h2>
+      @for (user of users; track $index) {
+        <div class="flex items-center justify-between bg-Surface text-Text p-3 rounded-lg mb-2">
+          <p>{{ user.user_name }}</p>
+          <button (click)="removeUser(user)" class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
+            Remove
+          </button>
+        </div>
+      }
+      
+    </section>
+
+   <section class="bg-Overlay p-4 rounded-lg">
+      <h2 class="font-semibold text-lg mb-4">Catalogs</h2>
+      @for (catalog of catalogs; track $index) {
+        <div class="flex items-center justify-between bg-Surface text-Text p-3 rounded-lg mb-2">
+          <p>{{ catalog.name }}</p>
+          <button (click)="removeCatalog(catalog)" class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
+            Eliminar
+          </button>
+        </div>
+        <div class="flex items-center mt-4">
+          <button (click)="addCatalog()" class="bg-Pine/70 text-white px-4 py-2 rounded-r-lg hover:bg-Pine">
+            Agregar
+          </button>
+        </div>
+      }
+    </section>
+  </div>
+</div>

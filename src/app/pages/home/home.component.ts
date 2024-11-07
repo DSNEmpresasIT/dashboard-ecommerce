@@ -13,15 +13,16 @@ import { FormSupplierComponent } from "../../components/form-supplier/form-suppl
 import { CategoryService } from '../../services/global-api/category.service';
 import { ProductService } from '../../services/global-api/product.service';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { UserComponent } from "../company-manager/user/user.component";
 @Component({
     selector: 'app-home',
     standalone: true,
     templateUrl: './home.component.html',
     styleUrl: './home.component.css',
     imports: [CommonModule, CardProductComponent,
-              FormProductComponent, CategoryExploreComponent,
-              FormNewProductComponent, HttpClientModule,
-              FormSupplierComponent, MatPaginatorModule]
+    FormProductComponent, CategoryExploreComponent,
+    FormNewProductComponent, HttpClientModule,
+    FormSupplierComponent, MatPaginatorModule, UserComponent]
 })
 export class HomeComponent implements OnInit, OnDestroy{
   products!: Product[];

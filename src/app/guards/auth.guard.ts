@@ -13,8 +13,9 @@ export class AuthGuard implements CanActivate {
     await this.authService.checkToken();
     let isLoggedIn = false;
     this.authService.currentTokenPayload.subscribe((value) => {
+      console.log(value,' valor de currenttoken')
         if(value){
-          isLoggedIn = value.status
+          value.user && (isLoggedIn = true)
         }
     });
   

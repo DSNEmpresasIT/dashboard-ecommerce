@@ -1,15 +1,16 @@
-export interface Company {
-  id: number;
-  logo: string | null;
-}
+// export interface Company {
+//   id: number;
+//   logo: string | null;
+// }
 
 export interface AuthenticatedUser {
   id: number;
   isActive: boolean;
-  userName: string;
-  catalogId?: number;
+  user_name: string;
+  companyId: number;
+  catalogId: number;
   email: string;
-  company: Company;
+  // company: Company;
   role: string;
 }
 

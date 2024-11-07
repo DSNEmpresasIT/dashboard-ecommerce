@@ -14,8 +14,6 @@ export class ModalDeletComponent {
   @ViewChild('updateButton') updateButton!: ElementRef;
   @ViewChild('cancelButton') cancelButton!: ElementRef;
   @ViewChild('favDialog') favDialog!: ElementRef;
-
-
   constructor(
     private supabase : SupabaseService,
     private alertServ : AlertService,

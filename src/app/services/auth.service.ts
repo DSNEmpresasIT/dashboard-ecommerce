@@ -35,12 +35,12 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
-  getAuthHeaders() {
+  getAuthHeaders(withBearer:boolean = true) {
     const token = this.getToken();
     let header ={
       'Content-Type': 'application/json; charset=utf-8',
       'Accept': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      'Authorization': `${withBearer ? 'Bearer' : ''} ${token}`,
     };
 
     return  header
@@ -48,33 +48,18 @@ export class AuthService {
 
   async checkToken(): Promise<boolean> {
     const token = this.getToken();
-
     try {
       const response = await firstValueFrom(
         this.http.post<UserAuthPayload>(
           `${this.GLOBALAPIURL}auth/verify-token`,
           {},
           {
-            headers: {
-              'Content-Type': 'application/json; charset=utf-8',
-              'Accept': 'application/json',
-              'authorization': `${token}`,
-            },
+            headers: this.getAuthHeaders(false),
           }
         )
       );
-
       this.isLoggedIn.next(true);
-      let mockResponse:UserAuthPayload ={
-        status: true,
-        user: {
-           catalogId: 1,
-           ...response.user
-        },
-        token: response.token
-      }
-
-     this.currentTokenPayload.next(mockResponse);
+      this.currentTokenPayload.next(response);
      
       return true;
     } catch (error) {
@@ -98,16 +83,8 @@ export class AuthService {
 
       this.saveToken(response.token);
       this.isLoggedIn.next(true);
-       let mockResponse:UserAuthPayload ={
-        status: true,
-         user: {
-            catalogId: 1,
-            ...response.user
-         },
-         token: response.token
-       }
-
-      this.currentTokenPayload.next(mockResponse);
+      
+      this.currentTokenPayload.next(response);
       this.alert.show(6000, `Sesión iniciada con éxito`, AlertsType.SUCCESS);
 
       return { data: response, error: null };
