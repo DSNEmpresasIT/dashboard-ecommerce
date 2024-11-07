@@ -1,3 +1,4 @@
+import { Roles } from "../enums/enums";
 
 
 export interface AuthenticatedUser {
@@ -8,7 +9,7 @@ export interface AuthenticatedUser {
   catalogId: number;
   email: string;
   // company: Company;
-  role: string;
+  role: Roles;
 }
 
 export interface UserAuthPayload {

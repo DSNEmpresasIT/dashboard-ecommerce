@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
-import { Product } from '../../interfaces/product';
+import { environment } from '../../../../environments/environment.development';
+import { Product } from '../../../interfaces/product';
+import { UserAuthPayload } from '../../../interfaces/auth';
+import { AuthService } from '../../auth/auth.service';
+import { AlertService, AlertsType } from '../../alert.service';
+import { CatalogStateService } from './catalog-state.service';
 
-import { AuthService } from '../auth.service';
-import { UserAuthPayload } from '../../interfaces/auth';
-import { AlertService, AlertsType } from '../alert.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +17,16 @@ export class ProductService {
   private productsSubject = new BehaviorSubject<Product[]>([]);
   products = this.productsSubject.asObservable();
   payload: UserAuthPayload | null = null;
+  catalogId: string | null = null
 
-
-  
   constructor(private http: HttpClient,
      private authService: AuthService,
-     private alertServ: AlertService) {
-    authService.currentTokenPayload.subscribe(res => this.payload = res)
+     private alertServ: AlertService,
+     private catalogState: CatalogStateService) {
+    authService.currentTokenPayload.subscribe(res => this.payload = res);
+    this.catalogState.catalogId$.subscribe(id => {
+      this.catalogId = id;
+    });
    }
 
    header = {
@@ -90,7 +94,7 @@ export class ProductService {
   
 
   async fetchAllProducts(){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}`)
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}`)
     .subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products:', error)
@@ -100,11 +104,11 @@ export class ProductService {
   }
 
   fetchProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.payload?.user.catalogId}/${id}?withCategoryRoot=true`);
+    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}/${id}?withCategoryRoot=true`);
   }
 
   fetchProductByCategoryId(id: number){
-    const product = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/${this.payload?.user.catalogId}/${id}`).subscribe({ 
+    const product = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/${this.catalogId}/${id}`).subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products by categoryId:', error)
     });;
@@ -113,7 +117,7 @@ export class ProductService {
   }
 
   fetchProductsByName(query: string){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.payload?.user.catalogId}/${query}`)
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.catalogId}/${query}`)
     .subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products:', error)

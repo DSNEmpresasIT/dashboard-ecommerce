@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { AlertService, AlertsType } from './alert.service';
+import { AlertService, AlertsType } from '../alert.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { UserAuthPayload } from '../interfaces/auth';
-import { environment } from '../../environments/environment.development';
+import { UserAuthPayload } from '../../interfaces/auth';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',

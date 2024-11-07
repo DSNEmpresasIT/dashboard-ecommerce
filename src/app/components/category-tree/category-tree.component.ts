@@ -6,7 +6,7 @@ import { DeletCheckComponent } from "../delet-check/delet-check.component";
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { Category } from '../../interfaces/product';
-import { CategoryService } from '../../services/global-api/category.service';
+import { CategoryService } from '../../services/global-api/catalog/category.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
 export interface CategoryTreeDTO {
   id: number;

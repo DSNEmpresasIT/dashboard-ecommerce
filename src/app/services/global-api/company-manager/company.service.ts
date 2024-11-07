@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { Catalog } from '../../../interfaces/product';
 import { UserAuthPayload } from '../../../interfaces/auth';
-import { AuthService } from '../../auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { Company } from '../../../interfaces/company';
 
 @Injectable({

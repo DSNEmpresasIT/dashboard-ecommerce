@@ -27,9 +27,9 @@
       @for (catalog of catalogs; track $index) {
         <div class="flex items-center justify-between bg-Surface text-Text p-3 rounded-lg mb-2">
           <p>{{ catalog.name }}</p>
-          <button (click)="removeCatalog(catalog)" class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
-            Eliminar
-          </button>
+          <a routerLink="/catalog" [queryParams]="{ id: catalog.id }" routerLinkActive="router-link-active" class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">
+            Administrar Catalogo
+          </a>
         </div>
         <div class="flex items-center mt-4">
           <button (click)="addCatalog()" class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">

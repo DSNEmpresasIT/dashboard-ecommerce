@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CategoryTreeDTO } from '../components/category-tree/category-tree.component';
 import { environment } from '../../environments/environment.development';
 import { UserAuthPayload } from '../interfaces/auth';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth/auth.service';
 
 export interface SelectedCategory {
   id: number;

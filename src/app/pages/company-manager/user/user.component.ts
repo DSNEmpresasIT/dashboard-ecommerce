@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Catalog } from '../../../interfaces/product';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/global-api/company-manager/user.service';
+import { RouterModule } from '@angular/router';
 
 export interface User {
   id:number,
@@ -17,7 +18,7 @@ interface Company {
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,RouterModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })

@@ -1,9 +1,10 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CategoryService } from '../../services/global-api/category.service';
+import { CategoryService } from '../../services/global-api/catalog/category.service';
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
-import { ProductService } from '../../services/global-api/product.service';
+import { ProductService } from '../../services/global-api/catalog/product.service';
+
 
 
 @Component({

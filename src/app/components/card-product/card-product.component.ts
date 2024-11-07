@@ -2,13 +2,14 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, OnChanges, S
 import { CommonModule } from '@angular/common';
 import { Product } from '../../interfaces/product';
 import { DeletCheckComponent } from "../delet-check/delet-check.component";
-import { ProductService } from '../../services/global-api/product.service';
+
 import { DeletTypes } from '../../enums/enums';
 import { deleteConfig } from '../../interfaces/interfaces';
 import { RouterModule } from '@angular/router';
 import { ModalService } from '../../services/modal-new-product.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { ProductPreviewComponent } from "../product-preview/product-preview.component";
+import { ProductService } from '../../services/global-api/catalog/product.service';
 
 @Component({
   selector: 'app-card-product',
