@@ -1,7 +1,4 @@
-// export interface Company {
-//   id: number;
-//   logo: string | null;
-// }
+
 
 export interface AuthenticatedUser {
   id: number;

@@ -1,0 +1,56 @@
+<div class="bg-Overlay h-25 p-5 m-5 rounded-2xl mt-28">
+    <h1 class="w-full font-semibold text-2xl text-white text-start ml-3">Manage Companies</h1>
+    <section class="flex flex-wrap gap-4 justify-start items-start w-full mt-2 pl-3">
+        <div class="flex gap-4">
+            <button
+                class="p-3 mt-1 text-xs  bg-violet-700 hover:bg-violet-700/70 text-Text font-semibold rounded-lg focus:outline-none">
+                Add Company
+            </button>            
+        </div>
+    </section>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-dense justify-center items-center">
+        @for (company of companies; track $index) {
+            <section class="bg-Base min-h-96 text-white rounded-2xl p-5 m-3 flex flex-wrap justify-around flex-col gap-4">
+                <article>
+                    <p>{{company.company_name}}</p>
+                    <button class="p-2 mt-1 bg-Pine hover:bg-Pine-700/70 text-Text font-semibold rounded-lg focus:outline-none text-xs">
+                        View Credentials
+                    </button>
+                </article>
+                <article>
+                    <p>Users</p>
+                        <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
+                            @for (user of company.users; track $index) {
+                                <span>{{user.user_name}}</span>
+                            }
+                            <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
+                                <button  class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                    Add User
+                                </button>
+                                <button class="bg-Rose/70 w-full sm:w-full text-white px-4 py-1 rounded-lg hover:bg-Rose">
+                                    Delete User
+                                </button>
+                            </div>
+                        </div>
+                </article>
+                <article>
+                    <p>Catalogs</p>
+                    <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
+                        @for (catalog of company.catalogs; track $index) {
+                            <span>{{catalog.name}}</span>
+                        }
+                        <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
+                            <button  class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                Add Catalog
+                            </button>
+                            <button class="bg-Rose/70 w-full sm:w-full text-white px-4 py-1 rounded-lg hover:bg-Rose">
+                                Delete Catalog
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                <button class="p-3 mt-1 text-xs bg-red-400 hover:bg-red-400/70 text-Text font-semibold rounded-lg focus:outline-none">Delete Company</button>
+            </section>
+        }
+    </div>
+</div>
