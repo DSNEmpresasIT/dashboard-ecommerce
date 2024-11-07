@@ -4,11 +4,11 @@ import { AuthGuard } from './guards/auth.guard';
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'home',
+        redirectTo: 'company-manager',
         pathMatch: 'prefix'
     },
     {
-        path: 'home',
+        path: 'catalog',
         loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent),
         title: 'Dashboard',
         canActivate: [AuthGuard]
