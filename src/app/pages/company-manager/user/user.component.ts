@@ -7,8 +7,13 @@ export interface User {
   id:number,
   user_name:string,
   email:string,
+  company:Company
 }
-
+interface Company {
+  id:number,
+  company_name:string,
+  logo:string,
+}
 @Component({
   selector: 'app-user',
   standalone: true,
@@ -37,7 +42,7 @@ export class UserComponent {
   }
 
   loadCatalogs() {
-    this.userService.getCatalogs().subscribe(
+    this.userService.getCatalogs(this.userService.payload?.user.companyId).subscribe(
       (data) => this.catalogs = data,
       (error) => console.error('Error loading catalogs', error)
     );

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../../../pages/company-manager/user/user.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../environments/environment.development';
 import { Catalog } from '../../../interfaces/product';
 import { UserAuthPayload } from '../../../interfaces/auth';
@@ -37,9 +37,15 @@ export class UserService {
     return this.http.delete<void>(`${this.GLOBALAPIURL}auth/remove-user/${userId}`);
   }
 
-  getCatalogs(): Observable<Catalog[]> {
-    return this.http.get<Catalog[]>(`${this.GLOBALAPIURL}catalogs`);
+  getCatalogs(companyId?: number): Observable<Catalog[]> {
+    let params = new HttpParams();
+    if (companyId) {
+      params = params.set('companyId', companyId);
+    }
+  
+    return this.http.get<Catalog[]>(`${this.GLOBALAPIURL}catalogs`, { params });
   }
+  
 
   addCatalog(catalog: Catalog): Observable<Catalog> {
     return this.http.post<Catalog>(`${this.GLOBALAPIURL}catalogs`, catalog);
