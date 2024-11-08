@@ -7,6 +7,7 @@ import { UserAuthPayload } from '../../../interfaces/auth';
 import { AuthService } from '../../auth/auth.service';
 import { AlertService, AlertsType } from '../../alert.service';
 import { CatalogStateService } from './catalog-state.service';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -22,7 +23,8 @@ export class ProductService {
   constructor(private http: HttpClient,
      private authService: AuthService,
      private alertServ: AlertService,
-     private catalogState: CatalogStateService) {
+     private catalogState: CatalogStateService,
+     private router: Router ) {
     authService.currentTokenPayload.subscribe(res => this.payload = res);
     this.catalogState.catalogId$.subscribe(id => {
       this.catalogId = id;
@@ -93,14 +95,20 @@ export class ProductService {
   }
   
 
-  async fetchAllProducts(){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}`)
-    .subscribe({ 
+  async fetchAllProducts() {
+    this.http.get<Product[]>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}`, {
+      headers: this.authService.getAuthHeaders(),
+    })
+    .subscribe({
       next: (products) => this.productsSubject.next(products),
-      error: (error) => console.error('Error fetching products:', error)
+      error: (error) => {
+        console.error('Error fetching products:', error);
+
+        if (error.status === 401) {
+          this.router.navigate(['/access-denied']);
+        }
+      }
     });
-    
-    return products
   }
 
   fetchProductById(id: number): Observable<Product> {
@@ -108,7 +116,11 @@ export class ProductService {
   }
 
   fetchProductByCategoryId(id: number){
-    const product = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/${this.catalogId}/${id}`).subscribe({ 
+    const product = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/${this.catalogId}/${id}`,
+      {
+        headers: this.authService.getAuthHeaders(),
+      }
+    ).subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products by categoryId:', error)
     });;
@@ -117,7 +129,11 @@ export class ProductService {
   }
 
   fetchProductsByName(query: string){
-    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.catalogId}/${query}`)
+    const products = this.http.get<Product[]>(`${this.GLOBALAPIURL}products/search/${this.catalogId}/${query}`,
+      {
+        headers: this.authService.getAuthHeaders(),
+      }
+    )
     .subscribe({ 
       next: (products) => this.productsSubject.next(products),
       error: (error) => console.error('Error fetching products:', error)

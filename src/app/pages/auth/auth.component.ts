@@ -25,7 +25,7 @@ export class AuthComponent {
     this.authService.login(this.email, this.password)
       .then((result) => {
         if (result) {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         }
       })
       .catch((error) => {

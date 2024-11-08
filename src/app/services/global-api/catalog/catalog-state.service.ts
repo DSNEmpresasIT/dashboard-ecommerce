@@ -7,7 +7,6 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 })
 export class CatalogStateService {
   private catalogIdSubject = new BehaviorSubject<string | null>(null);
-
   catalogId$: Observable<string | null> = this.catalogIdSubject.asObservable();
 
   setCatalogId(id: string): void {

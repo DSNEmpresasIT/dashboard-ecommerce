@@ -35,15 +35,25 @@ export class AuthService {
     localStorage.removeItem(this.TOKEN_KEY);
   }
 
+  
+
   getAuthHeaders(withBearer:boolean = true) {
     const token = this.getToken();
-    let header ={
+    const userPayload = this.currentTokenPayload.getValue();
+    const companyId = userPayload?.user.companyId ?? null;
+    const role = userPayload?.user.role ?? null;
+
+    let headers = {
       'Content-Type': 'application/json; charset=utf-8',
       'Accept': 'application/json',
+      'user': JSON.stringify({
+        company: { id: companyId },
+        role: { key: role }
+      }),
       'Authorization': `${withBearer ? 'Bearer' : ''} ${token}`,
     };
 
-    return  header
+    return headers;
   }
 
   async checkToken(): Promise<boolean> {

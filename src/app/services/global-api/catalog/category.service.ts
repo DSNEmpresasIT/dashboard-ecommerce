@@ -37,7 +37,8 @@ export class CategoryService {
 
     const url = `${this.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
 
-    return this.http.get<Category[]>(url, { params }).pipe(
+    return this.http.get<Category[]>(url, { params, 
+      headers: this.authService.getAuthHeaders(),}).pipe(
       catchError(error => {
         this.alertServ.show(6000, `Error en la búsqueda de categorías: ${error.message}`, AlertsType.ERROR);
         return throwError(() => new Error(`Error fetching categories: ${error.message}`));
@@ -61,7 +62,9 @@ export class CategoryService {
 
     const url = `${this.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
 
-    return this.http.get<Category[]>(url, { params })
+    return this.http.get<Category[]>(url, { params ,
+      headers: this.authService.getAuthHeaders(),
+    })
   }
 
   get categories$() {

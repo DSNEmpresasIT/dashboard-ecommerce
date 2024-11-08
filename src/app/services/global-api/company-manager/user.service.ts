@@ -43,7 +43,7 @@ export class UserService {
       params = params.set('companyId', companyId);
     }
   
-    return this.http.get<Catalog[]>(`${this.GLOBALAPIURL}catalogs`, { params });
+    return this.http.get<Catalog[]>(`${this.GLOBALAPIURL}catalogs`, { params, headers: this.authService.getAuthHeaders(), });
   }
   
 
