@@ -1,0 +1,10 @@
+<div>
+    <div class="w-full" role="group">
+      @if(action === crud.READ) {
+        <button mat-dialog-close type="button" class="w-full px-4 py-2 text-sm font-medium  bg-gray-700 border border-gray-500 text-white rounded-lg hover:bg-gray-600">Cerrar</button>
+      } @else {
+        <button mat-dialog-close type="button" class="w-1/2 px-4 py-2 text-sm font-medium  bg-gray-700 border border-gray-500 text-white rounded-s-lg hover:bg-gray-600">Cancelar</button>
+        <button type="submit" class="w-1/2 px-4 py-2 text-sm font-medium text-white bg-Iris border border-gray-200 rounded-e-lg hover:bg-Iris/90">Aceptar</button>
+      }
+    </div>
+</div>

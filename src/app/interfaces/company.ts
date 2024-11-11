@@ -5,11 +5,11 @@ export interface Company {
     id: number;
     logo: string | null;
     company_name: string,
-    catalogs?: Catalog[],
-    users?: User[],
-    projects?: Project[],
-    project_types?: ProjectType[],
-    keys?: CompanyKeys[]
+    catalogs: Catalog[],
+    users: User[],
+    projects: Project[],
+    project_types: ProjectType[],
+    keys: CompanyKeys[]
 }
 
 export interface Project {

@@ -18,3 +18,10 @@ export enum ContactInfo {
   SalesEmail = 'solucionesit@dsnempresas.com.ar',
   SalesPhone = '+54 9 345 409-9798',
 }
+
+export enum CrudAction {
+  CREATE = 'Alta',
+  READ = 'Consulta',
+  UPDATE = 'Editar',
+  DELETE = 'Eliminar'
+}

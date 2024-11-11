@@ -1,0 +1,49 @@
+<h2 mat-dialog-title class="text-3xl">{{title}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="userForm" (ngSubmit)="submit()">
+    <div class="mb-4">
+      <label for="email" class="block text-Text font-bold mb-2">Email</label>
+      <input disable formControlName="email" id="email" name="email" type="text" formControlName="email" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+      @if(userForm.get('email')?.touched && userForm.get('email')?.invalid) {
+        @if(userForm.get('email')?.errors?.['required']) {
+          <div class="text-Rose text-sm mt-1">
+            <div >El email es requerido.</div>
+          </div>
+        }
+        @if(userForm.get('email')?.errors?.['email']) {
+          <div class="text-Rose text-sm mt-1">
+            <div>El email es invalido.</div>
+          </div>
+        }
+      }
+    </div>
+    <div class="mb-4">
+      <label for="userName" class="block text-Text font-bold mb-2">Usuario</label>
+      <input id="userName" name="userName" type="text" formControlName="userName" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+      @if(userForm.get('userName')?.errors?.['required']) {
+        <div class="text-Rose text-sm mt-1">
+            <div >El usuario es requerido.</div>
+        </div>
+      }
+    </div>
+    @if(data.action !== crud.READ) {
+      <div class="mb-4">
+        <label for="name" class="block text-Text font-bold mb-2">Contraseña</label>
+        <input formControlName="password" id="name" name="name" type="text" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+        @if(userForm.get('password')?.touched && userForm.get('password')?.invalid) {
+          @if(userForm.get('password')?.errors?.['minlength']) {
+            <div class="text-Rose pt-2 text-sm mt-1">
+              <div>La contraseña debe cumplir con .</div>
+            </div>
+          }
+        }
+      </div>
+    }
+    @if(errorMsg) {
+      <p class="text-Rose pb-4">
+        Las contraseñas deben ser iguales
+      </p>
+    }
+    <app-modal-button [action]="data.action"></app-modal-button>
+  </form>
+</mat-dialog-content>

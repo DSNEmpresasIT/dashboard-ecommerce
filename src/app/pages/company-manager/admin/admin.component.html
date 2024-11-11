@@ -2,10 +2,9 @@
     <h1 class="w-full font-semibold text-2xl text-white text-start ml-3">Manage Companies</h1>
     <section class="flex flex-wrap gap-4 justify-start items-start w-full mt-2 pl-3">
         <div class="flex gap-4">
-            <button
-                class="p-3 mt-1 text-xs  bg-violet-700 hover:bg-violet-700/70 text-Text font-semibold rounded-lg focus:outline-none">
+            <button class="p-3 mt-1 text-xs  bg-violet-700 hover:bg-violet-700/70 text-Text font-semibold rounded-lg focus:outline-none">
                 Add Company
-            </button>            
+            </button>   
         </div>
     </section>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-dense justify-center items-center">
@@ -21,14 +20,25 @@
                     <p>Users</p>
                         <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
                             @for (user of company.users; track $index) {
-                                <span>{{user.user_name}}</span>
+                                <div class="flex flex-row justify-between w-full">                                    
+                                    <summary class="flex items-center justify-between group/bg w-full bg-Surface text-Text p-3 rounded-lg mb-2">
+                                        <p>{{ user.user_name }}</p>
+                                        <button type="button" [cdkMenuTriggerFor]="menu" class="peer-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 inline-block  hover:text-Pine px-3 py-2  bg-HighLightLow/60   rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
+                                          <i class="fa-solid fa-ellipsis  text-white"></i>
+                                        </button>                              
+                                      <ng-template  #menu>
+                                        <div class="mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+                                          <button (click)="userCrud(user, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
+                                          <button (click)="userCrud(user, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
+                                          <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Borrar</button>
+                                        </div>
+                                      </ng-template>
+                                      </summary>
+                                </div>
                             }
                             <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
-                                <button  class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                <button class="bg-Pine/70 w-full  text-white px-4 py-2 rounded-lg hover:bg-Pine">
                                     Add User
-                                </button>
-                                <button class="bg-Rose/70 w-full sm:w-full text-white px-4 py-1 rounded-lg hover:bg-Rose">
-                                    Delete User
                                 </button>
                             </div>
                         </div>
@@ -37,19 +47,21 @@
                     <p>Catalogs</p>
                     <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
                         @for (catalog of company.catalogs; track $index) {
-                            <span>{{catalog.name}}</span>
+                            <div class="flex flex-row justify-between">
+                                <span>{{catalog.name}}</span>
+                                <button class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
+                                    Delete Catalog
+                                </button>
+                            </div>
                         }
                         <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
-                            <button  class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                            <button class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
                                 Add Catalog
-                            </button>
-                            <button class="bg-Rose/70 w-full sm:w-full text-white px-4 py-1 rounded-lg hover:bg-Rose">
-                                Delete Catalog
-                            </button>
+                            </button>                            
                         </div>
                     </div>
                 </article>
-                <button class="p-3 mt-1 text-xs bg-red-400 hover:bg-red-400/70 text-Text font-semibold rounded-lg focus:outline-none">Delete Company</button>
+                <button class="p-3 mt-1 text-xs bg-Rose/70 hover:bg-Rose text-Text font-semibold rounded-lg focus:outline-none">Delete Company</button>
             </section>
         }
     </div>

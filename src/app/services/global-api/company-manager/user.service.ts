@@ -37,6 +37,13 @@ export class UserService {
     return this.http.delete<void>(`${this.GLOBALAPIURL}auth/remove-user/${userId}`);
   }
 
+  updateUser(userId: string, user: User) {
+    const filteredBody = Object.fromEntries(
+      Object.entries(user).filter(([_, value]) => value !== '')
+    );
+    return this.http.patch<User>(`${this.GLOBALAPIURL}user/${userId}`, filteredBody);
+  }
+
   getCatalogs(companyId?: number): Observable<Catalog[]> {
     let params = new HttpParams();
     if (companyId) {
