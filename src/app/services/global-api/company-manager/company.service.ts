@@ -21,9 +21,17 @@ export class CompanyService {
   ) {
     authService.currentTokenPayload.subscribe(res => this.payload = res)
   }
+
   getCompanies(): Observable<Company[]> {
     return this.http.get<Company[]>(`${this.GLOBALAPIURL}company/all`, {
       headers: this.authService.getAuthHeaders(),
     });
   }
+
+  getCompany(companyId:number | undefined = this.payload?.user.companyId ): Observable<Company> {
+    return this.http.get<Company>(`${this.GLOBALAPIURL}company/${companyId}`,{
+      headers: this.authService.getAuthHeaders(),
+    })
+  }
+
 }

@@ -3,6 +3,9 @@ import { Catalog } from '../../../interfaces/product';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/global-api/company-manager/user.service';
 import { RouterModule } from '@angular/router';
+import { CdkMenuModule } from '@angular/cdk/menu';
+import { CompanyService } from '../../../services/global-api/company-manager/company.service';
+import { Company } from '../../../interfaces/company';
 
 export interface User {
   id:number,
@@ -10,26 +13,26 @@ export interface User {
   email:string,
   company:Company
 }
-interface Company {
-  id:number,
-  company_name:string,
-  logo:string,
-}
+
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule,RouterModule],
+  imports: [CommonModule,RouterModule, CdkMenuModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
 export class UserComponent {
+editUser(_t14: User) {
+throw new Error('Method not implemented.');
+}
   users: User[] = [];
   catalogs: Catalog[] = [];
   newCatalogName: string = '';
-
-  constructor(private userService: UserService) {}
+  company!: Company;
+  constructor(private userService: UserService, private companyService: CompanyService) {}
 
   ngOnInit(): void {
+    this.loadCompany()
     this.loadUsers();
     this.loadCatalogs();
   }
@@ -47,6 +50,13 @@ export class UserComponent {
       (data) => this.catalogs = data,
       (error) => console.error('Error loading catalogs', error)
     );
+  }
+
+  loadCompany() {
+    this.companyService.getCompany().subscribe(
+      (data) => this.company = data,
+      (error) => console.error('Error loading company', error)
+    )
   }
 
   removeUser(user: User) {
