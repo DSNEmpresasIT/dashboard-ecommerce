@@ -22,53 +22,35 @@ export interface User {
   styleUrl: './user.component.css'
 })
 export class UserComponent {
-editUser(_t14: User) {
-throw new Error('Method not implemented.');
-}
-  users: User[] = [];
-  catalogs: Catalog[] = [];
+  editUser(_t14: User) {
+  throw new Error('Method not implemented.');
+  }
   newCatalogName: string = '';
   company!: Company;
   constructor(private userService: UserService, private companyService: CompanyService) {}
 
   ngOnInit(): void {
     this.loadCompany()
-    this.loadUsers();
-    this.loadCatalogs();
-  }
 
-  loadUsers() {
-    console.log('ejecutando')
-    this.userService.getUsersByCompany().subscribe(
-      (data) => this.users = data,
-      (error) => console.error('Error loading users', error)
-    );
-  }
-
-  loadCatalogs() {
-    this.userService.getCatalogs(this.userService.payload?.user.companyId).subscribe(
-      (data) => this.catalogs = data,
-      (error) => console.error('Error loading catalogs', error)
-    );
   }
 
   loadCompany() {
     this.companyService.getCompany().subscribe(
-      (data) => this.company = data,
+      (data) => {this.company = data, console.log(data)},
       (error) => console.error('Error loading company', error)
     )
   }
 
   removeUser(user: User) {
     this.userService.removeUser(user.user_name).subscribe(
-      () => this.users = this.users.filter(u => u !== user),
+      () => this.company.users = this.company.users?.filter(u => u !== user),
       (error) => console.error('Error removing user', error)
     );
   }
 
   removeCatalog(catalog: Catalog) {
     this.userService.removeCatalog(catalog.name).subscribe(
-      () => this.catalogs = this.catalogs.filter(c => c !== catalog),
+      () => this.company.catalogs = this.company.catalogs?.filter(c => c !== catalog),
       (error) => console.error('Error removing catalog', error)
     );
   }
@@ -83,7 +65,7 @@ throw new Error('Method not implemented.');
       };
       this.userService.addCatalog(newCatalog).subscribe(
         (data) => {
-          this.catalogs.push(data);
+          this.company.catalogs?.push(data);
           this.newCatalogName = '';
         },
         (error) => console.error('Error adding catalog', error)
