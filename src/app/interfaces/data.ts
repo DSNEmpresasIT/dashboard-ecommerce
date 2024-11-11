@@ -3,5 +3,6 @@ import { User } from "../pages/company-manager/user/user.component"
 
 export interface Data {
     user?: User
-    action: CrudAction
+    action: CrudAction,
+    refresh: () => Promise<void>
 }
