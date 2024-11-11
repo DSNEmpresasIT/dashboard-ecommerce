@@ -13,19 +13,10 @@ export enum AlertsType {
 export class AlertService {
   private showAlertSubject = new Subject<{ duration: number; message: string; type: AlertsType }>
   showAlert$ = this.showAlertSubject.asObservable();
-
   constructor() { }
-
   show(duration: number, message: string, type: AlertsType) {
     this.showAlertSubject.next({ duration, message, type });
   }
-  private darkTheme: SweetAlertOptions = {
-    background: '#2f2f2f',
-    color: '#ffffff',
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    iconColor: '#f39c12',
-  };
   // Método específico para confirmar la eliminación
   async showDeleteConfirmation(onConfirm: () => void): Promise<void> {
     const result = await Swal.fire({
