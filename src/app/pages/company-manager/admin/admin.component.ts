@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { CompanyService } from '../../../services/global-api/company-manager/company.service';
 import { Company } from '../../../interfaces/company';
-import { AlertService } from '../../../services/alert.service';
+import { AlertService, AlertsType } from '../../../services/alert.service';
 import { UserService } from '../../../services/global-api/company-manager/user.service';
 import {MatIconModule} from '@angular/material/icon';
 import {MatMenuModule} from '@angular/material/menu';
@@ -34,13 +34,14 @@ export class AdminComponent {
       const response = await firstValueFrom(this.companyService.getCompanies())
       this.companies = response
     } catch (error) {
-
+      console.error(error)
+      this.alertService.show(4000, "Se produjo un error al obtener la información", AlertsType.ERROR);
     }
   }
-  userCrud(user: User, action: CrudAction) {
+  userCrud(user: User | null, action: CrudAction) {
     this.dialog.open(UserFormComponent, {
       width: "600px",
-      data: { user, action }
+      data: { user, action, refresh: () => this.getCompanies() }
     })
   }
   async deleteUser(id: any) {
