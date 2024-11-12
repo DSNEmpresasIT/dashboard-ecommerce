@@ -1,0 +1,41 @@
+<h2 mat-dialog-title class="text-3xl">{{title}}</h2>
+<mat-dialog-content>
+  <form [formGroup]="catalogForm" (ngSubmit)="submit()">
+    <div class="mb-4">
+      <label for="name" class="block text-Text font-bold mb-2">Nombre del Catalogo</label>
+      <input disable formControlName="name" id="name" name="name" type="text" formControlName="name" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+      @if(catalogForm.get('name')?.touched && catalogForm.get('name')?.invalid) {
+        @if(catalogForm.get('name')?.errors?.['required']) {
+          <div class="text-Rose text-sm mt-1">
+            <div >El nombre es requerido.</div>
+          </div>
+        }
+        @if(catalogForm.get('name')?.errors?.['name']) {
+          <div class="text-Rose text-sm mt-1">
+            <div>El nombre es invalido.</div>
+          </div>
+        }
+      }
+    </div>
+    <div class="mb-4">
+      <label for="catalogType" class="block text-Text font-bold mb-2">Tipo de Catálogo</label>
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-select formControlName="catalogType" id="catalogType" placeholder="Selecciona el tipo de catálogo">
+          @for (type of catalogTypes; track $index) {
+            <mat-option  [value]="type">
+              {{ type }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if(catalogForm.get('catalogType')?.hasError('required')){
+        <div class="text-Rose text-sm mt-1">
+          El tipo de catálogo es requerido.
+        </div>
+      }
+      
+    </div>
+
+    <app-modal-button [action]="data.action"></app-modal-button>
+  </form>
+</mat-dialog-content>

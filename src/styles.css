@@ -68,3 +68,29 @@
 .mat-mdc-dialog-container .mdc-dialog__title {
   color: #fff !important;
 }
+
+
+div#catalogType-panel {
+  background: #2a273f!important;
+  color: white!important;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled.mdc-text-field--no-label {
+  --tw-bg-opacity: 1!important;
+  background-color: rgb(42 40 62 / var(--tw-bg-opacity))!important;
+  padding-left: 2rem!important;
+    padding-right: 2rem!important;
+    border-radius: 0.5rem!important;
+    width: 100%!important;
+    border-color: #6B7280;
+    border-width: 1px;
+}
+
+div#mat-select-value-1, .mat-mdc-select-trigger {
+  --tw-bg-opacity: 1!important;
+  background-color: rgb(42 40 62 / var(--tw-bg-opacity))!important;
+}
+
+.mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled.mdc-text-field--no-label:hover{
+  border-color: #3e8fb0!important;
+}

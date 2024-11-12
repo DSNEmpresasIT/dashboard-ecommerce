@@ -25,3 +25,8 @@ export enum CrudAction {
   UPDATE = 'Editar',
   DELETE = 'Eliminar'
 }
+
+export enum CatalogType {
+  AGRO = 'agro',
+  METALURGICA = 'metalurgica',
+}
