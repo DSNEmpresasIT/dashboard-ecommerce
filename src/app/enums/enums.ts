@@ -6,8 +6,8 @@ export enum DeletTypes {
 
 export enum Roles {
   ADMIN='DSN_ADMIN_ACCESS',
-  PREMIUM='DSN_PREMIUM_ACCESS',
-  CUSTOMER='DSN_CUSTOMER_ACCESS',
+  COMPANY_ADMIN='DSN_PREMIUM_ACCESS',
+  CATALOG_CUSTOMER='DSN_CUSTOMER_ACCESS'
 }
 
 export enum ContactInfo {

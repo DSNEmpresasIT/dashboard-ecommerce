@@ -38,10 +38,10 @@ export class AdminComponent {
       this.alertService.show(4000, "Se produjo un error al obtener la información", AlertsType.ERROR);
     }
   }
-  userCrud(user: User | null, action: CrudAction) {
+  userCrud(user: User | null, company: Company | null, action: CrudAction) {
     this.dialog.open(UserFormComponent, {
       width: "600px",
-      data: { user, action, refresh: () => this.getCompanies() }
+      data: { user, action, refresh: () => this.getCompanies(), company }
     })
   }
   async deleteUser(id: any) {

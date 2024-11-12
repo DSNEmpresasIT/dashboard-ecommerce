@@ -1,10 +1,13 @@
 import { CrudAction } from "../enums/enums"
 import { User } from "../pages/company-manager/user/user.component"
+import { Company } from "./company"
 import { Catalog } from "./product"
 
 export interface Data {
     user?: User
-    action: CrudAction
+    action: CrudAction,
+    refresh: () => Promise<void>,
+    company?: Company
 }
 
 export interface CatalogFormData extends Data{

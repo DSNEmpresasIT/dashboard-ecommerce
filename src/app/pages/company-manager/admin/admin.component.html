@@ -28,8 +28,8 @@
                                         </button>                              
                                       <ng-template  #menu>
                                         <div class="mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
-                                          <button (click)="userCrud(user, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
-                                          <button (click)="userCrud(user, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
+                                          <button (click)="userCrud(user, null, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
+                                          <button (click)="userCrud(user, null, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
                                           <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Borrar</button>
                                         </div>
                                       </ng-template>
@@ -37,7 +37,7 @@
                                 </div>
                             }
                             <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
-                                <button (click)="userCrud(null, action.CREATE)" class="bg-Pine/70 w-full  text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                <button (click)="userCrud(null, company, action.CREATE)" class="bg-Pine/70 w-full  text-white px-4 py-2 rounded-lg hover:bg-Pine">
                                     Add User
                                 </button>
                             </div>

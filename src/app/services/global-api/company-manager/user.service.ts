@@ -29,19 +29,28 @@ export class UserService {
     });
   }
 
-  addUser(user: User): Observable<User> {
-    return this.http.post<User>(`${this.GLOBALAPIURL}auth/register/${user.id}`, user);
+  addUser(companyId: string, user: User): Observable<User> {
+    const filteredBody = Object.fromEntries(
+      Object.entries(user).filter(([_, value]) => value !== '')
+    );
+    return this.http.post<User>(`${this.GLOBALAPIURL}auth/register/${companyId}`, filteredBody , {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
   removeUser(userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.GLOBALAPIURL}auth/remove-user/${userId}`);
+    return this.http.delete<void>(`${this.GLOBALAPIURL}auth/remove-user/${userId}`, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
   updateUser(userId: string, user: User) {
     const filteredBody = Object.fromEntries(
       Object.entries(user).filter(([_, value]) => value !== '')
     );
-    return this.http.patch<User>(`${this.GLOBALAPIURL}user/${userId}`, filteredBody);
+    return this.http.patch<User>(`${this.GLOBALAPIURL}user/${userId}`, filteredBody, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
   getCatalogs(companyId?: number): Observable<Catalog[]> {
@@ -55,10 +64,14 @@ export class UserService {
   
 
   addCatalog(catalog: Catalog): Observable<Catalog> {
-    return this.http.post<Catalog>(`${this.GLOBALAPIURL}catalogs`, catalog);
+    return this.http.post<Catalog>(`${this.GLOBALAPIURL}catalogs`, catalog, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 
   removeCatalog(catalogId: string): Observable<void> {
-    return this.http.delete<void>(`${this.GLOBALAPIURL}catalogs/${catalogId}`);
+    return this.http.delete<void>(`${this.GLOBALAPIURL}catalogs/${catalogId}`, {
+      headers: this.authService.getAuthHeaders()
+    });
   }
 }
