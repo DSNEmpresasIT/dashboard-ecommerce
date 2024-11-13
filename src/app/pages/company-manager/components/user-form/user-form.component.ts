@@ -43,13 +43,15 @@ export class UserFormComponent {
     this.userForm.patchValue({
       id: data.user?.id || '',
       email: data?.user?.email || '',
-      userName: data?.user?.user_name || ''
+      userName: data?.user?.user_name || '',
+      role: data.user?.role.key || ''
     })
     this.title = this.data.action
     if (data.action === CrudAction.CREATE) {
       this.userForm.get('companyId')?.setValue(data.company?.id)
       
       this.userForm.get('password')?.setValidators([Validators.required, Validators.minLength(4)]);
+      this.userForm.get('role')?.setValidators([Validators.required]);
       this.userForm.get('password')?.updateValueAndValidity();
     }
     if (data.action === CrudAction.READ) {
@@ -57,8 +59,7 @@ export class UserFormComponent {
     }
   }
   async submit() {
-    console.log(this.userForm.value);
-    if (!this.userForm.valid) return
+    if (!this.userForm.valid) return this.userForm.markAllAsTouched();
     try {
       switch (this.data.action) {
         case CrudAction.CREATE:

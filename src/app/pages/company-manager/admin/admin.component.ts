@@ -47,6 +47,7 @@ export class AdminComponent {
   async deleteUser(id: any) {
     try {
       await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
+      await this.getCompanies()
     } catch (error) {
       console.log(error);
     }

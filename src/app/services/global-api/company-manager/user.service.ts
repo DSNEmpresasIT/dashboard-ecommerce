@@ -39,7 +39,7 @@ export class UserService {
   }
 
   removeUser(userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.GLOBALAPIURL}auth/remove-user/${userId}`, {
+    return this.http.delete<void>(`${this.GLOBALAPIURL}user/${userId}`, {
       headers: this.authService.getAuthHeaders()
     });
   }

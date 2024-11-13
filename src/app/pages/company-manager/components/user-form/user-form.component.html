@@ -28,21 +28,26 @@
         }
       }
     </div>
-    @if(data.action === crud.CREATE) {
-      <form class="w-full mb-4">
-        <label for="countries" class="block text-sm text-Text font-bold mb-2">Rol</label>
-        <select formControlName="role" id="countries" class="bg-HighLightLow border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option value="" disabled>Seleccionar</option>
-          @for (rol of roles; track $index) {
-            <option [value]="rol.rol">{{rol.key | replaceUnderscore}}</option>
-          }
-        </select>
-      </form>
-    }
+    <form class="w-full mb-4">
+      <label for="role" class="block text-sm text-Text font-bold mb-2">Rol</label>
+      <select formControlName="role" id="role" class="bg-HighLightLow border border-gray-300 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        <option value="" disabled>Seleccionar</option>
+        @for (rol of roles; track $index) {
+          <option [value]="rol.rol">{{rol.key | replaceUnderscore}}</option>
+        }
+      </select>
+      @if(userForm.get('role')?.touched && userForm.get('role')?.invalid) {
+        @if(userForm.get('role')?.errors?.['required']) {
+          <div class="text-Rose pt-2 text-sm mt-1">
+            <div>El rol es requerido.</div>
+          </div>
+        }
+      }
+    </form>
     @if(data.action !== crud.READ) {
       <div class="mb-4">
         <label for="name" class="block text-Text font-bold mb-2">Contraseña</label>
-        <input formControlName="password" id="name" name="name" type="text" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+        <input formControlName="password" id="name" name="name" type="password" class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
         @if(userForm.get('password')?.touched && userForm.get('password')?.invalid) {
           @if(userForm.get('password')?.errors?.['required']) {
             <div class="text-Rose pt-2 text-sm mt-1">
