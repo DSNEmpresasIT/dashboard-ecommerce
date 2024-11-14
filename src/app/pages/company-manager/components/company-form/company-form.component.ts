@@ -48,12 +48,12 @@ export class CompanyFormComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: CompanyFormData , private dialogRef: MatDialogRef<CompanyFormComponent>) {
     console.log(data);
     this.catalogForm.patchValue({
-        id:data.company?.id || undefined,
-        company_name: data.company?.company_name || '',
-        cloudinary: data.company?.cloudinary || {},
-        email: data.company?.email || {},
-        contact_info: data.company?.contact_info || {},
-        links: data.company?.links || {}
+        id:data.companyDTO?.id || undefined,
+        company_name: data.companyDTO?.company_name || '',
+        cloudinary: data.companyDTO?.cloudinary || {},
+        email: data.companyDTO?.email || {},
+        contact_info: data.companyDTO?.contact_info || {},
+        links: data.companyDTO?.links || {}
     });
     this.title = this.data.action
     if (data.action === CrudAction.READ) {

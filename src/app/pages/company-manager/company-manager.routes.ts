@@ -21,6 +21,6 @@ export const COMPANY_MANAGER: Routes = [
         path: 'user', 
         component: UserComponent, 
         canActivate: [AuthGuard, RoleGuard],
-        data: {roles: [Roles.CUSTOMER, Roles.PREMIUM, Roles.ADMIN]}
+        data: {roles: [Roles.CATALOG_CUSTOMER, Roles.COMPANY_ADMIN, Roles.ADMIN]}
     }
 ]
