@@ -94,3 +94,9 @@ div#mat-select-value-1, .mat-mdc-select-trigger {
 .mat-mdc-text-field-wrapper.mdc-text-field.mdc-text-field--filled.mdc-text-field--no-label:hover{
   border-color: #3e8fb0!important;
 }
+
+
+span.mdc-tab__text-label {
+  color: #3e8fb0!important;
+  padding-bottom: 10px;
+}

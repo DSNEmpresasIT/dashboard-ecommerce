@@ -34,4 +34,18 @@ export class CompanyService {
     })
   }
 
+  create(company:Company){
+  }
+
+  update(company: Company){
+
+  }
+
+  createCompanyCredentials(){
+
+  }
+
+  editCompanyCredentials(){
+    
+  }
 }

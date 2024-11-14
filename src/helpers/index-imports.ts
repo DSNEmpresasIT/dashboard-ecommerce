@@ -7,6 +7,7 @@ import {
 } from '@angular/material/dialog';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalButtonComponent } from '../app/components/modal-button/modal-button.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 export const MATERIAL_MODULES = [
@@ -17,4 +18,5 @@ export const MATERIAL_MODULES = [
   ModalButtonComponent,
   MatFormFieldModule,
   MatSelectModule,
+  MatTabsModule
 ]

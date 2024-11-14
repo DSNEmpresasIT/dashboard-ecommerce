@@ -1,8 +1,15 @@
 <nav class="border-gray-200 fixed top-0 w-full z-[100] bg-Overlay">
-    <div class="justify-center flex flex-wrap items-center gap-1  p-4">
+
+    <div class="justify-between flex flex-wrap items-center gap-1 w-full  p-4">
+      <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+        <span class="sr-only">Open sidebar</span>
+        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+           <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+        </svg>
+     </button>
       <a routerLink="/home" class="flex items-center">
           <img src="./assets/img/dsnLogo.jpg" class="h-8 mr-3" alt="DSN LOGO" />
-          <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Aluplast</span>
+          <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">{{((authServ.currentTokenPayload | async)?.user?.userName) }}</span>
       </a>
       <div class="flex md:order-2">
         <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" class="md:hidden  text-gray-400 hover:bg-gray-100  focus:outline-none focus:ring-4  focus:ring-gray-600  rounded-lg text-sm p-2.5 mr-1" >
@@ -19,6 +26,7 @@
             </svg>
         </button>
       </div>
+    @if (router.url !== custompath.COMPANY_USER && router.url !== custompath.COMPANY_ADMIN) {
       <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
         <div class="relative mt-3 md:hidden">
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -45,6 +53,7 @@
           <button (click)="logout()" class="flex p-2 mt-1 items-center ms-10   text-white font-semibold rounded-md hover:bg-Pine    focus:outline-none"><i class="fa-solid fa-right-from-bracket pe-2"></i> Cerrar sesión</button>
         }
   
+    }
     </div>
 
   </nav>

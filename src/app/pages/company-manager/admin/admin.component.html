@@ -1,68 +1,88 @@
-<div class="bg-Overlay h-25 p-5 m-5 rounded-2xl mt-28">
-    <h1 class="w-full font-semibold text-2xl text-white text-start ml-3">Manage Companies</h1>
-    <section class="flex flex-wrap gap-4 justify-start items-start w-full mt-2 pl-3">
-        <div class="flex gap-4">
-            <button class="p-3 mt-1 text-xs  bg-violet-700 hover:bg-violet-700/70 text-Text font-semibold rounded-lg focus:outline-none">
-                Add Company
-            </button>   
-        </div>
-    </section>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-dense justify-center items-center">
-        @for (company of companies; track $index) {
-            <section class="bg-Base min-h-96 text-white rounded-2xl p-5 m-3 flex flex-wrap justify-around flex-col gap-4">
-                <article>
-                    <p>{{company.company_name}}</p>
-                    <button class="p-2 mt-1 bg-Pine hover:bg-Pine-700/70 text-Text font-semibold rounded-lg focus:outline-none text-xs">
-                        View Credentials
-                    </button>
-                </article>
-                <article>
-                    <p>Users</p>
-                        <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
-                            @for (user of company.users; track $index) {
-                                <div class="flex flex-row justify-between w-full">                                    
-                                    <summary class="flex items-center justify-between group/bg w-full bg-Surface text-Text p-3 rounded-lg mb-2">
-                                        <p>{{ user.user_name }}</p>
-                                        <button type="button" [cdkMenuTriggerFor]="menu" class="peer-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 inline-block  hover:text-Pine px-3 py-2  bg-HighLightLow/60   rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
-                                          <i class="fa-solid fa-ellipsis  text-white"></i>
-                                        </button>                              
-                                      <ng-template  #menu>
-                                        <div class="mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
-                                          <button (click)="userCrud(user, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
-                                          <button (click)="userCrud(user, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
-                                          <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Borrar</button>
-                                        </div>
-                                      </ng-template>
-                                      </summary>
-                                </div>
-                            }
-                            <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
-                                <button (click)="userCrud(null, action.CREATE)" class="bg-Pine/70 w-full  text-white px-4 py-2 rounded-lg hover:bg-Pine">
-                                    Add User
-                                </button>
-                            </div>
-                        </div>
-                </article>
-                <article>
-                    <p>Catalogs</p>
-                    <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
-                        @for (catalog of company.catalogs; track $index) {
-                            <div class="flex flex-row justify-between">
-                                <span>{{catalog.name}}</span>
-                                <button class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
-                                    Delete Catalog
-                                </button>
-                            </div>
-                        }
-                        <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
-                            <button class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
-                                Add Catalog
-                            </button>                            
-                        </div>
-                    </div>
-                </article>
-                <button class="p-3 mt-1 text-xs bg-Rose/70 hover:bg-Rose text-Text font-semibold rounded-lg focus:outline-none">Delete Company</button>
+
+<div class="min-h-screen flex  p-6 px-12 mt-4">
+    <app-side-navbar></app-side-navbar>
+    <div class=" sm:ml-64 w-full   ">
+
+            <div class="flex bg-Overlay   items-center  mb-10 p-4 gap-2  rounded-lg ">
+            <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center  text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                <span class="sr-only">Open sidebar</span>
+                <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
+                </svg>
+            </button>
+        
+            <h5 class=" text-white font-semibold text-lg ps-4">Manage Companies</h5>
+            
+           </div>
+
+           <div class="bg-Overlay p-6 rounded-2xl">
+            <section class="flex flex-wrap gap-4 justify-start items-start w-full mt-2 pl-3">
+                <div class="flex gap-4">
+                    <button class="p-3 mt-1 text-xs  bg-Pine hover:bg-Pine/70 text-Text font-semibold rounded-lg focus:outline-none">
+                        Add Company
+                    </button>   
+                </div>
             </section>
-        }
+    
+            <div class="grid  grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-dense justify-center items-center">
+                @for (company of companies; track $index) {
+                    <section class="bg-Base min-h-96 text-white rounded-2xl p-5 m-3 flex flex-wrap justify-around flex-col gap-4">
+                        <article>
+                            <p>{{company.company_name}}</p>
+                            <button class="p-2 mt-1 bg-Pine hover:bg-Pine-700/70 text-Text font-semibold rounded-lg focus:outline-none text-xs">
+                                View Credentials
+                            </button>
+                        </article>
+                        <article>
+                            <p>Users</p>
+                                <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
+                                    @for (user of company.users; track $index) {
+                                        <div class="flex flex-row justify-between w-full">                                    
+                                            <summary class="flex items-center justify-between group/bg w-full bg-Surface text-Text p-3 rounded-lg mb-2">
+                                                <p>{{ user.user_name }}</p>
+                                                <button type="button" [cdkMenuTriggerFor]="menu" class="peer-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 inline-block  hover:text-Pine px-3 py-2  bg-HighLightLow/60   rounded-lg   text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
+                                                  <i class="fa-solid fa-ellipsis  text-white"></i>
+                                                </button>                              
+                                              <ng-template  #menu>
+                                                <div class="mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+                                                  <button (click)="userCrud(user, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
+                                                  <button (click)="userCrud(user, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
+                                                  <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Borrar</button>
+                                                </div>
+                                              </ng-template>
+                                              </summary>
+                                        </div>
+                                    }
+                                    <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
+                                        <button (click)="userCrud(null, action.CREATE)" class="bg-Pine/70 w-full  text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                            Add User
+                                        </button>
+                                    </div>
+                                </div>
+                        </article>
+                        <article>
+                            <p>Catalogs</p>
+                            <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
+                                @for (catalog of company.catalogs; track $index) {
+                                    <div class="flex flex-row justify-between">
+                                        <span>{{catalog.name}}</span>
+                                        <button class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
+                                            Delete Catalog
+                                        </button>
+                                    </div>
+                                }
+                                <div class="flex flex-wrap sm:flex-row sm:flex-nowrap  gap-2">
+                                    <button class="bg-Pine/70  w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                                        Add Catalog
+                                    </button>                            
+                                </div>
+                            </div>
+                        </article>
+                        <button class="p-3 mt-1 text-xs bg-Rose/70 hover:bg-Rose text-Text font-semibold rounded-lg focus:outline-none">Delete Company</button>
+                    </section>
+                }
+            </div>
+           </div>
+      
     </div>
 </div>

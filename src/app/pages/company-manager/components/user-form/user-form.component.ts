@@ -60,7 +60,7 @@ export class UserFormComponent {
           break;
         case CrudAction.UPDATE:
           await firstValueFrom(this.userService.updateUser(this.userForm.get('id')?.value, this.userForm.value))
-          await this.data.refresh()
+          // await this.data.refresh()
           this.dialogRef.close()
           break;
       }

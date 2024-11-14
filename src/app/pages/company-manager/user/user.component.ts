@@ -12,6 +12,9 @@ import { CrudAction, Roles } from '../../../enums/enums';
 import { AlertService } from '../../../services/alert.service';
 import { firstValueFrom } from 'rxjs';
 import { CatalogService } from '../../../services/global-api/catalog/catalog.service';
+import { CreateCompanyDto } from '../../../interfaces/companyDTO';
+import { CompanyFormComponent } from '../components/company-form/company-form.component';
+import { NavbarLink, SideNavbarComponent } from "../../../components/common/side-navbar/side-navbar.component";
 
 export interface User {
   id:number,
@@ -27,7 +30,7 @@ export interface role {
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule,RouterModule, CdkMenuModule],
+  imports: [CommonModule, RouterModule, CdkMenuModule, SideNavbarComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
@@ -41,8 +44,16 @@ export class UserComponent {
   company!: Company;
   action = CrudAction;
   constructor(private userService: UserService, private companyService: CompanyService) {}
-
   readonly dialog = inject(MatDialog);
+
+  navLinks: NavbarLink[] = [
+    { label: 'Home', path: '/home' },
+    { label: 'About', path: '/about' },
+    { label: 'Contact', path: '/contact' },
+    { label: 'Section', path: '#section', samePage: true }
+  ];
+
+
 
   catalogCrud(action: CrudAction, catalog?:Catalog) {
     this.dialog.open(CatalogFormComponent, {
@@ -50,6 +61,15 @@ export class UserComponent {
       data: { catalog , action }
     })
   }
+
+  companyCrud(action: CrudAction, company?:CreateCompanyDto){
+    this.dialog.open(CompanyFormComponent,{
+      width: "800px",
+      height: "700px",
+      data: { company , action }
+    })
+  }
+
   ngOnInit(): void {
     this.loadCompany()
 

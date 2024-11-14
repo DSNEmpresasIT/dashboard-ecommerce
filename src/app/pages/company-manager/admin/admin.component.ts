@@ -12,12 +12,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserFormComponent } from '../components/user-form/user-form.component';
 import { User } from '../user/user.component';
 import { CrudAction } from '../../../enums/enums';
+import { SideNavbarComponent } from "../../../components/common/side-navbar/side-navbar.component";
 @Component({
   selector: 'app-admin',
   standalone: true,
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css',
-  imports: [MatButtonModule, MatMenuModule, MatIconModule, CdkMenuModule, MatDialogModule]
+  imports: [MatButtonModule, MatMenuModule, MatIconModule, CdkMenuModule, MatDialogModule, SideNavbarComponent]
 })
 export class AdminComponent {
   private companyService = inject(CompanyService)
