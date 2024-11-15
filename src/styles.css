@@ -100,3 +100,7 @@ span.mdc-tab__text-label {
   color: #3e8fb0!important;
   padding-bottom: 10px;
 }
+
+.custom-text-sidebar{
+  color: rgba(0, 0, 0, 0.901)!important;
+}

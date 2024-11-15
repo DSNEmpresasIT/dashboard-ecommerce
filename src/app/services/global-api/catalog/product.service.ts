@@ -112,7 +112,9 @@ export class ProductService {
   }
 
   fetchProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}/${id}?withCategoryRoot=true`);
+    return this.http.get<Product>(`${this.GLOBALAPIURL}products/catalog/${this.catalogId}/${id}?withCategoryRoot=true`,{
+      headers: this.authService.getAuthHeaders(),
+    });
   }
 
   fetchProductByCategoryId(id: number){

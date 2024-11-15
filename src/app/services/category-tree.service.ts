@@ -5,6 +5,7 @@ import { CategoryTreeDTO } from '../components/category-tree/category-tree.compo
 import { environment } from '../../environments/environment.development';
 import { UserAuthPayload } from '../interfaces/auth';
 import { AuthService } from './auth/auth.service';
+import { CatalogStateService } from './global-api/catalog/catalog-state.service';
 
 export interface SelectedCategory {
   id: number;
@@ -17,20 +18,28 @@ export interface SelectedCategory {
 export class CategoryTreeService {
   private selectedCategories = signal<SelectedCategory[]>([]);
   payload: UserAuthPayload | null = null;
+  catalogId: string | null = null
+
   constructor(
     private http: HttpClient,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private catalogState: CatalogStateService) {
     authService.currentTokenPayload.subscribe(res => this.payload = res)
+
+    authService.currentTokenPayload.subscribe(res => this.payload = res);
+    this.catalogState.catalogId$.subscribe(id => {
+      this.catalogId = id;
+    });
   }
 
   getProductWithCategories(catalogId: number, productId: number): Observable<any> {
-    return this.http.get<any>(`/api/products/catalog/${catalogId}/${productId}?withCategoryRoot=true`);
+    return this.http.get<any>(`/api/products/catalog/${this.catalogId}/${productId}?withCategoryRoot=true`, { headers: this.authService.getAuthHeaders() });
   }
 
   getCategoryChildren(categoryId?: number): Observable<any[]> {
     let option = `?categoryId=${categoryId}`;
-    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/${this.payload?.user.catalogId}`;
-    return this.http.get<any[]>(categoryId ? `${baseSetting + option}` : `${baseSetting}`);
+    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
+    return this.http.get<any[]>(categoryId ? `${baseSetting + option}` : `${baseSetting}` , { headers: this.authService.getAuthHeaders() } );
   }
 
   setSelectedCategories(categories: SelectedCategory[]): void {
