@@ -26,7 +26,7 @@ export class SideNavbarComponent {
   showFiller = false;
   custompath = CUSTOMPATHS;
   roleType = Roles
-  constructor(public authServ: AuthService, public roleServ: RoleService){}
+  constructor(public authServ: AuthService, public roleServ: RoleService,public router: Router){}
 
   scrollTo(elementId: string): void {
     const element = document.getElementById(elementId);

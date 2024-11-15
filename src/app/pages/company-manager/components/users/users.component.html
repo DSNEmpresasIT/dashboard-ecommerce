@@ -1,0 +1,25 @@
+<section class="bg-Overlay min-h-[700px] p-5 rounded-lg mb-20" id="users">
+  <h2 class="font-semibold text-lg mb-4" > <i class="fa-regular fa-user pe-1"></i> Usuarios</h2>
+  @for (user of users; track $index) {
+    <div class="flex  flex-col w-full justify-between group/bg  bg-Surface text-Text p-5 rounded-lg mb-2">
+      <div class="flex justify-between">
+        <p class="justify-start pb-2">{{ user.user_name }}</p>
+      <span class="pe-4">Rol: {{user.role.name}}</span>
+      </div>
+
+  
+      <div class="flex  border-t border-red-200 pt-2">
+      
+        <button class="block px-4 py-2 text-sm  hover:text-Pine text-Pine/70" ><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+        <button class="block px-4 py-2 text-sm  hover:text-red-500 text-red-400"  ><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
+     
+    </div>
+    </div>
+  }
+  <div class="flex items-center mt-4">
+    <button  class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">
+      Agregar
+    </button>
+  </div>
+  
+</section>

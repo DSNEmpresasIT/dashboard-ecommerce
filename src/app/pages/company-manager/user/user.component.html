@@ -14,77 +14,7 @@
     
    </div>
 
-    <section class="bg-Overlay min-h-[700px] p-5 rounded-lg mb-20" id="company">
-      @if (company) {
-        <h2 class="font-semibold text-lg mb-4" ><i class="fa-regular fa-building pe-1"></i> Datos de la compañia</h2>
-      <div class="bg-Surface text-Text p-5 rounded-lg">
-        <p><strong>Nombre:</strong> {{company.company_name}}</p>
-        <!-- <p><strong>Address:</strong> 123 Innovation Drive, Tech City</p>
-        <p><strong>Contact:</strong> (123) 456-7890</p> -->
-        <!-- <button (click)="companyCrud(action.UPDATE)" class="text-sm hover:text-Pine">Editar Compañia</button> -->
-      </div>
-        <!-- <h2 class="font-semibold text-lg my-4"><i class="fa-regular fa-file-lines pe-1"></i> Credenciales de la compañia</h2>
-        
-        <div class="bg-Surface text-Text p-4 rounded-lg">
-          @if(company.keys){
-            <button class="text-sm hover:text-Pine">
-              Editar credenciales
-            </button>
-          } @else {
-            <button class="text-sm hover:text-Pine">
-              Crear credenciales
-            </button>
-          }
-        </div> -->
-      }
-    </section>
-
-    <section class="bg-Overlay min-h-[700px] p-5 rounded-lg mb-20" id="users">
-      <h2 class="font-semibold text-lg mb-4" > <i class="fa-regular fa-user pe-1"></i> Usuarios</h2>
-      @for (user of company.users; track $index) {
-        <div class="flex  flex-col w-full justify-between group/bg  bg-Surface text-Text p-5 rounded-lg mb-2">
-          <div class="flex justify-between">
-            <p class="justify-start pb-2">{{ user.user_name }}</p>
-          <span class="pe-4">Rol: {{user.role.name}}</span>
-          </div>
-    
-      
-          <div class="flex  border-t border-red-200 pt-2">
-          
-            <button class="block px-4 py-2 text-sm  hover:text-Pine text-Pine/70" (click)="editUser(user)" ><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
-            <button class="block px-4 py-2 text-sm  hover:text-red-500 text-red-400" (click)="removeUser(user)" ><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
-         
-        </div>
-        </div>
-      }
-      <div class="flex items-center mt-4">
-        <button (click)="catalogCrud(action.CREATE)" class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">
-          Agregar
-        </button>
-      </div>
-      
-    </section>
-
-   <section class="bg-Overlay p-5 min-h-[700px]   rounded-lg mb-20" id="catalogs">
-      <h2 class="font-semibold text-lg mb-4" ><i class="fa-regular fa-object-group pe-1"></i> Catalogos</h2>
-      @for (catalog of company.catalogs; track $index) {
-        <div class="flex  flex-col justify-between bg-Surface text-Text p-5 rounded-lg mb-2">
-          <p class="justify-start pb-2">{{ catalog.name }}</p>
-        <div class="flex  border-t border-red-200 pt-2">
-          <button class="block px-4 py-2 text-sm text-Pine/70 hover:text-Pine" (click)="catalogCrud(action.UPDATE, catalog)" ><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
-          <button class="block px-4 py-2 text-sm hover:text-red-500 text-red-400"  (click)="deleteCatalog(catalog)"><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
-          <a routerLink="/catalog" [queryParams]="{ id: catalog.id }" routerLinkActive="router-link-active" class="block px-4 py-2 text-sm text-Text hover:text-Pine">
-            <i class="fa-regular fa-eye"></i> Ver Catalogo
-          </a>
-        </div>
-        </div>
-
-      }
-      <div class="flex items-center mt-4">
-        <button (click)="catalogCrud(action.CREATE)" class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">
-          Agregar
-        </button>
-      </div>
-    </section>
+   <router-outlet></router-outlet>
+   
   </div>
 </div>

@@ -104,3 +104,7 @@ span.mdc-tab__text-label {
 .custom-text-sidebar{
   color: rgba(0, 0, 0, 0.901)!important;
 }
+
+.custom-icon-color-sidebar{
+  color: #c4a7e7!important
+}

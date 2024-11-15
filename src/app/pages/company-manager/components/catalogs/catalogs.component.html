@@ -1,0 +1,21 @@
+<section class="bg-Overlay p-5 min-h-[700px]   rounded-lg mb-20" id="catalogs">
+  <h2 class="font-semibold text-lg mb-4" ><i class="fa-regular fa-object-group pe-1"></i> Catalogos</h2>
+  @for (catalog of catalogs; track $index) {
+    <div class="flex  flex-col justify-between bg-Surface text-Text p-5 rounded-lg mb-2">
+      <p class="justify-start pb-2">{{ catalog.name }}</p>
+    <div class="flex  border-t border-red-200 pt-2">
+      <button class="block px-4 py-2 text-sm text-Pine/70 hover:text-Pine" (click)="catalogCrud(action.UPDATE, catalog)" ><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+      <button class="block px-4 py-2 text-sm hover:text-red-500 text-red-400"  (click)="deleteCatalog(catalog)"><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
+      <a routerLink="/catalog" [queryParams]="{ id: catalog.id }" routerLinkActive="router-link-active" class="block px-4 py-2 text-sm text-Text hover:text-Pine">
+        <i class="fa-regular fa-eye"></i> Ver Catalogo
+      </a>
+    </div>
+    </div>
+
+  }
+  <div class="flex items-center mt-4">
+    <button (click)="catalogCrud(action.CREATE)" class="bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine">
+      Agregar
+    </button>
+  </div>
+</section>

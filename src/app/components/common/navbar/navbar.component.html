@@ -1,4 +1,4 @@
-@if (router.url !== custompath.COMPANY_USER && router.url !== custompath.COMPANY_ADMIN) {
+@if (!router.url.startsWith('/company-manager')) {
 <nav class="border-gray-200 fixed top-0 w-full z-[100] bg-Overlay">
 
     <div class="justify-between flex flex-wrap items-center gap-1 w-full  p-4">
