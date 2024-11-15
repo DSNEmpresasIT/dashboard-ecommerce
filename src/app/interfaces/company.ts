@@ -9,7 +9,8 @@ export interface Company {
     users: User[],
     projects: Project[],
     project_types: ProjectType[],
-    keys: CompanyKeys[]
+    keys: CompanyKeys[],
+    activeTab?: string
 }
 
 export interface Project {

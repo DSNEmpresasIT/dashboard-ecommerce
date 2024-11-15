@@ -4,21 +4,22 @@ import { CompanyService } from '../../../services/global-api/company-manager/com
 import { Company } from '../../../interfaces/company';
 import { AlertService, AlertsType } from '../../../services/alert.service';
 import { UserService } from '../../../services/global-api/company-manager/user.service';
-import {MatIconModule} from '@angular/material/icon';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatButtonModule} from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UserFormComponent } from '../components/user-form/user-form.component';
 import { User } from '../user/user.component';
 import { CrudAction } from '../../../enums/enums';
+import { CommonModule } from '@angular/common';
 import { SideNavbarComponent } from "../../../components/common/side-navbar/side-navbar.component";
 @Component({
   selector: 'app-admin',
   standalone: true,
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css',
-  imports: [MatButtonModule, MatMenuModule, MatIconModule, CdkMenuModule, MatDialogModule, SideNavbarComponent]
+  imports: [MatButtonModule, MatMenuModule, MatIconModule, CdkMenuModule, MatDialogModule, CommonModule, SideNavbarComponent]
 })
 export class AdminComponent {
   private companyService = inject(CompanyService)
@@ -34,6 +35,11 @@ export class AdminComponent {
     try {
       const response = await firstValueFrom(this.companyService.getCompanies())
       this.companies = response
+      const companies = this.companies.map((company) => {
+        const newCompany = company
+        return { ...newCompany, activeTab: "users" }
+      })
+      this.companies = companies
     } catch (error) {
       console.error(error)
       this.alertService.show(4000, "Se produjo un error al obtener la información", AlertsType.ERROR);
@@ -59,5 +65,8 @@ export class AdminComponent {
     } catch (error) {
       console.log(error);
     }
+  }
+  showTab(tab: string, companyIndex: number) {
+    this.companies[companyIndex].activeTab = tab;
   }
 }
