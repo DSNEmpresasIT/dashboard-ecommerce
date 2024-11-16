@@ -40,24 +40,20 @@ export class CatalogFormComponent {
     }
   }
   async submit() {
-    // this.dialogRef.close()
     if(!this.catalogForm.valid) return
     try {
       switch (this.data.action) {
         case CrudAction.CREATE:
-          const response = await firstValueFrom(this.catalogService.create(this.catalogForm.value))
-          console.log(response)
+          await firstValueFrom(this.catalogService.create(this.catalogForm.value))
+          this.dialogRef.close()
           break;
-  
         case CrudAction.READ:
           break;
-  
         case CrudAction.DELETE:
           break;
-  
         case CrudAction.UPDATE:
-          const updateResponse = await firstValueFrom(this.catalogService.update(this.catalogForm.value))
-          console.log(updateResponse)
+          await firstValueFrom(this.catalogService.update(this.catalogForm.value))
+          this.dialogRef.close()
           break;
       }
     } catch (error) {

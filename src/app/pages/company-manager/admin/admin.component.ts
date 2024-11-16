@@ -14,6 +14,10 @@ import { User } from '../user/user.component';
 import { CrudAction } from '../../../enums/enums';
 import { CommonModule } from '@angular/common';
 import { SideNavbarComponent } from "../../../components/common/side-navbar/side-navbar.component";
+import { Catalog } from '../../../interfaces/product';
+import { CatalogFormComponent } from '../components/catalog-form/catalog-form.component';
+import { CatalogService } from '../../../services/global-api/catalog/catalog.service';
+import { CompanyFormComponent } from '../components/company-form/company-form.component';
 @Component({
   selector: 'app-admin',
   standalone: true,
@@ -25,6 +29,7 @@ export class AdminComponent {
   private companyService = inject(CompanyService)
   private alertService = inject(AlertService)
   private userService = inject(UserService)
+  private catalogService = inject(CatalogService)
   readonly dialog = inject(MatDialog);
   companies!: Company[]
   action = CrudAction
@@ -41,7 +46,6 @@ export class AdminComponent {
       })
       this.companies = companies
     } catch (error) {
-      console.error(error)
       this.alertService.show(4000, "Se produjo un error al obtener la información", AlertsType.ERROR);
     }
   }
@@ -51,19 +55,38 @@ export class AdminComponent {
       data: { user, action, refresh: () => this.getCompanies(), company }
     })
   }
+  catalogCrud(action: CrudAction, catalog?:Catalog) {
+    this.dialog.open(CatalogFormComponent, {
+      width: "600px",
+      data: { catalog , action, refresh: () => this.getCompanies() }
+    })
+  }
+  companyCrud(action: CrudAction, company?: Company) {
+    this.dialog.open(CompanyFormComponent, {
+      width: "600px",
+      data: { company , action, refresh: () => this.getCompanies() }
+    })
+  }
+  async deleteCatalog(catalog: Catalog) {
+    try {
+      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.catalogService.delete(catalog)))
+    } catch (error) {
+      this.alertService.show(4000, "Se produjo un error al intentar eliminar el catálogo", AlertsType.ERROR);
+    }
+  }
   async deleteUser(id: any) {
     try {
       await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
       await this.getCompanies()
     } catch (error) {
-      console.log(error);
+      this.alertService.show(4000, "Se produjo un error al intentar eliminar el usuario", AlertsType.ERROR);
     }
   }
   async deleteCompany(id: any) {
     try {
       await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
     } catch (error) {
-      console.log(error);
+      this.alertService.show(4000, "Se produjo un error al intentar eliminar la empresa", AlertsType.ERROR);
     }
   }
   showTab(tab: string, companyIndex: number) {
