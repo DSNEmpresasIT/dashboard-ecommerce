@@ -1,6 +1,7 @@
 <h2 mat-dialog-title class="text-3xl">{{ title }}</h2>
 <mat-dialog-content>
-    <form [formGroup]="catalogForm" (ngSubmit)="submit()">
+    <form [formGroup]="catalogForm" class="flex flex-col justify-between h-full" (ngSubmit)="submit()">
+      
       <mat-tab-group>
         <mat-tab label="Compañía">
           <div class="mb-4">
@@ -53,7 +54,7 @@
                 </div>
                 <div class="mb-2">
                   <label class="block text-Text font-semibold mb-2" for="port">Puerto</label>
-                  <input formControlName="port" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine"  id="port" type="text" >
+                  <input formControlName="port" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine"  id="port" type="number" >
                   @if(catalogForm.get('email.port')?.hasError('pattern')) {
                     <div class="text-Rose text-sm mt-1">
                       <div>El puerto debe ser un número.</div>
@@ -111,8 +112,10 @@
           </fieldset>
         </mat-tab>
       
-        <button mat-button type="submit" [disabled]="!catalogForm.valid">Guardar</button>
       </mat-tab-group>
+   
+      <button type="submit" [class]="!catalogForm.valid ? 'cursor-not-allowed bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine  w-[200px] ms-auto mt-auto': 'bg-Pine/70 text-white px-4 py-1 rounded-lg hover:bg-Pine'" [disabled]="!catalogForm.valid">Guardar</button>
+     
   </form>
   
 </mat-dialog-content>

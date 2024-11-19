@@ -39,13 +39,13 @@ export class ProductService {
    
    async create(product: any) {
 
-    if (!this.payload) {
+    if (!this.payload || !this.catalogId) {
       throw new Error('The catalog ID was not defined');
     }
 
     const data = {
       ...product,
-      catalogId: this.payload.user.catalogId,
+      catalogId: parseInt(this.catalogId),
     };
 
     const products = this.http.post(`${this.GLOBALAPIURL}products`, { ...data },
@@ -70,13 +70,13 @@ export class ProductService {
 
   async edit(id: number, product: any){
       try {
-        if (!this.payload) {
+        if (!this.payload || !this.catalogId) {
           throw new Error('The catalog ID was not defined');
         }
 
         let data = {
           ...product,
-          catalogId: this.payload.user.catalogId,
+          catalogId: parseInt(this.catalogId),
           productId: id,
         }
         console.log(data, 'editando')

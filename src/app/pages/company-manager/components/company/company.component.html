@@ -1,24 +1,92 @@
 <section class="bg-Overlay min-h-[700px] p-5 rounded-lg mb-20" id="company">
   @if (company) {
-    <h2 class="font-semibold text-lg mb-4" ><i class="fa-regular fa-building pe-1"></i> Datos de la compañia</h2>
-  <div class="bg-Surface text-Text p-5 rounded-lg">
-    <p><strong>Nombre:</strong> {{company.company_name}}</p>
-    <!-- <p><strong>Address:</strong> 123 Innovation Drive, Tech City</p>
-    <p><strong>Contact:</strong> (123) 456-7890</p> -->
-    <!-- <button (click)="companyCrud(action.UPDATE)" class="text-sm hover:text-Pine">Editar Compañia</button> -->
-  </div>
-    <!-- <h2 class="font-semibold text-lg my-4"><i class="fa-regular fa-file-lines pe-1"></i> Credenciales de la compañia</h2>
-    
-    <div class="bg-Surface text-Text p-4 rounded-lg">
-      @if(company.keys){
-        <button class="text-sm hover:text-Pine">
-          Editar credenciales
-        </button>
-      } @else {
-        <button class="text-sm hover:text-Pine">
-          Crear credenciales
-        </button>
-      }
-    </div> -->
+    <h2 class="font-semibold text-lg mb-4">
+      <i class="fa-regular fa-building pe-1"></i> Datos de la Compañía
+    </h2>
+    <div class="bg-Surface text-Text p-5 rounded-lg">
+      <p class="mb-4"><strong>Nombre:</strong> {{ company.company_name }}</p>
+
+      <div class="mb-4">
+        <h3 class="font-medium text-sm mb-2">Claves de Cloudinary:</h3>
+        @if (company.keys?.cloudinary_keys) {
+          <p><strong>Cloud Name:</strong> {{ company.keys.cloudinary_keys.cloud_name }}</p>
+          <div>
+            <strong>API Key:</strong>
+            <span>*********</span>
+            <button
+              (click)="copyToClipboard(company.keys.cloudinary_keys.api_key)"
+              class="ml-2 text-sm hover:text-Pine"
+            >
+              Copiar
+            </button>
+          </div>
+          <div>
+            <strong>API Secret:</strong>
+            <span>*********</span>
+            <button
+              (click)="copyToClipboard(company.keys.cloudinary_keys.api_secret)"
+              class="ml-2 text-sm hover:text-Pine"
+            >
+              Copiar
+            </button>
+          </div>
+        } @else {
+          <p class="text-sm text-gray-500">La compañía no tiene claves de Cloudinary.</p>
+        }
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-medium text-sm mb-2">Información de Contacto:</h3>
+        @if (company.contact_info) {
+          <p><strong>Email:</strong> {{ company.contact_info.email || 'No disponible' }}</p>
+          <p><strong>Teléfono:</strong> {{ company.contact_info.phone || 'No disponible' }}</p>
+          <p><strong>Dirección:</strong> {{ company.contact_info.address || 'No disponible' }}</p>
+          <p><strong>Horario:</strong> {{ company.contact_info.schedule || 'No disponible' }}</p>
+        } @else {
+          <p class="text-sm text-gray-500">La compañía no tiene información de contacto. Edita para agregarla.</p>
+        }
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-medium text-sm mb-2">Emails:</h3>
+        @if (company.emails?.length) {
+          <ul>
+            @for (email of company.emails; track $index) {
+              <li class="flex items-center">
+                <span>{{ email.email }}</span>
+                <button
+                  (click)="copyToClipboard(email.email)"
+                  class="ml-2 text-sm hover:text-Pine"
+                >
+                  Copiar
+                </button>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-sm text-gray-500">La compañía no tiene emails. Edita para agregarlos.</p>
+        }
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-medium text-sm mb-2">Redes Sociales:</h3>
+        @if (company.links) {
+          <p><strong>Instagram:</strong> {{ company.links.instagram_link || 'No disponible' }}</p>
+          <p><strong>Facebook:</strong> {{ company.links.facebook_link || 'No disponible' }}</p>
+          <p><strong>Twitter:</strong> {{ company.links.twitter_link || 'No disponible' }}</p>
+        } @else {
+          <p class="text-sm text-gray-500">La compañía no tiene redes sociales. Edita para agregarlas.</p>
+        }
+      </div>
+
+      <button
+        (click)="companyCrud(action.UPDATE, company)"
+        class="text-sm hover:text-Pine mt-4"
+      >
+        Editar Compañía
+      </button>
+    </div>
+  } @else {
+    <p class="text-sm text-gray-500">No hay datos disponibles para mostrar.</p>
   }
 </section>

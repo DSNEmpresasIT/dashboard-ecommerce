@@ -5,6 +5,7 @@ import { CatalogType, CrudAction } from '../../../../enums/enums';
 import { MATERIAL_MODULES } from '../../../../../helpers/index-imports';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CompanyService } from '../../../../services/global-api/company-manager/company.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-company-form',
@@ -14,7 +15,7 @@ import { CompanyService } from '../../../../services/global-api/company-manager/
   styleUrl: './company-form.component.css'
 })
 export class CompanyFormComponent {
-  catalogService = inject(CompanyService)
+  companyService = inject(CompanyService)
   crud = CrudAction
   title!: string
   errorMsg!: boolean
@@ -46,14 +47,14 @@ export class CompanyFormComponent {
       })
   });
   constructor(@Inject(MAT_DIALOG_DATA) public data: CompanyFormData , private dialogRef: MatDialogRef<CompanyFormComponent>) {
-    console.log(data);
+    console.log(data, ' in company');
     this.catalogForm.patchValue({
         id:data.companyDTO?.id || undefined,
         company_name: data.companyDTO?.company_name || '',
-        cloudinary: data.companyDTO?.cloudinary || {},
-        email: data.companyDTO?.email || {},
-        contact_info: data.companyDTO?.contact_info || {},
-        links: data.companyDTO?.links || {}
+        cloudinary: data.companyDTO?.keys?.cloudinary || {},
+        email: data.companyDTO?.keys?.email || {},
+        contact_info: data.companyDTO?.keys?.contact_info || {},
+        links: data.companyDTO?.keys?.links || {}
     });
     this.title = this.data.action
     if (data.action === CrudAction.READ) {
@@ -71,7 +72,7 @@ export class CompanyFormComponent {
       host: new FormControl('', Validators.required),
       user: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
-      port: new FormControl('', [Validators.required, Validators.pattern('^[0-9]+$')]),
+      port: new FormControl(null, [Validators.required, Validators.pattern('^[0-9]+$')]),
       email: new FormControl('', [Validators.required, Validators.email])
     });
   }
@@ -101,8 +102,8 @@ export class CompanyFormComponent {
           break;
   
         case CrudAction.UPDATE:
-          // const updateResponse = await firstValueFrom(this.catalogService.update(this.catalogForm.value))
-          // console.log(updateResponse)
+          const updateResponse = await firstValueFrom(this.companyService.update(this.catalogForm.value))
+          console.log(updateResponse)
           break;
       }
     } catch (error) {

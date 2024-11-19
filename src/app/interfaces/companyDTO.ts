@@ -1,3 +1,5 @@
+import { Keys } from "./data";
+
 export interface CloudinaryDto {
   cloud_name: string;
   api_key: string;
@@ -33,8 +35,5 @@ export interface CreateSocialMedia {
 export interface CreateCompanyDto {
   id?:number;
   company_name: string;
-  cloudinary?: CloudinaryDto;
-  email?: EmailDto;
-  contact_info?: CreateContactInfo;
-  links?: CreateSocialMedia;
+  keys?: Keys;
 }

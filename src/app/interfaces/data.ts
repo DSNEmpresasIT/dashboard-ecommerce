@@ -1,7 +1,7 @@
 import { CrudAction } from "../enums/enums"
 import { User } from "../pages/company-manager/user/user.component"
 import { Company } from "./company"
-import { CreateCompanyDto } from "./companyDTO"
+import { CloudinaryDto, CreateCompanyDto, CreateContactInfo, CreateSocialMedia, EmailDto } from "./companyDTO"
 import { Catalog } from "./product"
 
 export interface Data {
@@ -16,5 +16,13 @@ export interface CatalogFormData extends Data{
 }
 
 export interface CompanyFormData extends Data {
-    companyDTO?: CreateCompanyDto
+    companyDTO?: CreateCompanyDto;
+    
+}
+
+export interface Keys {
+    cloudinary?: CloudinaryDto;
+    email?: EmailDto;
+    contact_info?: CreateContactInfo;
+    links?: CreateSocialMedia;
 }
