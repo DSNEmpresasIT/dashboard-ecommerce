@@ -9,19 +9,19 @@
           </svg>
       </button>
   
-      <h5 class=" text-white font-semibold text-lg ps-4">Manage Companies</h5>
+      <h5 class=" text-white font-semibold text-lg ps-4">Empresas</h5>
       
     </div>
     <div class="bg-Overlay p-6 rounded-2xl">
       <h1 class="w-full font-semibold text-2xl text-white text-start ml-3">Gestionar Empresas</h1>
       <section class="flex flex-wrap gap-4 justify-start items-start w-full mt-2 pl-3">
         <div class="flex gap-4">
-          <button class="p-3 mt-1 text-xs bg-Pine hover:bg-Pine-700/70 text-Text font-semibold rounded-lg focus:outline-none">
-            Agregar compañía
+          <button (click)="companyCrud(action.CREATE)" class="p-3 mb-2 mt-1 text-xs bg-Pine hover:bg-Pine-700/70 text-Text font-semibold rounded-lg focus:outline-none">
+            Agregar empresa
           </button>
         </div>
       </section>
-      <div class="grid mt-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-flow-dense justify-center items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 justify-center items-center">
           @for (company of companies; track $index) {
             <summary class="bg-Base h-full text-white rounded-2xl p-5 m-3 flex flex-wrap justify-around flex-col gap-4 group/bg overflow-hidden shadow-xl relative">
                 <article>
@@ -66,18 +66,16 @@
                                     <button (click)="userCrud(user, null, action.READ)" class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
                                     <button (click)="userCrud(user, null, action.UPDATE)" class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
                                     @if(company.users && company.users.length !== 1) {
-                                        <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Eliminar</button>
+                                      <button (click)="deleteUser(user.id)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Eliminar</button>
                                     }
                                   </div>
                                 </ng-template>
                               </summary>
-                          </div>
-                        }
+                            </div>
+                          }
                         </div>
                         <div class="flex flex-wrap sm:flex-row sm:flex-nowrap gap-2">
-                            <button (click)="userCrud(null, company, action.CREATE)" class="bg-Pine/70 w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
-                            Agregar usuario
-                            </button>
+                          <button (click)="userCrud(null, company, action.CREATE)" class="bg-Pine/70 w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">Agregar usuario</button>
                         </div>
                     </div>
                   </article>
@@ -86,19 +84,28 @@
                   <article>
                     <p>Catálogos</p>
                     <div class="flex flex-col gap-1 text-gray-400 text-sm mt-2">
-                      <div class="tree-category-scroll h-36 overflow-y-scroll">
+                      <div class="tree-category-scroll h-36 overflow-y-scroll pr-4">
                         @for (catalog of company.catalogs; track $index) {
-                          <div class="flex p-3 justify-between">
+                          <summary class="flex items-center justify-between group/bg w-full bg-Surface text-Text p-3 rounded-lg mb-2">
                             <span>{{ catalog.name }}</span>
-                            <button class="bg-Rose/70 text-white px-4 py-1 rounded-lg hover:bg-Rose">
-                              Delete Catalog
+                            <button type="button" [cdkMenuTriggerFor]="menu" class="peer-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 inline-block hover:text-Pine px-3 py-2 bg-HighLightLow/60 rounded-lg text-md font-medium text-Text hover:bg-Pine focus:bg-Pine focus:outline-none" type="button">
+                              <i class="fa-solid fa-ellipsis text-white"></i>
                             </button>
-                          </div>
+                            <ng-template #menu>
+                              <div class="mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
+                                <button (click)="catalogCrud(action.READ, catalog)" class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-eye ps-1 pr-2"></i>Ver</button>
+                                <button (click)="catalogCrud(action.UPDATE, catalog)" class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-pen ps-1 pr-2"></i>Editar</button>
+                                @if(company.catalogs && company.catalogs.length !== 1) {
+                                  <button (click)="deleteCatalog(catalog)" class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1 pr-2"></i>Eliminar</button>
+                                }
+                              </div>
+                            </ng-template>
+                          </summary>
                         }
                       </div>
                       <div class="flex flex-wrap sm:flex-row sm:flex-nowrap gap-2">
-                        <button class="bg-Pine/70 w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
-                          Add Catalog
+                        <button (click)="catalogCrud(action.CREATE)" class="bg-Pine/70 w-full sm:w-full text-white px-4 py-2 rounded-lg hover:bg-Pine">
+                          Agregar catálogo
                         </button>
                       </div>
                     </div>
@@ -109,7 +116,7 @@
                 </button>
                 <ng-template #menu>
                   <div class=" mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
-                    <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+                    <button (click)="companyCrud(action.UPDATE, company)" class="block px-4 py-2 text-sm text-Text hover:text-Pine" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
                     <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
                   </div>
                 </ng-template>

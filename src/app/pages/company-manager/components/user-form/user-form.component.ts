@@ -14,6 +14,8 @@ import { UserService } from '../../../../services/global-api/company-manager/use
 import { firstValueFrom } from 'rxjs';
 import { AlertService, AlertsType } from '../../../../services/alert.service';
 import { ReplaceUnderscorePipe } from '../../../../pipes/replace-underscore.pipe';
+import { Router } from '@angular/router';
+import { CUSTOMPATHS } from '../../../../enums/routes';
 @Component({
   selector: 'app-user-form',
   standalone: true,
@@ -29,8 +31,10 @@ export class UserFormComponent {
   }));
   userService = inject(UserService)
   alertService = inject(AlertService)
+  router = inject(Router)
   crud = CrudAction
   title!: string
+  hideAdminRole = false
   userForm: FormGroup = new FormGroup({
     id: new FormControl(''),
     companyId: new FormControl(''),
@@ -56,6 +60,10 @@ export class UserFormComponent {
     }
     if (data.action === CrudAction.READ) {
       this.userForm.disable()
+    }
+    this.hideAdminRole = this.router.url === CUSTOMPATHS.COMPANY_USER_USERS
+    if(this.hideAdminRole) {
+      this.roles = this.roles.filter((rol) => rol.rol !== Roles.ADMIN)
     }
   }
   async submit() {
