@@ -32,13 +32,13 @@ export class CategoryTreeService {
     });
   }
 
-  getProductWithCategories(catalogId: number, productId: number): Observable<any> {
+  getProductWithCategories(productId: number): Observable<any> {
     return this.http.get<any>(`/api/products/catalog/${this.catalogId}/${productId}?withCategoryRoot=true`, { headers: this.authService.getAuthHeaders() });
   }
 
-  getCategoryChildren(categoryId?: number): Observable<any[]> {
+  getCategoryChildren(categoryId?: number, catalogId?:number): Observable<any[]> {
     let option = `?categoryId=${categoryId}`;
-    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/${this.catalogId}`;
+    const baseSetting = `${environment.GLOBALAPIURL}catalog/categories/${catalogId ? catalogId : this.catalogId}`;
     return this.http.get<any[]>(categoryId ? `${baseSetting + option}` : `${baseSetting}` , { headers: this.authService.getAuthHeaders() } );
   }
 

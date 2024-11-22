@@ -1,16 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, effect, ElementRef, OnInit, Signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductSingleService } from '../../services/supabase/product-single.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductFeature } from '../../interfaces/productSingle';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { CloudinaryService } from '../../services/cloudinary.service';
 import { ButtonSpinerComponent } from "../../components/button-spiner/button-spiner.component";
+import { AlertService, AlertsType } from '../../services/alert.service';
+import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
+import { ProductService } from '../../services/global-api/catalog/product.service';
+import { AuthService } from '../../services/auth/auth.service';
+import { SupplierService } from '../../services/global-api/supplier.service';
+import { Supplier } from '../../interfaces/supplier';
+import { UserAuthPayload } from '../../interfaces/auth';
+import { firstValueFrom } from 'rxjs';
+import { Product, ProductFeatures } from '../../interfaces/product';
+import { CategoryTreeComponent } from "../../components/category-tree/category-tree.component";
+import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
+import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
 
 export enum COMPONENTSS{ 
-  MAIN_INFORMATION = 'Main Information',
+  MAIN_INFORMATION = 'Information principal',
   TECHNICAL_DETAILS = 'Technical Details',
-  DOWNLOAD_LINKS = 'Download Links'
+  FILES = 'Archivos',
+  CATEGORIES = 'Relacion con Categorias',
+  FEATURES= 'Caracteristicas'
 }
 
 @Component({
@@ -18,150 +31,374 @@ export enum COMPONENTSS{
     standalone: true,
     templateUrl: './product-feature.component.html',
     styleUrl: './product-feature.component.css',
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent]
+    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent]
 })
 export class ProductFeatureComponent implements OnInit {
-  productSingle: FormGroup;
+  productNewForm: FormGroup;
+  fileName: string = '';
   renderProductSingle: ProductFeature | undefined | null; 
   productName: string | null | undefined;
   readonly COMPONENTS = COMPONENTSS
-  componentsToRender: COMPONENTSS = this.COMPONENTS.TECHNICAL_DETAILS
+  componentsToRender: COMPONENTSS = this.COMPONENTS.MAIN_INFORMATION
   isLoading: boolean = false
   pdfFiles: { [key: string]: File } = {}; 
 
   switchComponentsToRender(componentToRender: COMPONENTSS){
     this.componentsToRender = componentToRender
   }
+  product!: any
+  suppliers: Supplier[] | null = [];
+  payload: UserAuthPayload | null = null;
+  selectedId: string | null = null;
+  selectedCategoriesSignal: Signal<SelectedCategory[]>;
+  catalogId: string | null = null;
 
   constructor(
-    private productServ: ProductSingleService,
+    private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private cloudinaryServ: CloudinaryService
+    private supplierServ: SupplierService,
+    private cloudinaryService: CloudinaryService,
+    // public modalToggleService: ModalService,
+    private alertServ: AlertService,
+    private authService: AuthService,
+    private productServ: ProductService,
+    private treeCategoryTestServ: CategoryTreeService,
+    private catalogStateService: CatalogStateService,
   ) {
-    this.productSingle = this.formBuilder.group({
-      id:[''],
-      product_id: [null],
-      description: [null],
-      activeIngredient: [null],
-      modeOfAction: [null],
-      actionSite: [null],
-      toxicologicalClassification: [null],
-      formulation: [null],
-      weedType: [null],
-      pdffiles: [null],
-      applicationTimingCrops: [null],
-      applicationTimingWeeds: [null],
-      actionForm: [null],
-      applicationLocation: [null],
-      safetyDataSheet: [null],
-      downloadMarbete: [''],
-      downloadCommercialFlyer: [''],
-    });
-  }
-
-  ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      const categoryParam = params.get('id');
-      if (categoryParam) {
-        const updatedProductSingleValue = { ...this.productSingle.value, product_id: categoryParam };
-        this.productSingle.setValue(updatedProductSingleValue);
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.catalogId = params['catalogId'];
+      if (this.catalogId) {
+        this.catalogStateService.setCatalogId(this.catalogId);
       }
-      this.productName = params.get('name')
-      this.getProductSingle(categoryParam as string);
     });
+    
+    this.selectedCategoriesSignal = this.treeCategoryTestServ.selectedCategoriesSignal;
+
+    this.productNewForm = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      img: [''], // For previewing the selected image
+      images: this.formBuilder.array([]),
+      categoryIds: [[], [Validators.required]],
+      catalogId: [this.payload?.user.catalogId],
+      is_active_substance: [false],
+      stock: [null],
+      productFeatures: this.formBuilder.group({
+        specs: this.formBuilder.array([]),
+        items: this.formBuilder.array([])
+      })
+    });
+    effect(() => {
+      let value = this.selectedCategoriesSignal()
+      this.productNewForm.patchValue({ categoryIds: value });
+    })
+     
   }
 
+  getModalTitle(): string {
+    if (this.selectedId) {
+      const productName = this.productNewForm.get('name')?.getRawValue() || '';
+      return `Editando Producto "${productName}"`;
+    } else {
+      return 'Ingrese los datos del producto';
+    }
+  }
+  
 
-  getProductSingle(productId: string) {
-    console.log(productId, 'productid')
-    if (productId) {
-      this.productServ.getProductSingleById(productId)
-        .then((data) => {
-          this.renderProductSingle = data;
-          console.log(data, 'data')
-          this.updateFormValues();
+  ngOnInit() {
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.catalogId = params['catalogId'];
+      const productId = params['id'];
+      if(!this.catalogId){
+        this.alertServ.show(10000, 'El catalogo no fue definido, cree uno antes de acceder a esta vista.', AlertsType.ERROR)
+      }
+
+      if(this.catalogId && productId){
+        this.loadProduct(productId);
+      }else{
+        this.treeCategoryTestServ.getCategoryChildren().subscribe((res)=>{
+          this.product = res
         })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }
-
-  private updateFormValues() {
-    console.log(this.renderProductSingle, 'render product Single')
-    if (this.renderProductSingle) {
-      this.productSingle.patchValue({
-        id: this.renderProductSingle.id || undefined,
-        product_id: this.renderProductSingle.product_id || undefined,
-        description: this.renderProductSingle.description || undefined,
-        activeIngredient: this.renderProductSingle.activeIngredient || undefined,
-        modeOfAction: this.renderProductSingle.modeOfAction || undefined,
-        actionSite: this.renderProductSingle.actionSite || undefined,
-        toxicologicalClassification: this.renderProductSingle.toxicologicalClassification || undefined,
-        formulation: this.renderProductSingle.formulation || undefined,
-        weedType: this.renderProductSingle.weedType || undefined,
-        pdffiles: this.renderProductSingle.pdffiles || undefined,
-        applicationTimingCrops: this.renderProductSingle.applicationTimingCrops || undefined,
-        applicationTimingWeeds: this.renderProductSingle.applicationTimingWeeds || undefined,
-        actionForm: this.renderProductSingle.actionForm || undefined,
-        applicationLocation: this.renderProductSingle.applicationLocation || undefined,
-        safetyDataSheet: this.renderProductSingle.safetyDataSheet || undefined,
-        downloadMarbete: this.renderProductSingle.downloadMarbete || undefined,
-        downloadCommercialFlyer: this.renderProductSingle.downloadCommercialFlyer || undefined,
-      });
-    }
-  }
-
-
-  onPDFFileSelected(event: any, fieldName: string) {
-    const file = event.target.files[0];
-    console.log(file, 'archivo en file')
-    if (file) {
-      this.pdfFiles[fieldName] = file;
-    }
-  }
-
-  async onSubmit() {
-    if (this.productSingle.valid) {
-      this.isLoading = true;
-      const data = this.productSingle.value;
-
-      const uploadAndUpdate = async (fieldName: string) => {
-        const oldUrl = data[fieldName];
-        if (oldUrl) {
-          const publicId = this.cloudinaryServ.extractPublicIdFromUrl(oldUrl);
-          if (publicId) {
-            await this.cloudinaryServ.deleteFile(publicId).toPromise();
-          }
-        }
-        if (this.pdfFiles[fieldName]) {
-          const response = await this.cloudinaryServ.uploadPDF(this.pdfFiles[fieldName]).toPromise();
-          data[fieldName] = response.secure_url;
-        }
-      };
-
-      const uploadPromises = [
-        uploadAndUpdate('pdffiles'),
-        uploadAndUpdate('safetyDataSheet'),
-        uploadAndUpdate('downloadMarbete'),
-        uploadAndUpdate('downloadCommercialFlyer')
-      ];
-
-      try {
-        await Promise.all(uploadPromises);
-        if (data.id === '') {
-          delete data.id;
-        }
-        await this.productServ.updateProductSingle(data);
-        console.log('Datos actualizados correctamente en Supabase.');
-        this.isLoading = false;
-        this.getProductSingle(data.id)
-      } catch (error) {
-        this.isLoading = false;
-        console.error('Error al actualizar datos:', error);
-        alert('Hubo un error al actualizar los datos. Por favor, inténtelo de nuevo.');
       }
+
+      if (this.catalogId) {
+        this.catalogStateService.setCatalogId(this.catalogId);
+      }
+    });
+  
+
+   this.fetchAllSuppliers();
+
+    this.authService.currentTokenPayload.subscribe(res => this.payload = res);
+  }
+
+
+
+  private async loadProduct(id: string) {
+    this.selectedId = id;
+    try {
+      const product: Product = await firstValueFrom(this.productServ.fetchProductById(parseInt(id)));
+      this.product = product.relatedCategoriesMarked
+      this.productNewForm.patchValue({
+        name: product.name,
+        description: product.description,
+        is_active_substance: product.is_active_substance,
+        stock: product.stock,
+        catalogId: product.catalog?.id || null,
+      });
+      if(product.categories){
+        this.treeCategoryTestServ.setSelectedCategories(
+          product.categories.map(cat => ({
+            id: cat.id,
+            label: cat.label
+          }))
+        );
+
+      }
+  
+  
+      const imagesFormArray = this.productNewForm.get('images') as FormArray;
+      imagesFormArray.clear();
+      product.images.forEach((image) => {
+        imagesFormArray.push(this.formBuilder.group({
+          id: [image.id],
+          url: [image.url],
+          cloudinary_id: [image.cloudinary_id]
+        }));
+      });
+  
+      this.setProductFeaturesFormArrays(product.product_features);
+  
+    } catch (error) {
+      console.error('Error fetching product', error);
     }
   }
+  
+  
+  private setProductFeaturesFormArrays(productFeatures: ProductFeatures | null | undefined) {
+    const productFeaturesForm = this.productNewForm.get('productFeatures') as FormGroup;
+  
+    const specsFormArray = productFeaturesForm.get('specs') as FormArray;
+    specsFormArray.clear();
+    productFeatures?.specs?.forEach((spec) => {
+      specsFormArray.push(this.formBuilder.control(spec));
+    });
+
+    const itemsFormArray = productFeaturesForm.get('items') as FormArray;
+    itemsFormArray.clear();
+    productFeatures?.items?.forEach((item) => {
+      itemsFormArray.push(this.formBuilder.group({
+        title: [item.title, Validators.required],
+        text: [item.text, Validators.required]
+      }));
+    });
+  }
+  
+  addFeatureItem() {
+    const items = this.productNewForm.get('productFeatures.items') as FormArray;
+    if (items) {
+      items.push(this.formBuilder.group({
+        title: ['', Validators.required],
+        text: ['', Validators.required]
+      }));
+    }
+  }
+
+  removeFormItems(id: number, form: string){
+    const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
+    itemToDelet.removeAt(id);
+
+    
+  }
+  
+  addSpec() {
+    const specs = this.productNewForm.get('productFeatures.specs') as FormArray;
+    if (specs) {
+      specs.push(this.formBuilder.control(''));
+    }
+  }
+  
+  get featuresArray(): FormArray {
+    return this.productNewForm.get('productFeatures.items') as FormArray;
+  }
+  
+  get featureSpects(): FormArray {
+    return this.productNewForm.get('productFeatures.specs') as FormArray;
+  }
+  
+  addImage() {
+    const images = this.productNewForm.get('images') as FormArray;
+    images.push(this.formBuilder.group({
+      cloudinary_id: ['', Validators.required],
+      url: ['', Validators.required]
+    }));
+  }
+  get imagesArray(): FormArray {
+    return this.productNewForm.get('images') as FormArray;
+  }
+  
+
+  async onImageSelected(event: Event): Promise<void> {
+    const inputElement = event.target as HTMLInputElement;
+    if (inputElement.files && inputElement.files.length > 0) {
+      const files = Array.from(inputElement.files);
+      this.fileName = files.map(file => file.name).join(', ');
+      const maxSizeInBytes = 500 * 1024; // 500kb
+
+      for (const file of files) {
+        if (file.size > maxSizeInBytes) {
+          this.alertServ.show(6000, "Una de las imágenes supera el tamaño máximo de 500kb", AlertsType.ERROR);
+          continue; // Skip this file
+        }
+
+        const reader = new FileReader();
+
+        await new Promise<void>((resolve, reject) => {
+          reader.onload = async (e: any) => {
+            const imageData = e.target.result;
+            const cloudinaryResponse = await this.uploadToCloudinary(imageData);
+            console.log(cloudinaryResponse, 'cloudinary')
+
+            if (cloudinaryResponse) {
+              this.addImageWithUrl(cloudinaryResponse.asset_id, cloudinaryResponse.url);
+            }
+
+            resolve();
+          };
+
+          reader.onerror = (error) => {
+            reject(error);
+          };
+
+          reader.readAsDataURL(file);
+        });
+      }
+    } else{
+      this.fileName = 'Ningún archivo seleccionado';
+    }
+  }
+
+  addImageWithUrl(cloudinaryId: string, url: string) {
+    const images = this.productNewForm.get('images') as FormArray;
+    images.push(this.formBuilder.group({
+      cloudinary_id: [cloudinaryId, Validators.required],
+      url: [url, Validators.required]
+    }));
+  }
+
+  async uploadToCloudinary(imageData: File): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.cloudinaryService.uploadImage(imageData).subscribe(
+        (response) => {
+          resolve(response);
+        },
+        (error) => {
+          console.error('Error uploading image to Cloudinary:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  async onSubmit(): Promise<void> {
+      this.toggleLoading();
+      try {
+        const productData = this.prepareProductData();
+        console.log(productData, 'data antes de enviar con el nuevo arbol ')
+        await this.saveProductToAPI(productData);
+       
+      } catch (error:any) {
+        console.error('Error processing the form:', error);
+        this.alertServ.show(10000, `Hubo un error al procesar el formulario. Corrige los errores e intenta nuevamente. ${error.message}` , AlertsType.ERROR);
+
+      } finally {
+        this.toggleLoading();
+      }
+    
+  }
+
+  private prepareProductData(): any {
+    if (!this.productNewForm.valid){
+    const errors: string[] = [];
+
+    Object.keys(this.productNewForm.controls).forEach((key) => {
+      const control = this.productNewForm.get(key);
+      
+      if (control && control.invalid) {
+        const fieldName = key; 
+        errors.push(`El campo "${fieldName}" es obligatorio.`);
+      }
+    });
+
+    throw new Error(`\n${errors.join('\n')}`);
+    }
+
+      const categories = this.productNewForm.get('categoryIds')?.getRawValue();
+      const categoryIds = [...categories.map((item:any) => parseInt(item.id))];
+    
+      const productData = {
+        ...this.productNewForm.value,
+        categoryIds:  categoryIds
+      };
+    
+      delete productData.img;
+      delete productData.categoryParentId;
+      delete productData.subCategoryIds;
+    
+      return productData;
+    
+  }
+
+  private async saveProductToAPI(productData: any): Promise<void> {
+    try {
+      const productId = this.selectedId;
+  
+      if (productId) {
+        await this.productServ.edit(parseInt(productId), productData);
+      } else {
+        await this.productServ.create(productData);
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  }
+
+  // toggleModal(value: boolean) {
+  //   this.treeCategoryTestServ.setSelectedCategories([])
+  //   this.modalToggleService.toggleModal(value);
+  // }
+
+  toggleLoading(){
+    this.isLoading = !this.isLoading;
+  }
+
+
+  fetchAllSuppliers(){
+    this.supplierServ.getSuppliers()
+      // .then((arg: Supplier[] | null)=>{
+      //   this.suppliers = arg;
+      // })
+      // .catch(error =>{
+      //   console.log('Error fetching suppliers', error);
+      // });
+  }
+
+
+  // modal image 
+
+  @ViewChild('imageDialog') imageDialog!: ElementRef;
+
+
+  openDialog() {
+    this.imageDialog.nativeElement.showModal();
+  }
+
+  closeDialog(e: Event) {
+    if (e && e.target === e.currentTarget) {
+      this.imageDialog.nativeElement.close();
+    }
+  }
+
+
 }

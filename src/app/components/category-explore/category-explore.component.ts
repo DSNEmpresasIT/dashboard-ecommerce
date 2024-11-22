@@ -14,16 +14,19 @@ import { CategoryTreeComponent } from "../category-tree/category-tree.component"
 import { CategoryTreeService, SelectedCategory } from '../../services/category-tree.service';
 import { ModalService } from '../../services/modal-new-product.service';
 import { ProductService } from '../../services/global-api/catalog/product.service';
+import { RouterLink } from '@angular/router';
+import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 
 @Component({
     selector: 'app-category-explore',
     standalone: true,
     templateUrl: './category-explore.component.html',
     styleUrl: './category-explore.component.css',
-    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, CdkMenuModule, DeletCheckComponent, CategoryTreeComponent]
+    imports: [CommonModule, ReactiveFormsModule, CategoryModalComponent, CdkMenuModule, DeletCheckComponent, CategoryTreeComponent, RouterLink]
 })
 export class CategoryExploreComponent implements OnInit {
   DeletTypes: DeletTypes = DeletTypes.CATEGORY;
+  catalogId: string | null = null
 
   searcherCategory:FormControl<string | null> = new FormControl<string>('');
   categories$ = this.categoryServ.categories$;
@@ -55,6 +58,7 @@ export class CategoryExploreComponent implements OnInit {
     private categoryServ: CategoryService,
     private categoryTreeServ: CategoryTreeService,
     private modalToggleService: ModalService,
+    private catalogState: CatalogStateService
   ) {
       this.selectedCategoriesSignal = this.categoryTreeServ.selectedCategoriesSignal;
 
@@ -86,12 +90,12 @@ export class CategoryExploreComponent implements OnInit {
           }
         });
         
+        this.catalogState.catalogId$.subscribe(id => {
+          this.catalogId = id;
+        });
         
     }
-
     
-
-
   ngOnInit() {
     this.getAllCategory()
    

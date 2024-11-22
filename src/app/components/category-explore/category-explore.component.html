@@ -41,12 +41,12 @@
   >
     <i class="fa-solid fa-indent pe-2"></i>Agregar Categoria
   </button>
-  <button
-    (click)="toggleModalNewProduct()"
-    class="p-3 mt-2 hover:bg-Pine bg-Pine/80 text-Text font-semibold rounded-lg focus:outline-none"
+  <a
+    [routerLink]="['/product-details']" [queryParams]="{ catalogId: catalogId}"
+    class="p-3 mt-2 hover:bg-Pine text-center bg-Pine/80 text-Text font-semibold rounded-lg focus:outline-none"
   >
     <i class="fa-solid fa-plus-minus pe-2"></i> Agregar Producto
-  </button>
+  </a>  
 
   <app-category-modal #categoryModal></app-category-modal>
 </div>

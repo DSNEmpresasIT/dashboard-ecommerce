@@ -10,6 +10,7 @@ import { ModalService } from '../../services/modal-new-product.service';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { ProductPreviewComponent } from "../product-preview/product-preview.component";
 import { ProductService } from '../../services/global-api/catalog/product.service';
+import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 
 @Component({
   selector: 'app-card-product',
@@ -21,7 +22,8 @@ import { ProductService } from '../../services/global-api/catalog/product.servic
 export class CardProductComponent implements OnInit, OnChanges {
   @Input() renderProduct!: Product;
   @Output() booleanOutput: EventEmitter<boolean> = new EventEmitter<boolean>();
-
+  catalogId: string | null = null
+  
   toggleForm: boolean = false;
   deleteConfig: deleteConfig = {
     id: 0,
@@ -34,8 +36,14 @@ export class CardProductComponent implements OnInit, OnChanges {
   @ViewChild(DeletCheckComponent) deletCheckComponent!: DeletCheckComponent;
 
   constructor(private productServ: ProductService,
-    private modalProduct: ModalService
-  ) {}
+    private modalProduct: ModalService,
+    private catalogState: CatalogStateService
+  ) {
+    this.catalogState.catalogId$.subscribe(id => {
+      this.catalogId = id;
+    });
+  }
+
 
   ngOnInit() {}
 

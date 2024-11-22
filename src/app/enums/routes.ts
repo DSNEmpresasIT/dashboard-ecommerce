@@ -7,5 +7,6 @@ export enum CUSTOMPATHS {
   COMPANY_USER_CATALOGS = COMPANY_USER + '/catalogs',
   COMPANY_ADMIN = COMPANY_MANAGER + '/admin',
   CATALOG = '/catalog',
+  PRODUCT_DETAILS = '/product-details',
   AUTH = '/auth'
 }

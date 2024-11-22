@@ -21,7 +21,7 @@
 
   <ng-template   #menu>
     <div class=" mt-2 p-2 peer rounded-md shadow-lg bg-Overlay ring-1 ring-black ring-opacity-5" cdkMenu>
-      <button class="block px-4 py-2 text-sm text-Text hover:text-Pine" (click)="editProduct(renderProduct.id)" cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</button>
+      <a [routerLink]="['/product-details']" [queryParams]="{ id: renderProduct.id, catalogId: catalogId}" class="block px-4 py-2 text-sm text-Text hover:text-Pine"  cdkMenuItem><i class="fa-solid fa-pen ps-1"></i>  Editar</a>
       <button class="block px-4 py-2 text-sm text-Text hover:text-red-400" (click)="deleteProduct(renderProduct)" cdkMenuItem><i class="fa-solid fa-xmark ps-1"></i>  Borrar</button>
 
     </div>

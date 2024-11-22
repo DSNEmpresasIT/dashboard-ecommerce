@@ -1,142 +1,280 @@
-<div class="min-h-screen w-full mt-20 px-20  justify-center  bg-Base">
+<div class="min-h-screen w-full  px-20 mt-20 justify-center  bg-Base">
 
-  <div class="flex mb-10 pt-10">
+  <!-- <div class="flex mb-10 pt-10">
     <a [routerLink]="['/home']" routerLinkActive="router-link-active" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
       Ir Atras
      </a>
   </div>
- 
-  <div class=" mt-2 p-4 rounded-lg flex bg-Overlay  w-full">
+  -->
 
-    <form   [formGroup]="productSingle" (ngSubmit)="onSubmit()">
+
+  <div class=" p-4 rounded-lg flex pt-10  w-full">
+
+    <form class="w-full"  [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
       <div class="flex  justify-center items-start ">
-        @if (productName){
-        <h2 class="text-3xl  font-bold mb-4 mt-6 text-Text flex">Edicion de detalle del producto : {{productName}} </h2>
-        }
-      </div>
-      <div class="flex flex-col gap-4  ">
         
-        <div class="flex gap-3">
-          <button type="button" [class.bg-Pine]="componentsToRender == COMPONENTS.TECHNICAL_DETAILS" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg" (click)="switchComponentsToRender(COMPONENTS.TECHNICAL_DETAILS)">Detalles tecnicos</button>
-          <button type="button" [class.bg-Pine]="componentsToRender == COMPONENTS.MAIN_INFORMATION" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)">Informacion principal</button>
-          <button type="button"[class.bg-Pine]="componentsToRender == COMPONENTS.DOWNLOAD_LINKS" class="p-2 text-Text hover:bg-Pine bg-HighLightLow  border  rounded-lg " (click)="switchComponentsToRender(COMPONENTS.DOWNLOAD_LINKS)">Links de descarga</button>
-        </div>
-        @switch (componentsToRender) {
-          @case (COMPONENTS.MAIN_INFORMATION) {
-            <div class=" flex flex-col gap-3">
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Momento de Aplicación Malezas</label>
-                  <input type="text" formControlName="applicationTimingWeeds"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Forma de Acción</label>
-                  <input type="text" formControlName="actionForm"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Lugar de Aplicación.</label>
-                  <input type="text" formControlName="applicationLocation"
-                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-    
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Tipo de Maleza</label>
-                  <input type="text" formControlName="weedType"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-    
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Momento de aplicación Cultivo</label>
-                  <input type="text" formControlName="applicationTimingCrops"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-    
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Principio Activo</label>
-                  <input type="text" formControlName="activeIngredient"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                </div>
-            </div>
-          }
-          @case ( COMPONENTS.TECHNICAL_DETAILS ) {
-            <div class=" flex flex-col gap-3">
-           
-              <div class="mb-4 ">
-                <label class="block text-Text font-bold mb-2">Modo de Acción</label>
-                <input type="text" formControlName="modeOfAction"
-                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-              </div>
-              <div class="mb-4">
-                <label class="block text-Text font-bold mb-2">Sitio de Acción</label>
-                <input type="text" formControlName="actionSite"
-                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-              </div>
-    
-              <div class="mb-4">
-                <label class="block text-Text font-bold mb-2">Formulación</label>
-                <input type="text" formControlName="formulation"
-                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-              </div>
-              <div class="mb-4">
-                <label class="block text-Text font-bold mb-2">Método de Aplicación</label>
-                <input type="text" formControlName="applicationMethod"
-                  class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-              </div>
-              <div class="mb-4">
-                <label class="block text-Text font-bold mb-2">Clasificación Toxicológica</label>
-                <input type="text" formControlName="toxicologicalClassification"
-                  class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-              </div>
-            </div>
-          }
-          @case (COMPONENTS.DOWNLOAD_LINKS) {
-           
-              <div class="flex flex-col gap-3">
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Link Archivos PDF</label>
-                  <input type="text" formControlName="pdffiles"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  (change)="onPDFFileSelected($event, 'pdffiles')">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Link PDF Marbete</label>
-                  <input type="text" formControlName="downloadMarbete"
-                    class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  name="downloadMarbete" (change)="onPDFFileSelected($event, 'downloadMarbete')">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Link PDF Flyer Comercial</label>
-                  <input type="text" formControlName="downloadCommercialFlyer"
-                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"  (change)="onPDFFileSelected($event, 'downloadCommercialFlyer')">
-                </div>
-                <div class="mb-4">
-                  <label class="block text-Text font-bold mb-2">Link Hoja de Datos de Seguridad</label>
-                  <input type="text" formControlName="safetyDataSheet"
-                    class="text-Text p-3  w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                    <input type="file" class="text-Text rounded-lg bg-Pine hover:bg-Pine"   (change)="onPDFFileSelected($event, 'safetyDataSheet')">
-                </div>
-                <div class="mb-4 ">
-                  <label class="block text-Text font-bold mb-2">Descripción</label>
-                  <textarea type="text" formControlName="description"
-                    class="text-Text p-3  w-full px-10 rounded-lg bg-HighLightLow "></textarea>
-                </div>
-              </div>
-             
-          }
-          }
+        <div class="flex w-full items-center bg-Overlay  mb-10 p-4 gap-2  rounded-lg ">
+   
+          <a [routerLink]="['/catalog']" [queryParams]="{ id: catalogId}" routerLinkActive="router-link-active" class="text-lg flex items-center  font-semibold text-Text p-2 hover:text-Pine    ">
+            <i class="fa-solid fa-arrow-left pe-2"></i>
+              Catalogo
+           </a>
+           <h5 class="text-white font-semibold text-lg ms-36 ps-4">
+            {{ selectedId ? 'Edición de detalle del producto: ' + productNewForm.get('name')?.value : 'Creando Producto' }}
+          </h5>
+          
+         </div>
+
       </div>
-    <div class="flex flex-col w-full ">
+        <div class="md:flex w-full gap-6  ">
+        
+          <div class="flex flex-col w-[300px]  gap-4">
+            <button 
+            type="button"
+            [class.bg-Pine]="componentsToRender == COMPONENTS.MAIN_INFORMATION"
+            class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
+            (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)"
+            >
+            <i class="fa-solid fa-circle-info pe-2"></i>
+            
+              Informacion principal
+            </button>
+            <button 
+            type="button" 
+            [class.bg-Pine]="componentsToRender == COMPONENTS.FEATURES"
+             class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
+              (click)="switchComponentsToRender(COMPONENTS.FEATURES)">
+              <i class="fa-regular fa-rectangle-list pe-2"></i>
+              
+              Caracteristicas
+            </button>
+            <button
+             type="button"
+             [class.bg-Pine]="componentsToRender == COMPONENTS.CATEGORIES"
+             class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
+             (click)="switchComponentsToRender(COMPONENTS.CATEGORIES)">
+             <i class="fa-solid fa-sitemap pe-2"></i>
+               Relacion con categorias
+            </button>
+            <button 
+            type="button"
+            [class.bg-Pine]="componentsToRender == COMPONENTS.FILES"
+            class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
+            (click)="switchComponentsToRender(COMPONENTS.FILES)">
+            <i class="fa-regular fa-image pe-2"></i>
+              Imagenes
+            </button>
+
+            
+          </div>
+         
+            
+
+             <div class="bg-Overlay p-6 rounded-lg w-full">
+              <h3 class="text-lg font-bold  text-white mb-3">Tab {{componentsToRender}}</h3>
+              @switch (componentsToRender) {
+                @case (COMPONENTS.MAIN_INFORMATION) {
+                  
+                  <div>
+                  
+                    <div class="mb-4">
+                      <label for="name" class="block text-Text font-bold mb-2">Nombre</label>
+                      <input id="name" name="name" type="text" formControlName="name"
+                        class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                        <!-- <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') ">
+                          El nombre es requerido.
+                        </div>  -->
+                    </div>
+        
+        
+                  <div class="mb-4">
+                    <label for="description" class="block text-Text font-bold mb-2">Description</label>
+                    <textarea rows="10" cols="30"  id="description" name="description" type="text" formControlName="description"
+                      class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine"></textarea>
+                      <!-- <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') ">
+                        La description es requerida.
+                      </div>  -->
+                  </div>
+                </div>
+                }
+                @case ( COMPONENTS.FEATURES ) {
+                  <div formGroupName="productFeatures" class=" flex flex-col gap-3">
+                
+                    <div>
+                      <h4 class="text-Text mb-3 text-2xl">Caracteristicas</h4>
+                      <div formArrayName="items" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll  ">
+                        <div class="bg-Overlay p-4 rounded-xl " *ngFor="let itemControl of featuresArray.controls; let i = index" [formGroupName]="i">
+                          <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.items')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                            </svg>
+                          </button>
+              
+              
+                          <div class="mb-4">
+                            <label for="title-{{i}}" class="block text-Text font-bold mb-2">Titulo</label>
+                            <input id="title-{{i}}" name="title" type="text" formControlName="title"
+                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                              <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
+                                El titulo es requerido.
+                              </div> 
+                          </div>
+              
+                          <div class="mb-4">
+                            <label for="text-{{i}}" class="block text-Text font-bold mb-2">Texto</label>
+                            <input id="text-{{i}}" name="text" type="text" formControlName="text"
+                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                              <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
+                                El texto es requerido.
+                              </div> 
+                          </div>
+              
+                        </div>
+                        
+                          <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[260px] text-Text justify-center  px-4 " (click)="addFeatureItem()"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar característica</button>
+                        
+                      </div>
+                    </div>
+                    <div>
+                      <h4 class="text-Text mb-3 text-2xl">Especificación</h4>
+                      <div formArrayName="specs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll ">
+                        
+                        <div *ngFor="let specControl of featureSpects.controls; let i = index" class="bg-Overlay p-4 rounded-xl w-full">
+            
+                          <button type="button" class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.specs')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                              <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                            </svg>
+                          </button>
+            
+                          <div class="mb-4">
+                            <label for="specs-{{i}}" class="block text-Text font-bold mb-2">Especificacion</label>
+                            <input id="specs-{{i}}" name="specs" type="text" [formControlName]="i"
+                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                              <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
+                                La especificacion es requerida.
+                              </div> 
+                          </div>
+            
+                        </div>
+                        
+                        <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[164px] text-Text justify-center  px-4" (click)="addSpec()"> <i class="fa-solid fa-plus-minus pe-2"> </i>Agregar especificación</button>
+                        
+            
+                      </div>
+                    </div>
+  
+                  </div>
+                }
+                @case (COMPONENTS.FILES) {
+               
+                  <div  class="" formArrayName="images">
+                    <div class="grid grid-cols-4 gap-3 max-h-[700px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll scroll-smooth snap-y snap-mandatory ">
+                      <div class="flex relative group flex-col gap-2 p-2 justify-center bg-Overlay rounded snap-always snap-center"  *ngFor="let imageControl of imagesArray.controls; let i = index" [formGroupName]="i">
+                          <div class="absolute justify-center items-center group-hover:flex hidden inset-0 bg-black/70">
+                              <div class="flex gap-4">
+                                <button type="button" (click)="openDialog()"><i class="fa-regular fa-eye text-lg text-gray-200/60 hover:text-gray-200 "></i></button>
+                                <button type="button" (click)="removeFormItems(i, 'images')"><i class="fa-regular fa-trash-can text-lg hover:text-red-400 text-red-200"></i></button>
+                              </div>
+                          </div>
+                          <dialog #imageDialog >
+                            <div class="fixed inset-0 z-[9000] bg-black/50 h-full w-full flex justify-center items-center" (click)="closeDialog($event)">
+                                <button type="button" class="absolute  outline-none top-8 right-8 bg-black/60  p-3 px-5 text-white" (click)="closeDialog($event)">
+                                    <i (click)="closeDialog($event)" class="fa-solid text-lg fa-xmark"></i>
+                                </button>
+                        
+                                
+                                <div class="bg-white  rounded-lg p-4 max-w-xl relative">
+                                <img 
+                                    class="w-full aspect-[700/800] h-auto" 
+                                    [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' "
+                                    alt="Imagen completa">
+                                
+                                </div>
+        
+                            </div>
+                        </dialog>
+                           
+                       
+                            <img class="aspect-video object-cover max-h-[200px]" [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' " alt="Imagen subida">
+                            <!-- <app-product-preview 
+                            [renderProduct]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' "
+                           /> -->
+                          
+                          <!-- <div class="mb-4">
+                            <label for="url" class="block text-Text font-bold mb-2">URL de la imagen</label>
+                            <input id="url" name="url" type="text" formControlName="url"
+                              class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
+                              <div class="text-Rose" *ngIf="productNewForm?.get('url')?.hasError('required') && productNewForm.touched">
+                                La URL es requerida.
+                              </div> 
+                          </div> -->
+      
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class=" pt-2 mt-2 flex items-center gap-2">
+                    <input 
+                      name="file"
+                      type="file"
+                      class="rounded-lg hover:bg-Pine bg-HighLightLow border text-Text"
+                      (change)="onImageSelected($event)"
+                      id="img"
+                      placeholder="Agregar Imagen"
+                      multiple
+                      hidden
+                      accept="image/*">
+                     <div class="flex items-center gap-2">
+                      <label class="text-Text hover:text-Pine items-center flex gap-2" for="img" >
+                         <i class="fa-solid fa-folder-plus"></i>
+                         Agregar Imagen
+                      </label>
+                      
+                      <span >{{ fileName || 'Ningún archivo seleccionado' }}</span>
+                     </div>
+                  </div>
+                  
+                }
+                @case (COMPONENTS.CATEGORIES) {
+                  <app-category-tree [categories]="product"/>
+  
+                <div class="text-Rose" *ngIf="productNewForm.get('categoryIds')?.hasError('required') ">
+                  Al menos una categoría debe ser seleccionada.
+                </div>
+                
+                }
+                }
+            </div>
      
-      <div class="flex w-full justify-center items-center">
-        @if (!isLoading) {
-          <button type="submit" class="hover:bg-Pine bg-HighLightLow  border  text-Text p-2 px-4 rounded-lg ">Guardar</button>
-        } @else {
-          <app-button-spiner></app-button-spiner>
-        }
-      </div>
-    
-    </div>
+         
+         
+        </div>
+        <div class="flex justify-end gap-6 ">
+          
+          <a 
+            class="p-2 text-Text hover:bg-Rose bg-Rose/70 mt-4   rounded-lg justify-center  inline-flex items-center px-4 py-3 w-[150px] "
+            [routerLink]="['/catalog']"
+            [queryParams]="{ id: catalogId}"
+            >
+            <i class="fa-regular fa-rectangle-xmark pe-2"></i>
+            Cancelar
+          </a>
+          <div class="flex  justify-center text-center  items-center">
+            @if (!isLoading) {
+              <button type="submit"
+              [class.cursor-not-allowed]="productNewForm.invalid" 
+              [disabled]="productNewForm.invalid" 
+              class="p-2 text-Text hover:bg-Pine bg-Pine/70  mt-4 w-[150px] justify-center  rounded-lg  inline-flex items-center px-4 py-3">
+              <i class="fa-solid fa-circle-plus pe-2"></i>
+              
+              {{selectedId ? 'Guardar' : 'Crear'}}
+            </button>
+            } @else {
+              <app-button-spiner></app-button-spiner>
+            }
+          </div>
+        
+        </div>
     </form>
 </div>

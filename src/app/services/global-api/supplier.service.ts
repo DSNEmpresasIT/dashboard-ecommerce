@@ -7,5 +7,9 @@ export class SupplierService {
 
   constructor() { }
 
+  getSuppliers(){
+    throw new Error('method not implemented')
+  }
+
   
 }
