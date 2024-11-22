@@ -1,13 +1,4 @@
 <div class="min-h-screen w-full  px-20 mt-20 justify-center  bg-Base">
-
-  <!-- <div class="flex mb-10 pt-10">
-    <a [routerLink]="['/home']" routerLinkActive="router-link-active" class="text-xl  font-bold text-Text p-2   rounded-lg hover:bg-Pine bg-HighLightLow  border ">
-      Ir Atras
-     </a>
-  </div>
-  -->
-
-
   <div class=" p-4 rounded-lg flex pt-10  w-full">
 
     <form class="w-full"  [formGroup]="productNewForm" (ngSubmit)="onSubmit()">
@@ -68,8 +59,6 @@
             
           </div>
          
-            
-
              <div class="bg-Overlay p-6 rounded-lg w-full">
               <h3 class="text-lg font-bold  text-white mb-3">Tab {{componentsToRender}}</h3>
               @switch (componentsToRender) {
@@ -81,9 +70,12 @@
                       <label for="name" class="block text-Text font-bold mb-2">Nombre</label>
                       <input id="name" name="name" type="text" formControlName="name"
                         class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine">
-                        <!-- <div class="text-Rose" *ngIf="productNewForm?.get('name')?.hasError('required') ">
-                          El nombre es requerido.
-                        </div>  -->
+                        @if (productNewForm.get('name')?.hasError('required')) {
+                          <div class="text-Rose">
+                            El nombre es requerido.
+                          </div> 
+                        }
+                        
                     </div>
         
         
@@ -91,9 +83,12 @@
                     <label for="description" class="block text-Text font-bold mb-2">Description</label>
                     <textarea rows="10" cols="30"  id="description" name="description" type="text" formControlName="description"
                       class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine"></textarea>
-                      <!-- <div class="text-Rose" *ngIf="productNewForm?.get('description')?.hasError('required') ">
-                        La description es requerida.
-                      </div>  -->
+                      @if (productNewForm.get('description')?.hasError('required')) {
+                        <div class="text-Rose">
+                          La description es requerida.
+                        </div> 
+                      }
+                      
                   </div>
                 </div>
                 }
@@ -103,34 +98,35 @@
                     <div>
                       <h4 class="text-Text mb-3 text-2xl">Caracteristicas</h4>
                       <div formArrayName="items" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll  ">
-                        <div class="bg-Overlay p-4 rounded-xl " *ngFor="let itemControl of featuresArray.controls; let i = index" [formGroupName]="i">
-                          <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.items')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-                              <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-                            </svg>
-                          </button>
-              
-              
-                          <div class="mb-4">
-                            <label for="title-{{i}}" class="block text-Text font-bold mb-2">Titulo</label>
-                            <input id="title-{{i}}" name="title" type="text" formControlName="title"
-                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                              <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
-                                El titulo es requerido.
-                              </div> 
+                        @for (itemControl of featuresArray.controls; track $index) {
+                          <div class="bg-Overlay p-4 rounded-xl " [formGroupName]="$index">
+                            <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems($index, 'productFeatures.items')">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                              </svg>
+                            </button>
+                
+                
+                            <div class="mb-4">
+                              <label for="title-{{$index}}" class="block text-Text font-bold mb-2">Titulo</label>
+                              <input id="title-{{$index}}" name="title" type="text" formControlName="title"
+                                class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                                <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
+                                  El titulo es requerido.
+                                </div> 
+                            </div>
+                
+                            <div class="mb-4">
+                              <label for="text-{{$index}}" class="block text-Text font-bold mb-2">Texto</label>
+                              <input id="text-{{$index}}" name="text" type="text" formControlName="text"
+                                class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                                <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
+                                  El texto es requerido.
+                                </div> 
+                            </div>
+                
                           </div>
-              
-                          <div class="mb-4">
-                            <label for="text-{{i}}" class="block text-Text font-bold mb-2">Texto</label>
-                            <input id="text-{{i}}" name="text" type="text" formControlName="text"
-                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                              <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
-                                El texto es requerido.
-                              </div> 
-                          </div>
-              
-                        </div>
-                        
+                        }
                           <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[260px] text-Text justify-center  px-4 " (click)="addFeatureItem()"><i class="fa-solid fa-plus-minus pe-2"></i> Agregar característica</button>
                         
                       </div>
@@ -138,29 +134,27 @@
                     <div>
                       <h4 class="text-Text mb-3 text-2xl">Especificación</h4>
                       <div formArrayName="specs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[400px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll ">
-                        
-                        <div *ngFor="let specControl of featureSpects.controls; let i = index" class="bg-Overlay p-4 rounded-xl w-full">
+                        @for (specControl of featureSpects.controls; track $index) {
+                          <div class="bg-Overlay p-4 rounded-xl w-full">
             
-                          <button type="button" class="p-2 group flex ms-auto items-center" (click)="removeFormItems(i, 'productFeatures.specs')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
-                              <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
-                            </svg>
-                          </button>
-            
-                          <div class="mb-4">
-                            <label for="specs-{{i}}" class="block text-Text font-bold mb-2">Especificacion</label>
-                            <input id="specs-{{i}}" name="specs" type="text" [formControlName]="i"
-                              class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                              <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
-                                La especificacion es requerida.
-                              </div> 
+                            <button type="button" class="p-2 group flex ms-auto items-center" (click)="removeFormItems($index, 'productFeatures.specs')">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
+                              </svg>
+                            </button>
+              
+                            <div class="mb-4">
+                              <label for="specs-{{$index}}" class="block text-Text font-bold mb-2">Especificacion</label>
+                              <input id="specs-{{$index}}" name="specs" type="text" [formControlName]="$index"
+                                class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
+                                <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
+                                  La especificacion es requerida.
+                                </div> 
+                            </div>
+              
                           </div>
-            
-                        </div>
-                        
+                        }
                         <button type="button" class="bg-Base p-4 rounded-xl hover:bg-Pine border h-[164px] text-Text justify-center  px-4" (click)="addSpec()"> <i class="fa-solid fa-plus-minus pe-2"> </i>Agregar especificación</button>
-                        
-            
                       </div>
                     </div>
   
@@ -193,7 +187,7 @@
                                 </div>
         
                             </div>
-                        </dialog>
+                          </dialog>
                            
                        
                             <img class="aspect-video object-cover max-h-[200px]" [src]="imageControl.get('url')?.value ? imageControl.get('url')?.value : './assets/img/create-product-placeholder.jpg' " alt="Imagen subida">
@@ -226,7 +220,7 @@
                       hidden
                       accept="image/*">
                      <div class="flex items-center gap-2">
-                      <label class="text-Text hover:text-Pine items-center flex gap-2" for="img" >
+                      <label class="text-Text hover:text-Pine hover:cursor-pointer items-center flex gap-2" for="img" >
                          <i class="fa-solid fa-folder-plus"></i>
                          Agregar Imagen
                       </label>
