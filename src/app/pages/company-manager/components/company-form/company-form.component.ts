@@ -51,7 +51,7 @@ export class CompanyFormComponent {
     this.catalogForm.patchValue({
         id:data.companyDTO?.id || undefined,
         company_name: data.companyDTO?.company_name || '',
-        cloudinary: data.companyDTO?.keys?.cloudinary || {},
+        cloudinary: data.companyDTO?.keys?.cloudinary_keys || {},
         email: data.companyDTO?.keys?.email || {},
         contact_info: data.companyDTO?.keys?.contact_info || {},
         links: data.companyDTO?.keys?.links || {}
