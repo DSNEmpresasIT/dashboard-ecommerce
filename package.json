@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "start:dev": "ng s --port 4242",
+    "build": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "dev": "ng s --port 4242"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
