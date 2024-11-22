@@ -64,7 +64,7 @@ export class AdminComponent {
   companyCrud(action: CrudAction, company?: Company) {
     this.dialog.open(CompanyFormComponent, {
       width: "600px",
-      data: { company , action, refresh: () => this.getCompanies() }
+      data: { companyDTO: company , action, refresh: () => this.getCompanies() }
     })
   }
   async deleteCatalog(catalog: Catalog) {
