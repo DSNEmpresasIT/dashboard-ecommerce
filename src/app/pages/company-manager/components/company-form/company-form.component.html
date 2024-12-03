@@ -35,9 +35,9 @@
         </mat-tab>
        
         <mat-tab label="Emails">
-          <fieldset formArrayName="emails" class="mb-4">
+          <fieldset formArrayName="email_keys" class="mb-4">
             <legend class="block text-Text text-lg font-bold mb-2">Configuración de Email</legend>
-            @for (email of emails.controls; track $index) {
+            @for (email of email_keys.controls; track $index) {
               <div  [formGroupName]="$index">
                 <button class="flex justify-end items-end text-red-200 hover:text-red-400" type="button" (click)="removeEmail($index)">Eliminar Email</button>
                 <div class="mb-2">

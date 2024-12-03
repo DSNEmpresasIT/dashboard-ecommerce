@@ -8,36 +8,42 @@ import { CrudAction } from '../../../../enums/enums';
 import { CompanyFormComponent } from '../company-form/company-form.component';
 import { CompanyService } from '../../../../services/global-api/company-manager/company.service';
 import { AlertService, AlertsType } from '../../../../services/alert.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-company',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './company.component.html',
   styleUrl: './company.component.css'
 })
 export class CompanyComponent implements OnInit, OnDestroy{
   company: any;
+  visibleFields: { [key: string]: boolean } = {};
   private subscription!: Subscription;
   readonly dialog = inject(MatDialog);
   action = CrudAction;
   constructor(
     private dataSharingService: DataSharingService,
-    private companyService: CompanyService,
     private alertService: AlertService
   ) {}
 
   async ngOnInit() {
-
         this.subscription = this.dataSharingService.companyData$.subscribe((data) => {
           this.company = data;
           if (!this.company) {
             console.warn('No company data found!');
-
           }
-
     });
- 
+  }
+
+  toggleVisibility(index: number, field: string): void {
+    const key = `${index}-${field}`;
+    this.visibleFields[key] = !this.visibleFields[key];
+  }
+
+  isVisible(index: number, field: string): boolean {
+    return !!this.visibleFields[`${index}-${field}`];
   }
 
   copyToClipboard(value: string | undefined): void {

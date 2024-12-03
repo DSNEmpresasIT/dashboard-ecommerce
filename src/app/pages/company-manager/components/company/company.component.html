@@ -10,26 +10,18 @@
         <h3 class="font-medium text-sm mb-2">Claves de Cloudinary:</h3>
         @if (company.keys?.cloudinary_keys) {
           <p><strong>Cloud Name:</strong> {{ company.keys.cloudinary_keys.cloud_name }}</p>
-          <div>
-            <strong>API Key:</strong>
-            <span>*********</span>
-            <button
-              (click)="copyToClipboard(company.keys.cloudinary_keys.api_key)"
-              class="ml-2 text-sm hover:text-Pine"
-            >
-              Copiar
-            </button>
-          </div>
-          <div>
-            <strong>API Secret:</strong>
-            <span>*********</span>
-            <button
-              (click)="copyToClipboard(company.keys.cloudinary_keys.api_secret)"
-              class="ml-2 text-sm hover:text-Pine"
-            >
-              Copiar
-            </button>
-          </div>
+          @for (field of ['api_key', 'api_secret']; track $index) {
+            <li class="flex items-center">
+              <span><strong>{{[field] }}:</strong> {{ isVisible($index, field) ? company.keys.cloudinary_keys[field] : '******' }}</span>
+              <button (click)="toggleVisibility($index, field)" class="ml-2 text-sm hover:text-Pine">
+                <i class="fas" [ngClass]="isVisible($index, field) ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+              <button (click)="copyToClipboard(company.keys.cloudinary_keys[field])" class="ml-2 text-sm hover:text-Pine">
+                Copiar
+              </button>
+            </li>
+          }
+
         } @else {
           <p class="text-sm text-gray-500">La compañía no tiene claves de Cloudinary.</p>
         }
@@ -49,18 +41,21 @@
 
       <div class="mb-4">
         <h3 class="font-medium text-sm mb-2">Emails:</h3>
-        @if (company.emails?.length) {
+        @if (company.keys.email_keys?.length) {
           <ul>
-            @for (email of company.emails; track $index) {
-              <li class="flex items-center">
-                <span>{{ email.email }}</span>
-                <button
-                  (click)="copyToClipboard(email.email)"
-                  class="ml-2 text-sm hover:text-Pine"
-                >
-                  Copiar
-                </button>
-              </li>
+            @for (email of company.keys.email_keys; track $index) {
+              <li class="flex items-center"> <span><strong>ID:</strong> {{ email.id || 'No disponible' }}</span></li>
+              @for (field of ['host', 'user', 'email', 'password', 'port']; track $index) {
+                <li class="flex items-center">
+                  <span><strong>{{[field] }}:</strong> {{ isVisible($index, field) ? email[field] : '******' }}</span>
+                  <button (click)="toggleVisibility($index, field)" class="ml-2 text-sm hover:text-Pine">
+                    <i class="fas" [ngClass]="isVisible($index, field) ? 'fa-eye-slash' : 'fa-eye'"></i>
+                  </button>
+                  <button (click)="copyToClipboard(email[field])" class="ml-2 text-sm hover:text-Pine">
+                    Copiar
+                  </button>
+                </li>
+              }
             }
           </ul>
         } @else {

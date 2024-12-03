@@ -28,7 +28,7 @@ export class CompanyFormComponent {
         api_key: new FormControl(''),
         api_secret: new FormControl('')
       }),
-      emails: new FormArray([this.createEmailGroup()]),
+      email_keys: new FormArray([this.createEmailGroup()]),
       contact_info: new FormGroup({
         email: new FormControl(''),
         phone: new FormControl(''),
@@ -52,7 +52,7 @@ export class CompanyFormComponent {
         id:data.companyDTO?.id || undefined,
         company_name: data.companyDTO?.company_name || '',
         cloudinary: data.companyDTO?.keys?.cloudinary_keys || {},
-        email: data.companyDTO?.keys?.email || {},
+        email_keys: data.companyDTO?.keys?.email_keys || {},
         contact_info: data.companyDTO?.keys?.contact_info || {},
         links: data.companyDTO?.keys?.links || {}
     });
@@ -63,8 +63,8 @@ export class CompanyFormComponent {
   }
 
 
-  get emails(): FormArray {
-    return this.catalogForm.get('emails') as FormArray;
+  get email_keys(): FormArray {
+    return this.catalogForm.get('email_keys') as FormArray;
   }
 
   createEmailGroup(): FormGroup {
@@ -78,11 +78,11 @@ export class CompanyFormComponent {
   }
 
   addEmail() {
-    this.emails.push(this.createEmailGroup());
+    this.email_keys.push(this.createEmailGroup());
   }
 
   removeEmail(index: number) {
-    this.emails.removeAt(index);
+    this.email_keys.removeAt(index);
   }
 
   async submit() {
