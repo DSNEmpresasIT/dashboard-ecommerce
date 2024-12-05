@@ -51,8 +51,8 @@ export class CompanyFormComponent {
     this.catalogForm.patchValue({
         id:data.companyDTO?.id || undefined,
         company_name: data.companyDTO?.company_name || '',
-        cloudinary: data.companyDTO?.keys?.cloudinary_keys || {},
-        email_keys: data.companyDTO?.keys?.email_keys || {},
+        cloudinary: data.companyDTO?.keys?.cloudinary_keys || [],
+        email_keys: data.companyDTO?.keys?.email_keys || [],
         contact_info: data.companyDTO?.keys?.contact_info || {},
         links: data.companyDTO?.keys?.links || {}
     });
@@ -69,6 +69,7 @@ export class CompanyFormComponent {
 
   createEmailGroup(): FormGroup {
     return new FormGroup({
+      id: new FormControl(''),
       host: new FormControl('', Validators.required),
       user: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
