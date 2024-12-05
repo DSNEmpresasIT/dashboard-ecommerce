@@ -69,7 +69,7 @@ export class CompanyFormComponent {
 
   createEmailGroup(): FormGroup {
     return new FormGroup({
-      id: new FormControl(''),
+      id: new FormControl(null),
       host: new FormControl('', Validators.required),
       user: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),

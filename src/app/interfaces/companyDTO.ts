@@ -7,6 +7,7 @@ export interface CloudinaryDto {
 }
 
 export interface EmailDto {
+  id?: number;
   host: string;
   user: string;
   password: string;
