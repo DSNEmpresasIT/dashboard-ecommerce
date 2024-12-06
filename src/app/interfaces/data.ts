@@ -22,7 +22,7 @@ export interface CompanyFormData extends Data {
 
 export interface Keys {
     cloudinary_keys?: CloudinaryDto;
-    email_keys?: EmailDto;
+    email_keys?: EmailDto[];
     contact_info?: CreateContactInfo;
     links?: CreateSocialMedia;
 }
