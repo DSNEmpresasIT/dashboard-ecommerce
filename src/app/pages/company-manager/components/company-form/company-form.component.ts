@@ -6,6 +6,7 @@ import { MATERIAL_MODULES } from '../../../../../helpers/index-imports';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CompanyService } from '../../../../services/global-api/company-manager/company.service';
 import { firstValueFrom } from 'rxjs';
+import { AlertService, AlertsType } from '../../../../services/alert.service';
 
 @Component({
   selector: 'app-company-form',
@@ -15,7 +16,9 @@ import { firstValueFrom } from 'rxjs';
   styleUrl: './company-form.component.css'
 })
 export class CompanyFormComponent {
-  companyService = inject(CompanyService)
+  companyService = inject(CompanyService);
+  alertService = inject(AlertService);
+
   crud = CrudAction
   title!: string
   errorMsg!: boolean
@@ -28,7 +31,7 @@ export class CompanyFormComponent {
         api_key: new FormControl(''),
         api_secret: new FormControl('')
       }),
-      email_keys: new FormArray([this.createEmailGroup()]),
+      email_keys: new FormArray([]),
       contact_info: new FormGroup({
         email: new FormControl(''),
         phone: new FormControl(''),
@@ -48,15 +51,26 @@ export class CompanyFormComponent {
   });
   constructor(@Inject(MAT_DIALOG_DATA) public data: CompanyFormData , private dialogRef: MatDialogRef<CompanyFormComponent>) {
     console.log(data, ' in company');
-    this.catalogForm.patchValue({
-        id:data.companyDTO?.id || undefined,
-        company_name: data.companyDTO?.company_name || '',
-        cloudinary: data.companyDTO?.keys?.cloudinary_keys || [],
-        email_keys: data.companyDTO?.keys?.email_keys || [],
-        contact_info: data.companyDTO?.keys?.contact_info || {},
-        links: data.companyDTO?.keys?.links || {}
-    });
-    this.title = this.data.action
+
+
+    // Llenar el FormArray con los datos recibidos
+   data.companyDTO?.keys?.email_keys?.forEach(() => {
+    this.email_keys.push(this.createEmailGroup());  // Crear un nuevo grupo por cada email_key
+  });
+
+  // Ahora sí, realizar el patchValue
+  this.catalogForm.patchValue({
+    id: data.companyDTO?.id || undefined,
+    company_name: data.companyDTO?.company_name || '',
+    cloudinary: data.companyDTO?.keys?.cloudinary_keys || {},
+    contact_info: data.companyDTO?.keys?.contact_info || {},
+    links: data.companyDTO?.keys?.links || {}
+  });
+
+  // Asignar valores específicos para el FormArray
+  this.email_keys.patchValue(data.companyDTO?.keys?.email_keys || []);
+  
+  this.title = this.data.action;
     if (data.action === CrudAction.READ) {
       this.catalogForm.disable()
     }
@@ -84,6 +98,23 @@ export class CompanyFormComponent {
 
   removeEmail(index: number) {
     this.email_keys.removeAt(index);
+  }
+
+  async deleteEmail(id: number, index: number) {
+    try {
+      if (id) {
+        await this.alertService.showDeleteConfirmation(async () => {
+          await firstValueFrom(this.companyService.deleteCompanyEmail(id));
+          this.removeEmail(index);
+        });
+      } else {
+        await this.alertService.showDeleteConfirmation(async () => {
+          this.removeEmail(index);
+        });
+      }
+    } catch (error) {
+      this.alertService.show(4000, "Se produjo un error al intentar eliminar el correo", AlertsType.ERROR);
+    }
   }
 
   async submit() {

@@ -39,7 +39,7 @@
             <legend class="block text-Text text-lg font-bold mb-2">Configuración de Email</legend>
             @for (email of email_keys.controls; track $index) {
               <div  [formGroupName]="$index">
-                <button class="flex justify-end items-end text-red-200 hover:text-red-400" type="button" (click)="removeEmail($index)">Eliminar Email</button>
+                <button class="flex justify-end items-end text-red-200 hover:text-red-400" type="button" (click)="deleteEmail(email_keys.at($index).get('id')?.value, $index)">Eliminar Email</button>
                 <div class="mb-2">
                   <label class="block text-Text font-semibold mb-2" for="host">Host</label>
                   <input formControlName="host" class="text-Text p-3 w-full px-8 rounded-lg bg-HighLightLow hover:border-Pine"  id="host" type="text" >
@@ -71,9 +71,9 @@
                     <div class="text-Rose text-sm mt-1">El correo es inválido.</div>
                   }
                 </div>
-                <button type="button" (click)="addEmail()">Agregar Email</button>
               </div>
             }
+            <button class="text-sm text-white md:text-lg hover:text-Pine mt-4" type="button" (click)="addEmail()">Agregar Email</button>
         
           </fieldset>
         </mat-tab>

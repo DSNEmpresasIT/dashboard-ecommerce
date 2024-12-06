@@ -41,28 +41,15 @@ export class CompanyService {
   }
 
   update(company: CreateCompanyDto){
-    const id = company.keys?.email_keys?.id;
-    
-    if (company.keys?.email_keys) {
-      const numericId = Number(id);
-  
-      if (!isNaN(numericId)) {
-        company.keys.email_keys.id = numericId;
-      } else {
-        delete company.keys.email_keys.id;
-      }
-    }
     console.log(company, 'company update');
     return this.http.put<Company>(`${this.GLOBALAPIURL}company/${company.id}`,{...company},{
       headers: this.authService.getAuthHeaders(),
     })
   }
 
-  createCompanyCredentials(){
-
-  }
-
-  editCompanyCredentials(){
-    
+  deleteCompanyEmail(id:number){
+    return this.http.delete(`${this.GLOBALAPIURL}client-credential/email/${id}`,{
+      headers: this.authService.getAuthHeaders(),
+    })
   }
 }
