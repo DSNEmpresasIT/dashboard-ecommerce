@@ -168,7 +168,7 @@
                           <div class="absolute justify-center items-center group-hover:flex hidden inset-0 bg-black/70">
                               <div class="flex gap-4">
                                 <button type="button" (click)="openDialog()"><i class="fa-regular fa-eye text-lg text-gray-200/60 hover:text-gray-200 "></i></button>
-                                <button type="button" (click)="removeFormItems(i, 'images')"><i class="fa-regular fa-trash-can text-lg hover:text-red-400 text-red-200"></i></button>
+                                <button type="button" (click)="removeFormItems(i, 'images', imageControl.get('id')?.value)"><i class="fa-regular fa-trash-can text-lg hover:text-red-400 text-red-200"></i></button>
                               </div>
                           </div>
                           <dialog #imageDialog >

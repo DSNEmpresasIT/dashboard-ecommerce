@@ -17,6 +17,7 @@ import { Product, ProductFeatures } from '../../interfaces/product';
 import { CategoryTreeComponent } from "../../components/category-tree/category-tree.component";
 import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
+import { FilesService } from '../../services/global-api/files.service';
 
 export enum COMPONENTSS{ 
   MAIN_INFORMATION = 'Information principal',
@@ -64,6 +65,7 @@ export class ProductFeatureComponent implements OnInit {
     private productServ: ProductService,
     private treeCategoryTestServ: CategoryTreeService,
     private catalogStateService: CatalogStateService,
+    private fileService: FilesService
   ) {
     this.activatedRoute.queryParams.subscribe(params => {
       this.catalogId = params['catalogId'];
@@ -106,6 +108,9 @@ export class ProductFeatureComponent implements OnInit {
   
 
   ngOnInit() {
+    this.authService.currentTokenPayload.subscribe((res) => {
+      this.payload = res
+    });
 
     this.activatedRoute.queryParams.subscribe(params => {
       this.catalogId = params['catalogId'];
@@ -130,7 +135,6 @@ export class ProductFeatureComponent implements OnInit {
 
    this.fetchAllSuppliers();
 
-    this.authService.currentTokenPayload.subscribe(res => this.payload = res);
   }
 
 
@@ -205,11 +209,17 @@ export class ProductFeatureComponent implements OnInit {
     }
   }
 
-  removeFormItems(id: number, form: string){
-    const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
-    itemToDelet.removeAt(id);
-
-    
+  async removeFormItems(id: number, form: string, imageId?:any){
+    try {
+      const companyId = this.payload?.user.companyId
+      if(companyId) {
+        this.alertServ.showDeleteConfirmation(async () => await firstValueFrom(this.fileService.deleteFileById(companyId, imageId)))
+        const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
+        itemToDelet.removeAt(id);
+      }
+    } catch (error: any) {
+      this.alertServ.show(10000, `Hubo un error al eliminar ${error.message}, vuelva a intentar` , AlertsType.ERROR);
+    }
   }
   
   addSpec() {

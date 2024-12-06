@@ -20,18 +20,67 @@ export class AlertService {
   // Método específico para confirmar la eliminación
   async showDeleteConfirmation(onConfirm: () => void): Promise<void> {
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "Estás seguro?",
       icon: "warning",
       background: 'rgb(57 53 82 / var(--tw-bg-opacity))',
       color: '#fff',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Aceptar"
     })
     if(result.isConfirmed) {
       onConfirm()
     }
+  }
+  /**
+   * Validacion por input para realizar el DELETE
+   * @param onConfirm 
+   */
+  async showDeleteConfirmationWithValidation(onConfirm: () => void) {
+    const validateText = 'confirmar'
+    Swal.fire({
+      title: "Para eliminar, escriba confirmar",
+      input: "text",
+      color: "#fff",
+      inputAttributes: {
+        autocapitalize: "off",
+      },
+      customClass: {
+        htmlContainer: "rgb(57 53 82 / var(--tw-bg-opacity))",
+        input: 'text-Text p-3 px-8 rounded-lg bg-Base hover:border-Pine'
+      },
+      background: 'rgb(57 53 82 / var(--tw-bg-opacity))',
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Aceptar",
+      showLoaderOnConfirm: true,
+      preConfirm: async (text) => {
+        try {
+          if(text === validateText) {
+            return 'OK'
+          } 
+          return Swal.showValidationMessage(`
+            ${JSON.stringify("tes")}
+          `);
+        } catch (error) {
+          Swal.showValidationMessage(`
+            Request failed: ${error}
+          `);
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Éxito!",
+          text: 'Eliminación exitosa',
+          icon: "info",
+          color: "#fff",
+          showClass: {
+            popup: 'bg-Overlay',
+          },
+        });
+      }
+    });
   }
 }
