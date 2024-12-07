@@ -37,7 +37,10 @@ export class CompanyService {
   }
 
   create(company:Company){
-   
+    console.log(company, 'company update');
+    return this.http.post<Company>(`${this.GLOBALAPIURL}company/register`,{...company},{
+      headers: this.authService.getAuthHeaders(),
+    })
   }
 
   update(company: CreateCompanyDto){
