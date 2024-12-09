@@ -123,8 +123,9 @@ export class CompanyFormComponent {
     try {
       switch (this.data.action) {
         case CrudAction.CREATE:
-          // const response = await firstValueFrom(this.catalogService.create(this.catalogForm.value))
-          // console.log(response)
+          const response = await firstValueFrom(this.companyService.create(this.catalogForm.value))
+          await this.data.refresh()
+          this.dialogRef.close()
           break;
   
         case CrudAction.READ:
@@ -135,6 +136,8 @@ export class CompanyFormComponent {
   
         case CrudAction.UPDATE:
           const updateResponse = await firstValueFrom(this.companyService.update(this.catalogForm.value))
+          await this.data.refresh()
+          this.dialogRef.close()
           console.log(updateResponse)
           break;
       }

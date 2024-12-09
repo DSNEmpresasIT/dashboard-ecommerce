@@ -61,7 +61,7 @@ export class CompanyComponent implements OnInit, OnDestroy{
     this.dialog.open(CompanyFormComponent, {
       width: "600px",
       minHeight: "750px",
-      data: { companyDTO , action }
+      data: { companyDTO , action, refresh: () => this.dataSharingService.refreshCompanyData() }
     })
   }
 

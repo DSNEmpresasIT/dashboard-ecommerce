@@ -19,7 +19,7 @@ export class DataSharingService {
 
   async refreshCompanyData() {
     try {
-      const response = await firstValueFrom(this.companyServ.getCompanies());
+      const response = await firstValueFrom(this.companyServ.getCompany());
       this.setCompanyData(response);  
       return response; 
     } catch (error) {
