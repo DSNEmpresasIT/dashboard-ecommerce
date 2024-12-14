@@ -1,4 +1,4 @@
-import { Component, effect, ElementRef, OnInit, Signal, ViewChild } from '@angular/core';
+import { Component, effect, ElementRef, Input, OnInit, Signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductFeature } from '../../interfaces/productSingle';
@@ -18,42 +18,44 @@ import { CategoryTreeComponent } from "../../components/category-tree/category-t
 import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
 import { FilesService } from '../../services/global-api/files.service';
+import { ApiResponse } from '../../interfaces/response';
 
-export enum COMPONENTSS{ 
+export enum COMPONENTSS {
   MAIN_INFORMATION = 'Information principal',
   TECHNICAL_DETAILS = 'Technical Details',
   FILES = 'Archivos',
   CATEGORIES = 'Relacion con Categorias',
-  FEATURES= 'Caracteristicas'
+  FEATURES = 'Caracteristicas'
 }
 
 @Component({
-    selector: 'app-product-feature',
-    standalone: true,
-    templateUrl: './product-feature.component.html',
-    styleUrl: './product-feature.component.css',
-    imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent]
+  selector: 'app-product-feature',
+  standalone: true,
+  templateUrl: './product-feature.component.html',
+  styleUrl: './product-feature.component.css',
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent]
 })
 export class ProductFeatureComponent implements OnInit {
   productNewForm: FormGroup;
   fileName: string = '';
-  renderProductSingle: ProductFeature | undefined | null; 
+  renderProductSingle: ProductFeature | undefined | null;
   productName: string | null | undefined;
   readonly COMPONENTS = COMPONENTSS
   componentsToRender: COMPONENTSS = this.COMPONENTS.MAIN_INFORMATION
   isLoading: boolean = false
-  pdfFiles: { [key: string]: File } = {}; 
-
-  switchComponentsToRender(componentToRender: COMPONENTSS){
+  pdfFiles: { [key: string]: File } = {};
+  imageToUpload = false
+  switchComponentsToRender(componentToRender: COMPONENTSS) {
     this.componentsToRender = componentToRender
   }
+  uploading = false
   product!: any
   suppliers: Supplier[] | null = [];
   payload: UserAuthPayload | null = null;
   selectedId: string | null = null;
   selectedCategoriesSignal: Signal<SelectedCategory[]>;
   catalogId: string | null = null;
-
+  productId!: number
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -73,7 +75,6 @@ export class ProductFeatureComponent implements OnInit {
         this.catalogStateService.setCatalogId(this.catalogId);
       }
     });
-    
     this.selectedCategoriesSignal = this.treeCategoryTestServ.selectedCategoriesSignal;
 
     this.productNewForm = this.formBuilder.group({
@@ -94,7 +95,6 @@ export class ProductFeatureComponent implements OnInit {
       let value = this.selectedCategoriesSignal()
       this.productNewForm.patchValue({ categoryIds: value });
     })
-     
   }
 
   getModalTitle(): string {
@@ -105,7 +105,6 @@ export class ProductFeatureComponent implements OnInit {
       return 'Ingrese los datos del producto';
     }
   }
-  
 
   ngOnInit() {
     this.authService.currentTokenPayload.subscribe((res) => {
@@ -115,14 +114,17 @@ export class ProductFeatureComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       this.catalogId = params['catalogId'];
       const productId = params['id'];
-      if(!this.catalogId){
+      if (productId) {
+        this.productId = productId
+      }
+      if (!this.catalogId) {
         this.alertServ.show(10000, 'El catalogo no fue definido, cree uno antes de acceder a esta vista.', AlertsType.ERROR)
       }
 
-      if(this.catalogId && productId){
+      if (this.catalogId && productId) {
         this.loadProduct(productId);
-      }else{
-        this.treeCategoryTestServ.getCategoryChildren().subscribe((res)=>{
+      } else {
+        this.treeCategoryTestServ.getCategoryChildren().subscribe((res) => {
           this.product = res
         })
       }
@@ -131,9 +133,8 @@ export class ProductFeatureComponent implements OnInit {
         this.catalogStateService.setCatalogId(this.catalogId);
       }
     });
-  
 
-   this.fetchAllSuppliers();
+    this.fetchAllSuppliers();
 
   }
 
@@ -151,38 +152,32 @@ export class ProductFeatureComponent implements OnInit {
         stock: product.stock,
         catalogId: product.catalog?.id || null,
       });
-      if(product.categories){
+      if (product.categories) {
         this.treeCategoryTestServ.setSelectedCategories(
           product.categories.map(cat => ({
             id: cat.id,
             label: cat.label
           }))
         );
-
       }
-  
-  
       const imagesFormArray = this.productNewForm.get('images') as FormArray;
       imagesFormArray.clear();
       product.images.forEach((image) => {
         imagesFormArray.push(this.formBuilder.group({
           id: [image.id],
           url: [image.url],
+          loading: [false],
           cloudinary_id: [image.cloudinary_id]
         }));
       });
-  
+      this.imagesToUpload()
       this.setProductFeaturesFormArrays(product.product_features);
-  
     } catch (error) {
       console.error('Error fetching product', error);
     }
   }
-  
-  
   private setProductFeaturesFormArrays(productFeatures: ProductFeatures | null | undefined) {
     const productFeaturesForm = this.productNewForm.get('productFeatures') as FormGroup;
-  
     const specsFormArray = productFeaturesForm.get('specs') as FormArray;
     specsFormArray.clear();
     productFeatures?.specs?.forEach((spec) => {
@@ -198,7 +193,6 @@ export class ProductFeatureComponent implements OnInit {
       }));
     });
   }
-  
   addFeatureItem() {
     const items = this.productNewForm.get('productFeatures.items') as FormArray;
     if (items) {
@@ -209,34 +203,40 @@ export class ProductFeatureComponent implements OnInit {
     }
   }
 
-  async removeFormItems(id: number, form: string, imageId?:any){
+  async removeFormItems(id: number, form: string, imageId?: any) {
+    if (!imageId) {
+      const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
+      itemToDelet.removeAt(id);
+      return
+    }
     try {
       const companyId = this.payload?.user.companyId
-      if(companyId) {
-        this.alertServ.showDeleteConfirmation(async () => await firstValueFrom(this.fileService.deleteFileById(companyId, imageId)))
-        const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
-        itemToDelet.removeAt(id);
+      if (companyId) {
+        await this.alertServ.showDeleteConfirmation(async () => {
+          const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
+          itemToDelet.value[id].loading = true
+          this.productNewForm.get('images')?.setValue(itemToDelet.value)
+          await firstValueFrom(this.fileService.deleteFileById(companyId, imageId))
+          itemToDelet.removeAt(id);
+          this.alertServ.show(5000, "Eliminación realizada con éxito", AlertsType.SUCCESS);
+        })
       }
     } catch (error: any) {
-      this.alertServ.show(10000, `Hubo un error al eliminar ${error.message}, vuelva a intentar` , AlertsType.ERROR);
+      this.alertServ.show(10000, `Ocurrió un error al intentar eliminar. Por favor, intente nuevamente.`, AlertsType.ERROR);
     }
   }
-  
   addSpec() {
     const specs = this.productNewForm.get('productFeatures.specs') as FormArray;
     if (specs) {
       specs.push(this.formBuilder.control(''));
     }
   }
-  
   get featuresArray(): FormArray {
     return this.productNewForm.get('productFeatures.items') as FormArray;
   }
-  
   get featureSpects(): FormArray {
     return this.productNewForm.get('productFeatures.specs') as FormArray;
   }
-  
   addImage() {
     const images = this.productNewForm.get('images') as FormArray;
     images.push(this.formBuilder.group({
@@ -247,56 +247,100 @@ export class ProductFeatureComponent implements OnInit {
   get imagesArray(): FormArray {
     return this.productNewForm.get('images') as FormArray;
   }
-  
-
   async onImageSelected(event: Event): Promise<void> {
     const inputElement = event.target as HTMLInputElement;
-    if (inputElement.files && inputElement.files.length > 0) {
-      const files = Array.from(inputElement.files);
-      this.fileName = files.map(file => file.name).join(', ');
-      const maxSizeInBytes = 500 * 1024; // 500kb
-
-      for (const file of files) {
-        if (file.size > maxSizeInBytes) {
-          this.alertServ.show(6000, "Una de las imágenes supera el tamaño máximo de 500kb", AlertsType.ERROR);
-          continue; // Skip this file
-        }
-
+    if (!inputElement.files || inputElement.files.length === 0) {
+      this.fileName = 'Ningún archivo seleccionado'
+    } else {
+      const images: { file: File; preview: string; }[] = []
+      for (let i = 0; i < inputElement.files.length; i++) {
+        const file = inputElement.files[i];
         const reader = new FileReader();
-
-        await new Promise<void>((resolve, reject) => {
-          reader.onload = async (e: any) => {
-            const imageData = e.target.result;
-            const cloudinaryResponse = await this.uploadToCloudinary(imageData);
-            console.log(cloudinaryResponse, 'cloudinary')
-
-            if (cloudinaryResponse) {
-              this.addImageWithUrl(cloudinaryResponse.asset_id, cloudinaryResponse.url);
-            }
-
-            resolve();
-          };
-
-          reader.onerror = (error) => {
-            reject(error);
-          };
-
-          reader.readAsDataURL(file);
-        });
+        reader.onload = () => {
+          const img = {
+            file,
+            preview: reader.result as string
+          }
+          images.push(img);
+          this.addImageWithUrl(file.name, img.preview)
+        };
+        reader.readAsDataURL(file);
       }
-    } else{
-      this.fileName = 'Ningún archivo seleccionado';
     }
+    this.imageToUpload = true
   }
-
+  imagesToUpload() {
+    const images = this.productNewForm.get('images')?.value.find((img: any) => !img.id)
+    this.imageToUpload = images && images.length !== 0
+  }
+  dataURIToBlob(dataURI: string) {
+    const splitDataURI = dataURI.split(',')
+    const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
+    const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
+    const ia = new Uint8Array(byteString.length)
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i)
+    }
+    return new Blob([ia], { type: mimeString })
+  }
   addImageWithUrl(cloudinaryId: string, url: string) {
     const images = this.productNewForm.get('images') as FormArray;
     images.push(this.formBuilder.group({
+      id: [''],
       cloudinary_id: [cloudinaryId, Validators.required],
-      url: [url, Validators.required]
+      url: [url, Validators.required],
+      loading: [false]
     }));
   }
-
+  async uploadImage(image: any): Promise<void> {
+    this.uploading = true
+    const loadingControl = image.get('loading');
+    const cloudinaryId = image.get('cloudinary_id').value;
+    const imageUrl = image.get('url').value;
+    loadingControl.setValue(true);
+    const companyId = this.payload?.user.companyId;
+    if (!companyId) return
+    try {
+      const imageBlob = this.dataURIToBlob(imageUrl);
+      const formData = new FormData();
+      formData.append('file', imageBlob, cloudinaryId);
+      formData.append('companyId', companyId.toString());
+      formData.append('productId', this.productId.toString());
+      const response = await firstValueFrom(this.fileService.uploadFile(formData)) as ApiResponse
+      image.get('id').setValue(response.content[0]);
+      this.alertServ.show(3000, 'Imagen subida exitosamente', AlertsType.SUCCESS);
+    } catch (error) {
+      this.alertServ.show(3000, `Error al subir la imagen: ${cloudinaryId}`, AlertsType.ERROR);
+    } finally {
+      this.uploading = false
+      loadingControl.setValue(false);
+    }
+    this.imagesToUpload()
+  }
+  async uploadImages() {
+    try {
+      const formData = new FormData();
+      this.uploading = true
+      let images = this.productNewForm.get('images')?.value
+      images.forEach((img: any) => {
+        if (!img.id) {
+          const imageBlob = this.dataURIToBlob(img.url);
+          formData.append(`file`, imageBlob, img.cloudinary_id);
+          img.loading = true
+        }
+      });
+      this.productNewForm.get('images')?.setValue(images)
+      const companyId = this.payload?.user.companyId;
+      if (!companyId || images.length === 0) return
+      formData.append('companyId', companyId.toString());
+      formData.append('productId', this.productId.toString());
+      await firstValueFrom(this.fileService.uploadFile(formData));
+      await this.loadProduct(this.productId.toString())
+      this.uploading = false
+    } catch (error) {
+      this.alertServ.show(10000, `Ocurrió un error al subir las imágenes. Por favor, intenta nuevamente`, AlertsType.ERROR);
+    }
+  }
   async uploadToCloudinary(imageData: File): Promise<any> {
     return new Promise((resolve, reject) => {
       this.cloudinaryService.uploadImage(imageData).subscribe(
@@ -312,58 +356,56 @@ export class ProductFeatureComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-      this.toggleLoading();
-      try {
-        const productData = this.prepareProductData();
-        console.log(productData, 'data antes de enviar con el nuevo arbol ')
-        await this.saveProductToAPI(productData);
-       
-      } catch (error:any) {
-        console.error('Error processing the form:', error);
-        this.alertServ.show(10000, `Hubo un error al procesar el formulario. Corrige los errores e intenta nuevamente. ${error.message}` , AlertsType.ERROR);
+    this.toggleLoading();
+    try {
+      const productData = this.prepareProductData();
+      console.log(productData, 'data antes de enviar con el nuevo arbol ')
+      await this.saveProductToAPI(productData);
 
-      } finally {
-        this.toggleLoading();
-      }
-    
+    } catch (error: any) {
+      console.error('Error processing the form:', error);
+      this.alertServ.show(10000, `Hubo un error al procesar el formulario. Corrige los errores e intenta nuevamente. ${error.message}`, AlertsType.ERROR);
+
+    } finally {
+      this.toggleLoading();
+    }
   }
 
   private prepareProductData(): any {
-    if (!this.productNewForm.valid){
-    const errors: string[] = [];
+    if (!this.productNewForm.valid) {
+      const errors: string[] = [];
 
-    Object.keys(this.productNewForm.controls).forEach((key) => {
-      const control = this.productNewForm.get(key);
-      
-      if (control && control.invalid) {
-        const fieldName = key; 
-        errors.push(`El campo "${fieldName}" es obligatorio.`);
-      }
-    });
+      Object.keys(this.productNewForm.controls).forEach((key) => {
+        const control = this.productNewForm.get(key);
 
-    throw new Error(`\n${errors.join('\n')}`);
+        if (control && control.invalid) {
+          const fieldName = key;
+          errors.push(`El campo "${fieldName}" es obligatorio.`);
+        }
+      });
+
+      throw new Error(`\n${errors.join('\n')}`);
     }
 
-      const categories = this.productNewForm.get('categoryIds')?.getRawValue();
-      const categoryIds = [...categories.map((item:any) => parseInt(item.id))];
-    
-      const productData = {
-        ...this.productNewForm.value,
-        categoryIds:  categoryIds
-      };
-    
-      delete productData.img;
-      delete productData.categoryParentId;
-      delete productData.subCategoryIds;
-    
-      return productData;
-    
+    const categories = this.productNewForm.get('categoryIds')?.getRawValue();
+    const categoryIds = [...categories.map((item: any) => parseInt(item.id))];
+
+    const productData = {
+      ...this.productNewForm.value,
+      categoryIds: categoryIds
+    };
+
+    delete productData.img;
+    delete productData.categoryParentId;
+    delete productData.subCategoryIds;
+
+    return productData;
+
   }
 
   private async saveProductToAPI(productData: any): Promise<void> {
     try {
       const productId = this.selectedId;
-  
       if (productId) {
         await this.productServ.edit(parseInt(productId), productData);
       } else {
@@ -379,19 +421,19 @@ export class ProductFeatureComponent implements OnInit {
   //   this.modalToggleService.toggleModal(value);
   // }
 
-  toggleLoading(){
+  toggleLoading() {
     this.isLoading = !this.isLoading;
   }
 
 
-  fetchAllSuppliers(){
+  fetchAllSuppliers() {
     this.supplierServ.getSuppliers()
-      // .then((arg: Supplier[] | null)=>{
-      //   this.suppliers = arg;
-      // })
-      // .catch(error =>{
-      //   console.log('Error fetching suppliers', error);
-      // });
+    // .then((arg: Supplier[] | null)=>{
+    //   this.suppliers = arg;
+    // })
+    // .catch(error =>{
+    //   console.log('Error fetching suppliers', error);
+    // });
   }
 
 

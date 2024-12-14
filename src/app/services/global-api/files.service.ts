@@ -17,7 +17,9 @@ export class FilesService {
   ) {
     authService.currentTokenPayload.subscribe(res => this.payload = res)
   }
-
+  uploadFile(file: FormData) {
+    return this.http.post(`${this.GLOBALAPIURL}files`, file)
+  }
   deleteFileById(companyId: number, imageId: number) {
     return this.http.delete(`${this.GLOBALAPIURL}files/${companyId}/${imageId}`, {
       headers: this.authService.getAuthHeaders(),

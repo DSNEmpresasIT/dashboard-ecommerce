@@ -72,15 +72,13 @@ export class CategoryService {
   }
 
   create(category: CategoryDTO): Observable<CategoryDTO> {
-    if (!this.payload) {
+    if (!this.catalogId) {
       throw new Error('The catalog ID was not defined');
     }
-
     const data = {
       ...category,
-      catalogId: this.payload.user.catalogId,
+      catalogId: parseInt(this.catalogId),
     };
-
     return this.http.post<CategoryDTO>(`${this.GLOBALAPIURL}catalog/categories/`, data, { headers: this.authService.getAuthHeaders() })
       .pipe(
         catchError(error => {
