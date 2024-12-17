@@ -19,6 +19,7 @@ import { CatalogStateService } from '../../services/global-api/catalog/catalog-s
 import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
 import { FilesService } from '../../services/global-api/files.service';
 import { ApiResponse } from '../../interfaces/response';
+import { NzFormatEmitEvent, NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 export enum COMPONENTSS {
   MAIN_INFORMATION = 'Information principal',
@@ -33,7 +34,7 @@ export enum COMPONENTSS {
   standalone: true,
   templateUrl: './product-feature.component.html',
   styleUrl: './product-feature.component.css',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent, NzTreeModule]
 })
 export class ProductFeatureComponent implements OnInit {
   productNewForm: FormGroup;
@@ -56,6 +57,26 @@ export class ProductFeatureComponent implements OnInit {
   selectedCategoriesSignal: Signal<SelectedCategory[]>;
   catalogId: string | null = null;
   productId!: number
+  public nodes!: NzTreeNodeOptions[]
+  nzEvent(event: NzFormatEmitEvent): void {
+    if(event.eventName === 'expand' && event.node?.isExpanded || event.keys?.length !== 0) {
+      if(!event.node?.key) return
+      this.treeCategoryTestServ.getCategoryChildren(parseInt(event.node?.key)).subscribe((res) => {
+        this.nodes.forEach((category) => {
+          if(category.key == event.node?.key) {
+            const children = res.map((product: any) => {
+              return {
+                title: product.label,
+                key: product.id
+              }
+            })
+            category.children = children
+          }
+        })
+        this.nodes = [...this.nodes]
+      })
+    }
+  }
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -137,14 +158,18 @@ export class ProductFeatureComponent implements OnInit {
     this.fetchAllSuppliers();
 
   }
-
-
-
   private async loadProduct(id: string) {
     this.selectedId = id;
     try {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(parseInt(id)));
       this.product = product.relatedCategoriesMarked
+      this.nodes = this.product.map((product: any) => {
+        return {
+          title: product.label,
+          key: product.id,
+          children: []
+        }
+      })
       this.productNewForm.patchValue({
         name: product.name,
         description: product.description,
@@ -387,12 +412,23 @@ export class ProductFeatureComponent implements OnInit {
       throw new Error(`\n${errors.join('\n')}`);
     }
 
-    const categories = this.productNewForm.get('categoryIds')?.getRawValue();
-    const categoryIds = [...categories.map((item: any) => parseInt(item.id))];
-
+    const keys: string[] = []
+    this.nodes.forEach((node) => {
+      const areChecked = node?.children?.some((child) => child?.checked)
+      if(areChecked) {
+        keys.push(node.key)
+        node.children?.forEach((child) => {
+          if(child.checked) {
+            keys.push(child.key)
+          }
+        })
+      } else if(node.checked) {
+        keys.push(node.key)
+      }
+    })
     const productData = {
       ...this.productNewForm.value,
-      categoryIds: categoryIds
+      categoryIds: keys
     };
 
     delete productData.img;
