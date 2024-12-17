@@ -69,14 +69,14 @@ export class AdminComponent {
   }
   async deleteCatalog(catalog: Catalog) {
     try {
-      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.catalogService.delete(catalog)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.catalogService.delete(catalog)))
     } catch (error) {
       this.alertService.show(4000, "Se produjo un error al intentar eliminar el catálogo", AlertsType.ERROR);
     }
   }
   async deleteUser(id: any) {
     try {
-      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
       await this.getCompanies()
     } catch (error) {
       this.alertService.show(4000, "Se produjo un error al intentar eliminar el usuario", AlertsType.ERROR);
@@ -84,7 +84,7 @@ export class AdminComponent {
   }
   async deleteCompany(id: any) {
     try {
-      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
     } catch (error) {
       this.alertService.show(4000, "Se produjo un error al intentar eliminar la empresa", AlertsType.ERROR);
     }

@@ -1,8 +1,15 @@
 <div>
   <div class="flex mt-28 w-full px-10">
-    <app-category-explore></app-category-explore>
+    <div class="flex flex-col">
+      <a [routerLink]="['/company-manager']" routerLinkActive="router-link-active"  class="text-white hover:text-Pine text-lg flex justify-start w-max gap-2 items-center group">
+        <i class=" fa-solid fa-chevron-left transition duration-75 text-gray-400 group-hover:text-Pine"></i>
+        Volver a Compañia
+
+      </a>
+      <app-category-explore></app-category-explore>
+    </div>
   
-    <div class=" min-h-screen grid gap-4 md:grid-cols-2 pb-10 min-[1210px]:grid-cols-3  min-[1501px]:grid-cols-4  grid-rows-1 mb-auto">
+    <div class=" min-h-screen grid gap-4 md:grid-cols-2 pb-10 min-[1210px]:grid-cols-3  min-[1629px]:grid-cols-4  grid-rows-1 mb-auto">
       @for (product of paginatedProducts; track $index) {
       <app-card-product
         [renderProduct]="product"

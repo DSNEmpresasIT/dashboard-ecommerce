@@ -103,12 +103,12 @@ export class CompanyFormComponent {
   async deleteEmail(id: number, index: number) {
     try {
       if (id) {
-        await this.alertService.showDeleteConfirmation(async () => {
+        await this.alertService.showConfirmation(async () => {
           await firstValueFrom(this.companyService.deleteCompanyEmail(id));
           this.removeEmail(index);
         });
       } else {
-        await this.alertService.showDeleteConfirmation(async () => {
+        await this.alertService.showConfirmation(async () => {
           this.removeEmail(index);
         });
       }
