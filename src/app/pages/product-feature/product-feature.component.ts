@@ -94,31 +94,36 @@ export class ProductFeatureComponent implements OnInit {
     })
   }
 
-  switchComponentsToRender(componentToRender: COMPONENTSS) {
-    if(componentToRender !== this.COMPONENTS.FILES || !this.productNewForm.invalid || this.selectedId) {
-       this.componentsToRender = componentToRender;
+  switchComponentsToRender(componentToRender: COMPONENTSS): void {
+    if (componentToRender !== this.COMPONENTS.FILES) {
+      this.componentsToRender = componentToRender;
+      return;
     }
-     if (componentToRender !== this.COMPONENTS.FILES) return
-     
-      if (this.productNewForm.invalid) {
-        const invalidFields = this.getInvalidFields();
-        this.alertServ.show(
-          10000,
-          `Debes completar los campos obligatorios  * : ${invalidFields.join(', ')}`,
-          AlertsType.ERROR
-        );
-      } else if (!this.selectedId) {
-        this.alertServ.showConfirmation(
-          async () => {
-            await this.onSubmit();
-            this.componentsToRender = componentToRender;
-          },
-            "Confirmación",
-          "Si entras a la sección de imágenes, el producto se creará automáticamente.",
-        );
-      }
-    
+  
+    if (this.productNewForm.invalid) {
+      this.alertServ.show(
+        10000,
+        `Debes completar los campos obligatorios *: ${this.getInvalidFields().join(', ')}`,
+        AlertsType.ERROR
+      );
+      return;
+    }
+  
+    if (!this.selectedId) {
+      this.alertServ.showConfirmation(
+        async () => {
+          await this.onSubmit();
+          this.componentsToRender = componentToRender;
+        },
+        "Confirmación",
+        "Si entras a la sección de imágenes, el producto se creará automáticamente."
+      );
+      return;
+    }
+  
+    this.componentsToRender = componentToRender;
   }
+  
 
   getInvalidFields(): string[] {
     const invalidFields: string[] = [];
