@@ -13,13 +13,13 @@ import { SupplierService } from '../../services/global-api/supplier.service';
 import { Supplier } from '../../interfaces/supplier';
 import { UserAuthPayload } from '../../interfaces/auth';
 import { firstValueFrom } from 'rxjs';
-import { Product, ProductFeatures } from '../../interfaces/product';
+import { Category, Product, ProductFeatures } from '../../interfaces/product';
 import { CategoryTreeComponent } from "../../components/category-tree/category-tree.component";
 import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
 import { FilesService } from '../../services/global-api/files.service';
 import { ApiResponse } from '../../interfaces/response';
-import { NzFormatEmitEvent, NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 export enum COMPONENTSS {
   MAIN_INFORMATION = 'Information principal',
@@ -49,6 +49,7 @@ export class ProductFeatureComponent implements OnInit {
   switchComponentsToRender(componentToRender: COMPONENTSS) {
     this.componentsToRender = componentToRender
   }
+  categories: Category[] | undefined = []
   uploading = false
   product!: any
   suppliers: Supplier[] | null = [];
@@ -59,21 +60,26 @@ export class ProductFeatureComponent implements OnInit {
   productId!: number
   public nodes!: NzTreeNodeOptions[]
   nzEvent(event: NzFormatEmitEvent): void {
+    if(event.eventName === 'expand') {
+      const node = this.nodes.find((node) => node.key == event.node?.key)
+      const count = node?.children?.length
+      if(count) return
+    }
+    if(!event.node?.key) return
     if(event.eventName === 'expand' && event.node?.isExpanded || event.keys?.length !== 0) {
-      if(!event.node?.key) return
       this.treeCategoryTestServ.getCategoryChildren(parseInt(event.node?.key)).subscribe((res) => {
-        this.nodes.forEach((category) => {
-          if(category.key == event.node?.key) {
-            const children = res.map((product: any) => {
-              return {
-                title: product.label,
-                key: product.id
-              }
-            })
-            category.children = children
+        const children = res.map((product: any) => ({
+          title: product.label,
+          key: product.id,
+          // checked: !!this.categories?.find((c: any) => c.id == product.id) // Puedes reactivar si es necesario
+        }));
+        this.nodes = this.nodes.map((category) => {
+          if (category.key === event.node?.key) {
+            category.children = [...children];
           }
-        })
-        this.nodes = [...this.nodes]
+          return category;
+        });
+        this.nodes = [...this.nodes];
       })
     }
   }
@@ -162,12 +168,14 @@ export class ProductFeatureComponent implements OnInit {
     this.selectedId = id;
     try {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(parseInt(id)));
+      this.categories = product.categories
       this.product = product.relatedCategoriesMarked
-      this.nodes = this.product.map((product: any) => {
+      this.nodes = this.product.map((category: any) => {
+        const isActive = !!this.categories?.find((c: any) => c.id == category.id)
         return {
-          title: product.label,
-          key: product.id,
-          children: []
+          checked: isActive,
+          title: category.label,
+          key: category.id,
         }
       })
       this.productNewForm.patchValue({
@@ -384,7 +392,6 @@ export class ProductFeatureComponent implements OnInit {
     this.toggleLoading();
     try {
       const productData = this.prepareProductData();
-      console.log(productData, 'data antes de enviar con el nuevo arbol ')
       await this.saveProductToAPI(productData);
 
     } catch (error: any) {
@@ -443,6 +450,9 @@ export class ProductFeatureComponent implements OnInit {
     try {
       const productId = this.selectedId;
       if (productId) {
+        if(productData.productFeatures.specs.length == 0) {
+          delete productData.productFeatures
+        }
         await this.productServ.edit(parseInt(productId), productData);
       } else {
         await this.productServ.create(productData);
