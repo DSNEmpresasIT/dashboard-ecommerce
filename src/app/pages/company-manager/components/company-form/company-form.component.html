@@ -37,6 +37,7 @@
         <mat-tab label="Emails">
           <fieldset formArrayName="email_keys" class="mb-4">
             <legend class="block text-Text text-lg font-bold mb-2">Configuración de Email</legend>
+           @if (email_keys.controls) {
             @for (email of email_keys.controls; track $index) {
               <div  [formGroupName]="$index">
                 <button class="flex justify-end items-end text-red-200 hover:text-red-400" type="button" (click)="deleteEmail(email_keys.at($index).get('id')?.value, $index)">Eliminar Email</button>
@@ -73,6 +74,7 @@
                 </div>
               </div>
             }
+           }
             <button class="text-sm text-white md:text-lg hover:text-Pine mt-4" type="button" (click)="addEmail()">Agregar Email</button>
         
           </fieldset>

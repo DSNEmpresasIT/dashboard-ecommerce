@@ -41,7 +41,7 @@
 
       <div class="mb-4">
         <h3 class="font-medium text-sm mb-2">Emails:</h3>
-        @if (company.keys.email_keys?.length) {
+        @if (company.keys && company.keys.email_keys?.length) {
           <ul>
             @for (email of company.keys.email_keys; track $index) {
               <li class="flex items-center"> <span><strong>ID:</strong> {{ email.id || 'No disponible' }}</span></li>

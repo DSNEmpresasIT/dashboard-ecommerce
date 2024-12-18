@@ -84,11 +84,12 @@ export class AdminComponent {
   }
   async deleteCompany(id: any) {
     try {
-      await this.alertService.showConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.catalogService.delete(id)))
     } catch (error) {
       this.alertService.show(4000, "Se produjo un error al intentar eliminar la empresa", AlertsType.ERROR);
     }
   }
+  
   showTab(tab: string, companyIndex: number) {
     this.companies[companyIndex].activeTab = tab;
   }
