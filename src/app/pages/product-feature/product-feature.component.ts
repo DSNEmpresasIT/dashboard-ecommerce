@@ -61,32 +61,19 @@ export class ProductFeatureComponent implements OnInit {
   productId!: number
   public nodes!: NzTreeNodeOptions[]
   nzEvent(event: NzFormatEmitEvent): void {
-    if(event.eventName === 'expand') {
-      const node = this.nodes.find((node) => node.key == event.node?.key)
-      const count = node?.children?.length
-      if(count) return
-    }
-    if(!event.node?.key) return
-    if(event.eventName === 'expand' && event.node?.isExpanded || event.keys?.length !== 0) {
+    const events = ['expand', 'check']
+    const node = this.nodes.find((node) => node.key == event.node?.key)
+    if(node?.children?.length || !event.node?.key) return
+    if(events.includes(event.eventName) && event.node?.isExpanded || event.keys?.length !== 0) {
       this.treeCategoryTestServ.getCategoryChildren(parseInt(event.node?.key)).subscribe((res) => {
-        const children = res.map((product: any) => ({
+        const children = res.map((product: Category) => ({
           title: product.label,
           key: product.id,
-          // checked: !!this.categories?.find((c: any) => c.id == product.id) // Puedes reactivar si es necesario
+          checked: !!this.categories?.find((c: Category) => c.id == product.id),
+          selectable: false,
+          selected: false
         }));
-        this.nodes = this.nodes.map((category) => {
-          if (category.key === event.node?.key) {
-            category.children = [...children];
-          }
-          return category;
-        });
-        this.nodes = [...this.nodes];
-        const childrenKeys = this.nodes
-          .filter(node => node.children)
-          .flatMap(node => node.children?.map(child => child.key));
-          console.log(childrenKeys);
-        this.defaultCheckedKeys =[...childrenKeys]
-        console.log(this.nodes);
+        event.node?.addChildren(children)
       })
     }
   }
@@ -177,12 +164,14 @@ export class ProductFeatureComponent implements OnInit {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(parseInt(id)));
       this.categories = product.categories
       this.product = product.relatedCategoriesMarked
-      this.nodes = this.product.map((category: any) => {
-        const isActive = !!this.categories?.find((c: any) => c.id == category.id)
+      this.nodes = this.product.map((category: Category) => {
         return {
-          checked: isActive,
+          expanded: false,
+          checked: !!this.categories?.find((c: Category) => c.id == category.id),
           title: category.label,
           key: category.id,
+          selectable: false,
+          selected: false
         }
       })
       this.productNewForm.patchValue({
