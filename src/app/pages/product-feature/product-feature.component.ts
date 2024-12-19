@@ -45,6 +45,7 @@ export class ProductFeatureComponent implements OnInit {
   componentsToRender: COMPONENTSS = this.COMPONENTS.MAIN_INFORMATION
   isLoading: boolean = false
   pdfFiles: { [key: string]: File } = {};
+  defaultCheckedKeys: any
   imageToUpload = false
   switchComponentsToRender(componentToRender: COMPONENTSS) {
     this.componentsToRender = componentToRender
@@ -80,6 +81,12 @@ export class ProductFeatureComponent implements OnInit {
           return category;
         });
         this.nodes = [...this.nodes];
+        const childrenKeys = this.nodes
+          .filter(node => node.children)
+          .flatMap(node => node.children?.map(child => child.key));
+          console.log(childrenKeys);
+        this.defaultCheckedKeys =[...childrenKeys]
+        console.log(this.nodes);
       })
     }
   }
