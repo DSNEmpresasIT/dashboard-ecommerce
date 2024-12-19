@@ -1,5 +1,7 @@
+import { FormArray } from "@angular/forms"
 import { CrudAction } from "../enums/enums"
 import { User } from "../pages/company-manager/user/user.component"
+import { UserAuthPayload } from "./auth"
 import { Company } from "./company"
 import { CloudinaryDto, CreateCompanyDto, CreateContactInfo, CreateSocialMedia, EmailDto } from "./companyDTO"
 import { Catalog } from "./product"
@@ -25,4 +27,10 @@ export interface Keys {
     email_keys?: EmailDto[];
     contact_info?: CreateContactInfo;
     links?: CreateSocialMedia;
+}
+
+export interface FileData {
+  payload: UserAuthPayload;
+  imagenes?: FormArray;
+  productoId: string;
 }
