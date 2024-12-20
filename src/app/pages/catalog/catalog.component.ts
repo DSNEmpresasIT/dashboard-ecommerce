@@ -15,7 +15,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { UserComponent } from "../company-manager/user/user.component";
 import { ProductService } from '../../services/global-api/catalog/product.service';
 import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
-import { ActivatedRoute, RouterModule, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterModule, RouterOutlet } from '@angular/router';
 @Component({
     selector: 'app-catalog',
     standalone: true,
@@ -24,7 +24,7 @@ import { ActivatedRoute, RouterModule, RouterOutlet } from '@angular/router';
     imports: [CommonModule, CardProductComponent,
     FormProductComponent, CategoryExploreComponent,
     FormNewProductComponent, HttpClientModule,
-    FormSupplierComponent, MatPaginatorModule, UserComponent]
+    FormSupplierComponent, MatPaginatorModule, RouterLink]
 })
 export class CatalogComponent implements OnInit, OnDestroy{
   products!: Product[];

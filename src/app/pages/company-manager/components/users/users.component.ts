@@ -50,7 +50,7 @@ export class UsersComponent implements OnInit, OnDestroy{
 
   async deleteUser(id: any) {
     try {
-      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.userService.removeUser(id)))
       // this.dataSharingService.refreshCompanyData()
     } catch (error) {
       this.alertService.show(4000, "Se produjo un error al intentar eliminar el usuario", AlertsType.ERROR);

@@ -27,7 +27,9 @@
             (click)="switchComponentsToRender(COMPONENTS.MAIN_INFORMATION)"
             >
             <i class="fa-solid fa-circle-info pe-2"></i>
-            
+            @if(productNewForm.get('name')?.hasError('required') || productNewForm.get('description')?.hasError('required') && productNewForm.touched){
+              <span class="text-red-300 text-lg">*</span>
+            }
               Informacion principal
             </button>
             <button 
@@ -36,7 +38,9 @@
              class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
               (click)="switchComponentsToRender(COMPONENTS.FEATURES)">
               <i class="fa-regular fa-rectangle-list pe-2"></i>
-              
+              @if(featuresArray.invalid){
+                <span class="text-red-300 text-lg">*</span>
+              }
               Caracteristicas
             </button>
             <button
@@ -45,6 +49,9 @@
              class="p-2 text-Text hover:bg-Pine bg-Overlay    rounded-lg  inline-flex items-center px-4 py-3 w-full "
              (click)="switchComponentsToRender(COMPONENTS.CATEGORIES)">
              <i class="fa-solid fa-sitemap pe-2"></i>
+             @if(productNewForm.get('categoryIds')?.hasError('required')){
+              <span class="text-red-300 text-lg">*</span>
+            }
                Relacion con categorias
             </button>
             <button 
@@ -99,7 +106,7 @@
                       <div formArrayName="items" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[600px] border-y-4 border-Base bg-Base p-3  rounded-md overflow-y-scroll  ">
                         @for (itemControl of featuresArray.controls; track $index) {
                           <div class="bg-Overlay p-4 rounded-xl " [formGroupName]="$index">
-                            <button class="p-2 group flex ms-auto items-center" (click)="removeFormItems($index, 'productFeatures.items')">
+                            <button type="button" class="p-2 group flex ms-auto items-center" (click)="removeFormItems($index, 'productFeatures.items')">
                               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline ml-2 text-Text group-hover:text-Rose" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M14.293 5.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 11-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 111.414-1.414L10 8.586l4.293-4.293z" clip-rule="evenodd" />
                               </svg>
@@ -110,7 +117,7 @@
                               <label for="title-{{$index}}" class="block text-Text font-bold mb-2">Titulo</label>
                               <input id="title-{{$index}}" name="title" type="text" formControlName="title"
                                 class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                                <div class="text-Rose" *ngIf="productNewForm?.get('title')?.hasError('required') && productNewForm.touched">
+                                <div class="text-Rose" *ngIf="itemControl.get('title')?.hasError('required')">
                                   El titulo es requerido.
                                 </div> 
                             </div>
@@ -119,7 +126,7 @@
                               <label for="text-{{$index}}" class="block text-Text font-bold mb-2">Texto</label>
                               <input id="text-{{$index}}" name="text" type="text" formControlName="text"
                                 class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                                <div class="text-Rose" *ngIf="productNewForm?.get('text')?.hasError('required') && productNewForm.touched">
+                                <div class="text-Rose" *ngIf="itemControl.get('text')?.hasError('required')">
                                   El texto es requerido.
                                 </div> 
                             </div>
@@ -145,10 +152,7 @@
                             <div class="mb-4">
                               <label for="specs-{{$index}}" class="block text-Text font-bold mb-2">Especificacion</label>
                               <input id="specs-{{$index}}" name="specs" type="text" [formControlName]="$index"
-                                class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine">
-                                <div class="text-Rose" *ngIf="productNewForm?.get('specs')?.hasError('required') && productNewForm.touched">
-                                  La especificacion es requerida.
-                                </div> 
+                                class="text-Text p-3 w-full  px-8 rounded-lg bg-Base hover:border-Pine"> 
                             </div>
               
                           </div>

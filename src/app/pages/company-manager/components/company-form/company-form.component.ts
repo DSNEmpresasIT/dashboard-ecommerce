@@ -53,12 +53,10 @@ export class CompanyFormComponent {
     console.log(data, ' in company');
 
 
-    // Llenar el FormArray con los datos recibidos
    data.companyDTO?.keys?.email_keys?.forEach(() => {
-    this.email_keys.push(this.createEmailGroup());  // Crear un nuevo grupo por cada email_key
+    this.email_keys.push(this.createEmailGroup());
   });
 
-  // Ahora sí, realizar el patchValue
   this.catalogForm.patchValue({
     id: data.companyDTO?.id || undefined,
     company_name: data.companyDTO?.company_name || '',
@@ -67,7 +65,6 @@ export class CompanyFormComponent {
     links: data.companyDTO?.keys?.links || {}
   });
 
-  // Asignar valores específicos para el FormArray
   this.email_keys.patchValue(data.companyDTO?.keys?.email_keys || []);
   
   this.title = this.data.action;
@@ -103,12 +100,12 @@ export class CompanyFormComponent {
   async deleteEmail(id: number, index: number) {
     try {
       if (id) {
-        await this.alertService.showDeleteConfirmation(async () => {
+        await this.alertService.showConfirmation(async () => {
           await firstValueFrom(this.companyService.deleteCompanyEmail(id));
           this.removeEmail(index);
         });
       } else {
-        await this.alertService.showDeleteConfirmation(async () => {
+        await this.alertService.showConfirmation(async () => {
           this.removeEmail(index);
         });
       }

@@ -18,15 +18,16 @@ export class AlertService {
     this.showAlertSubject.next({ duration, message, type });
   }
   // Método específico para confirmar la eliminación
-  async showDeleteConfirmation(onConfirm: () => void): Promise<void> {
+  async showConfirmation(onConfirm: () => void, title = "¿Estás seguro?", message?: string): Promise<void> {
     const result = await Swal.fire({
-      title: "Estás seguro?",
+      title,
       icon: "warning",
+      text: message,
       background: 'rgb(57 53 82 / var(--tw-bg-opacity))',
       color: '#fff',
       showCancelButton: true,
       cancelButtonText: "Cancelar",
-      confirmButtonText: "Aceptar"
+      confirmButtonText: "Aceptar",
     })
     if(result.isConfirmed) {
       onConfirm()
@@ -36,10 +37,10 @@ export class AlertService {
    * Validacion por input para realizar el DELETE
    * @param onConfirm 
    */
-  async showDeleteConfirmationWithValidation(onConfirm: () => void) {
-    const validateText = 'confirmar'
+  async showConfirmationWithValidation(onConfirm: () => void) {
+    const validateText = 'DELETE'
     Swal.fire({
-      title: "Para eliminar, escriba confirmar",
+      title: "Para eliminar, escriba DELETE",
       input: "text",
       color: "#fff",
       inputAttributes: {

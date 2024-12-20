@@ -50,7 +50,7 @@ export class CatalogsComponent implements OnInit, OnDestroy{
 
   async deleteCatalog(catalog: Catalog) {
     try {
-      await this.alertService.showDeleteConfirmation(async () => await firstValueFrom(this.catalogService.delete(catalog)))
+      await this.alertService.showConfirmation(async () => await firstValueFrom(this.catalogService.delete(catalog)))
     } catch (error) {
       console.log(error);
     }

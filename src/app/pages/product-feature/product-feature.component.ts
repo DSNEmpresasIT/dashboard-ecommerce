@@ -47,9 +47,6 @@ export class ProductFeatureComponent implements OnInit {
   pdfFiles: { [key: string]: File } = {};
   defaultCheckedKeys: any
   imageToUpload = false
-  switchComponentsToRender(componentToRender: COMPONENTSS) {
-    this.componentsToRender = componentToRender
-  }
   categories: Category[] | undefined = []
   uploading = false
   product!: any
@@ -103,7 +100,7 @@ export class ProductFeatureComponent implements OnInit {
       description: ['', [Validators.required]],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryIds: [[], [Validators.required]],
+      categoryIds: [[]],
       catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
@@ -116,6 +113,48 @@ export class ProductFeatureComponent implements OnInit {
       let value = this.selectedCategoriesSignal()
       this.productNewForm.patchValue({ categoryIds: value });
     })
+  }
+
+  switchComponentsToRender(componentToRender: COMPONENTSS): void {
+    if (componentToRender !== this.COMPONENTS.FILES) {
+      this.componentsToRender = componentToRender;
+      return;
+    }
+  
+    if (this.productNewForm.invalid) {
+      this.alertServ.show(
+        10000,
+        `Debes completar los campos obligatorios *: ${this.getInvalidFields().join(', ')}`,
+        AlertsType.ERROR
+      );
+      return;
+    }
+  
+    if (!this.selectedId) {
+      this.alertServ.showConfirmation(
+        async () => {
+          await this.onSubmit();
+          this.componentsToRender = componentToRender;
+        },
+        "Confirmación",
+        "Si entras a la sección de imágenes, el producto se creará automáticamente."
+      );
+      return;
+    }
+  
+    this.componentsToRender = componentToRender;
+  }
+  
+
+  getInvalidFields(): string[] {
+    const invalidFields: string[] = [];
+    Object.keys(this.productNewForm.controls).forEach(key => {
+      const control = this.productNewForm.get(key);
+      if (control && control.invalid && control.errors) {
+        invalidFields.push(key);
+      }
+    });
+    return invalidFields;
   }
 
   getModalTitle(): string {
@@ -147,6 +186,16 @@ export class ProductFeatureComponent implements OnInit {
       } else {
         this.treeCategoryTestServ.getCategoryChildren().subscribe((res) => {
           this.product = res
+          this.nodes = this.product.map((category: Category) => {
+            return {
+              expanded: false,
+              checked: !!this.categories?.find((c: Category) => c.id == category.id),
+              title: category.label,
+              key: category.id,
+              selectable: false,
+              selected: false
+            }
+          })
         })
       }
 
@@ -241,7 +290,7 @@ export class ProductFeatureComponent implements OnInit {
     try {
       const companyId = this.payload?.user.companyId
       if (companyId) {
-        await this.alertServ.showDeleteConfirmation(async () => {
+        await this.alertServ.showConfirmation(async () => {
           const itemToDelet = this.productNewForm.get(`${form}`) as FormArray
           itemToDelet.value[id].loading = true
           this.productNewForm.get('images')?.setValue(itemToDelet.value)
@@ -328,17 +377,18 @@ export class ProductFeatureComponent implements OnInit {
     const imageUrl = image.get('url').value;
     loadingControl.setValue(true);
     const companyId = this.payload?.user.companyId;
-    if (!companyId) return
+    if (!companyId || !this.selectedId) return
     try {
       const imageBlob = this.dataURIToBlob(imageUrl);
       const formData = new FormData();
       formData.append('file', imageBlob, cloudinaryId);
       formData.append('companyId', companyId.toString());
-      formData.append('productId', this.productId.toString());
+      formData.append('productId', this.selectedId);
       const response = await firstValueFrom(this.fileService.uploadFile(formData)) as ApiResponse
       image.get('id').setValue(response.content[0]);
       this.alertServ.show(3000, 'Imagen subida exitosamente', AlertsType.SUCCESS);
     } catch (error) {
+      console.log(error, 'error en img')
       this.alertServ.show(3000, `Error al subir la imagen: ${cloudinaryId}`, AlertsType.ERROR);
     } finally {
       this.uploading = false
@@ -360,14 +410,16 @@ export class ProductFeatureComponent implements OnInit {
       });
       this.productNewForm.get('images')?.setValue(images)
       const companyId = this.payload?.user.companyId;
-      if (!companyId || images.length === 0) return
+      if (!companyId || images.length === 0 || !this.selectedId) return
       formData.append('companyId', companyId.toString());
-      formData.append('productId', this.productId.toString());
+      formData.append('productId', this.selectedId);
       await firstValueFrom(this.fileService.uploadFile(formData));
-      await this.loadProduct(this.productId.toString())
+      await this.loadProduct(this.selectedId)
       this.uploading = false
     } catch (error) {
       this.alertServ.show(10000, `Ocurrió un error al subir las imágenes. Por favor, intenta nuevamente`, AlertsType.ERROR);
+    } finally{
+      this.uploading = false
     }
   }
   async uploadToCloudinary(imageData: File): Promise<any> {
@@ -451,7 +503,10 @@ export class ProductFeatureComponent implements OnInit {
         }
         await this.productServ.edit(parseInt(productId), productData);
       } else {
-        await this.productServ.create(productData);
+        this.productServ.create(productData).then((res)=>{
+          console.log(res, 'producto creado')
+          this.loadProduct(res.id)
+        });
       }
     } catch (error: any) {
       console.error(error.message);
@@ -467,7 +522,6 @@ export class ProductFeatureComponent implements OnInit {
     this.isLoading = !this.isLoading;
   }
 
-
   fetchAllSuppliers() {
     this.supplierServ.getSuppliers()
     // .then((arg: Supplier[] | null)=>{
@@ -477,7 +531,6 @@ export class ProductFeatureComponent implements OnInit {
     //   console.log('Error fetching suppliers', error);
     // });
   }
-
 
   // modal image 
 

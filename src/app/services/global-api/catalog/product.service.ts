@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, firstValueFrom, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 import { Product } from '../../../interfaces/product';
 import { UserAuthPayload } from '../../../interfaces/auth';
@@ -37,34 +37,31 @@ export class ProductService {
     'authorization': `${this.payload?.token}`,
    }
    
-   async create(product: any) {
-
+   async create(product: any): Promise<any> {
     if (!this.payload || !this.catalogId) {
       throw new Error('The catalog ID was not defined');
     }
-
+  
     const data = {
       ...product,
       catalogId: parseInt(this.catalogId),
     };
-
-    const products = this.http.post(`${this.GLOBALAPIURL}products`, { ...data },
-      {
-        headers: this.authService.getAuthHeaders(),
-      })
-      .subscribe({
-        next: (products) => {
-          this.alertServ.show(6000, 'Producto creado exitosamente', AlertsType.SUCCESS);
-          this.fetchAllProducts();
-          return products;
-        },
-        error: (error) => {
-          console.error('Error creating product:', error);
-          this.alertServ.show(9000, 'Error al crear el producto', AlertsType.ERROR);
-        }
-      });
   
-    return products;
+    try {
+      const response = await firstValueFrom(
+        this.http.post(`${this.GLOBALAPIURL}products`, data, {
+          headers: this.authService.getAuthHeaders(),
+        })
+      );
+  
+      this.alertServ.show(6000, 'Producto creado exitosamente', AlertsType.SUCCESS);
+      this.fetchAllProducts();
+      return response; // Devolvemos la respuesta del servidor
+    } catch (error) {
+      console.error('Error creating product:', error);
+      this.alertServ.show(9000, 'Error al crear el producto', AlertsType.ERROR);
+      throw error; // Permite que el error sea manejado donde se llame a `create`
+    }
   }
 
 
