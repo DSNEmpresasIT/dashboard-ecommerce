@@ -6,11 +6,12 @@ import { AlertService, AlertsType } from '../../services/alert.service';
 import { FilesService } from '../../services/global-api/files.service';
 import { CommonModule } from '@angular/common';
 import { FileData } from '../../interfaces/data';
+import { PinturaEditorComponentTest } from "./pintura-editor/pintura-editor.component";
 
 @Component({
   selector: 'app-files-manager',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, PinturaEditorComponentTest],
   templateUrl: './files-manager.component.html',
   styleUrl: './files-manager.component.css'
 })
@@ -87,6 +88,7 @@ export class FilesManagerComponent implements OnChanges {
     }
     this.imageToUpload = true
   }
+
   imagesToUpload() {
     const images = this.imageForm.get('images')?.value.find((img: any) => !img.id)
     this.imageToUpload = images && images.length !== 0

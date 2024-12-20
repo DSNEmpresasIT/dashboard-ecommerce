@@ -20,7 +20,8 @@
               }
               @if(!imageControl.get('loading')?.value) {
                 <button type="button" (click)="removeFormItems(i, 'images', imageControl.get('id')?.value)"><i class="fa-regular fa-trash-can text-lg hover:text-red-400 text-red-200"></i></button>
-              }                                
+              }  
+
             </div>
         </div>
         <dialog #imageDialog >
@@ -82,3 +83,4 @@
 
 
 </form>
+<app-pintura-editor></app-pintura-editor>
