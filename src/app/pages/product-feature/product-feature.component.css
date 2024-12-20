@@ -1,0 +1,7 @@
+.ant-tree,.ant-tree {
+    background-color: rgba(0, 0, 0, 0);
+    color: #fff;
+}
+::ng-deep nz-tree-node-title:hover {
+    color: #000000 !important;
+}

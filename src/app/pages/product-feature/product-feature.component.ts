@@ -13,12 +13,13 @@ import { SupplierService } from '../../services/global-api/supplier.service';
 import { Supplier } from '../../interfaces/supplier';
 import { UserAuthPayload } from '../../interfaces/auth';
 import { firstValueFrom } from 'rxjs';
-import { Product, ProductFeatures } from '../../interfaces/product';
+import { Category, Product, ProductFeatures } from '../../interfaces/product';
 import { CategoryTreeComponent } from "../../components/category-tree/category-tree.component";
 import { CatalogStateService } from '../../services/global-api/catalog/catalog-state.service';
 import { ProductPreviewComponent } from "../../components/product-preview/product-preview.component";
 import { FilesService } from '../../services/global-api/files.service';
 import { ApiResponse } from '../../interfaces/response';
+import { NzFormatEmitEvent, NzTreeComponent, NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 export enum COMPONENTSS {
   MAIN_INFORMATION = 'Information principal',
@@ -33,7 +34,7 @@ export enum COMPONENTSS {
   standalone: true,
   templateUrl: './product-feature.component.html',
   styleUrl: './product-feature.component.css',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent, NzTreeModule]
 })
 export class ProductFeatureComponent implements OnInit {
   productNewForm: FormGroup;
@@ -44,7 +45,9 @@ export class ProductFeatureComponent implements OnInit {
   componentsToRender: COMPONENTSS = this.COMPONENTS.MAIN_INFORMATION
   isLoading: boolean = false
   pdfFiles: { [key: string]: File } = {};
+  defaultCheckedKeys: any
   imageToUpload = false
+  categories: Category[] | undefined = []
   uploading = false
   product!: any
   suppliers: Supplier[] | null = [];
@@ -53,6 +56,24 @@ export class ProductFeatureComponent implements OnInit {
   selectedCategoriesSignal: Signal<SelectedCategory[]>;
   catalogId: string | null = null;
   productId!: number
+  public nodes!: NzTreeNodeOptions[]
+  nzEvent(event: NzFormatEmitEvent): void {
+    const events = ['expand', 'check']
+    const node = this.nodes.find((node) => node.key == event.node?.key)
+    if(node?.children?.length || !event.node?.key) return
+    if(events.includes(event.eventName) && event.node?.isExpanded || event.keys?.length !== 0) {
+      this.treeCategoryTestServ.getCategoryChildren(parseInt(event.node?.key)).subscribe((res) => {
+        const children = res.map((product: Category) => ({
+          title: product.label,
+          key: product.id,
+          checked: !!this.categories?.find((c: Category) => c.id == product.id),
+          selectable: false,
+          selected: false
+        }));
+        event.node?.addChildren(children)
+      })
+    }
+  }
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -79,7 +100,7 @@ export class ProductFeatureComponent implements OnInit {
       description: ['', [Validators.required]],
       img: [''], // For previewing the selected image
       images: this.formBuilder.array([]),
-      categoryIds: [[], [Validators.required]],
+      categoryIds: [[]],
       catalogId: [this.payload?.user.catalogId],
       is_active_substance: [false],
       stock: [null],
@@ -165,6 +186,16 @@ export class ProductFeatureComponent implements OnInit {
       } else {
         this.treeCategoryTestServ.getCategoryChildren().subscribe((res) => {
           this.product = res
+          this.nodes = this.product.map((category: Category) => {
+            return {
+              expanded: false,
+              checked: !!this.categories?.find((c: Category) => c.id == category.id),
+              title: category.label,
+              key: category.id,
+              selectable: false,
+              selected: false
+            }
+          })
         })
       }
 
@@ -176,12 +207,22 @@ export class ProductFeatureComponent implements OnInit {
     this.fetchAllSuppliers();
 
   }
-
   private async loadProduct(id: string) {
     this.selectedId = id;
     try {
       const product: Product = await firstValueFrom(this.productServ.fetchProductById(parseInt(id)));
+      this.categories = product.categories
       this.product = product.relatedCategoriesMarked
+      this.nodes = this.product.map((category: Category) => {
+        return {
+          expanded: false,
+          checked: !!this.categories?.find((c: Category) => c.id == category.id),
+          title: category.label,
+          key: category.id,
+          selectable: false,
+          selected: false
+        }
+      })
       this.productNewForm.patchValue({
         name: product.name,
         description: product.description,
@@ -399,7 +440,6 @@ export class ProductFeatureComponent implements OnInit {
     this.toggleLoading();
     try {
       const productData = this.prepareProductData();
-      console.log(productData, 'data antes de enviar con el nuevo arbol ')
       await this.saveProductToAPI(productData);
 
     } catch (error: any) {
@@ -427,12 +467,23 @@ export class ProductFeatureComponent implements OnInit {
       throw new Error(`\n${errors.join('\n')}`);
     }
 
-    const categories = this.productNewForm.get('categoryIds')?.getRawValue();
-    const categoryIds = [...categories.map((item: any) => parseInt(item.id))];
-
+    const keys: string[] = []
+    this.nodes.forEach((node) => {
+      const areChecked = node?.children?.some((child) => child?.checked)
+      if(areChecked) {
+        keys.push(node.key)
+        node.children?.forEach((child) => {
+          if(child.checked) {
+            keys.push(child.key)
+          }
+        })
+      } else if(node.checked) {
+        keys.push(node.key)
+      }
+    })
     const productData = {
       ...this.productNewForm.value,
-      categoryIds: categoryIds
+      categoryIds: keys
     };
 
     delete productData.img;
@@ -447,6 +498,9 @@ export class ProductFeatureComponent implements OnInit {
     try {
       const productId = this.selectedId;
       if (productId) {
+        if(productData.productFeatures.specs.length == 0) {
+          delete productData.productFeatures
+        }
         await this.productServ.edit(parseInt(productId), productData);
       } else {
         this.productServ.create(productData).then((res)=>{

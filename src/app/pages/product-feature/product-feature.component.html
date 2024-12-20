@@ -246,7 +246,16 @@
                   </div>
                 }
                 @case (COMPONENTS.CATEGORIES) {
-                  <app-category-tree [categories]="product"/>
+                  <nz-tree
+                  #nzTree
+                  [nzData]="nodes"
+                  nzCheckable
+                  nzMultiple
+                  nzAsyncData
+                  (nzClick)="nzEvent($event)"
+                  (nzExpandChange)="nzEvent($event)"
+                  (nzCheckBoxChange)="nzEvent($event)"
+                ></nz-tree>
   
                 <div class="text-Rose" *ngIf="productNewForm.get('categoryIds')?.hasError('required') ">
                   Al menos una categoría debe ser seleccionada.
