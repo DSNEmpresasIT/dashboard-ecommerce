@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 export class ProductService {
   GLOBALAPIURL = environment.GLOBALAPIURL;
   private productsSubject = new BehaviorSubject<Product[]>([]);
+  descriptionSubject = new BehaviorSubject('');
   products = this.productsSubject.asObservable();
   payload: UserAuthPayload | null = null;
   catalogId: string | null = null

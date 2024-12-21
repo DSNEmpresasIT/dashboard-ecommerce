@@ -108,3 +108,7 @@ span.mdc-tab__text-label {
 .custom-icon-color-sidebar{
   color: #c4a7e7!important
 }
+.angular-editor-wrapper {
+  background-color: #fff;
+  max-width: 100%;
+}
