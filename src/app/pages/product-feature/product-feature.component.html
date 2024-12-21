@@ -85,16 +85,17 @@
                     </div>
         
         
-                  <div class="mb-4">
-                    <label for="description" class="block text-Text font-bold mb-2">Description</label>
+                  <div class="mb-4 w-full">
+                    <!-- <label for="description" class="block text-Text font-bold mb-2">Description</label>
                     <textarea rows="10" cols="30"  id="description" name="description" type="text" formControlName="description"
                       class="text-Text p-3 w-full  px-8 rounded-lg bg-HighLightLow hover:border-Pine"></textarea>
-                      @if (productNewForm.get('description')?.hasError('required')) {
-                        <div class="text-Rose">
-                          La description es requerida.
-                        </div> 
-                      }
-                      
+                      -->
+                        <app-description [value]="productNewForm.get('description')?.value"></app-description>
+                        @if (productNewForm.get('description')?.hasError('required')) {
+                          <div class="text-Rose">
+                            La description es requerida.
+                          </div> 
+                        }
                   </div>
                 </div>
                 }

@@ -20,6 +20,7 @@ import { ProductPreviewComponent } from "../../components/product-preview/produc
 import { FilesService } from '../../services/global-api/files.service';
 import { ApiResponse } from '../../interfaces/response';
 import { NzFormatEmitEvent, NzTreeComponent, NzTreeModule, NzTreeNodeOptions } from 'ng-zorro-antd/tree';
+import { DescriptionComponent } from "../../components/description/description.component";
 
 export enum COMPONENTSS {
   MAIN_INFORMATION = 'Information principal',
@@ -34,7 +35,7 @@ export enum COMPONENTSS {
   standalone: true,
   templateUrl: './product-feature.component.html',
   styleUrl: './product-feature.component.css',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent, NzTreeModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, ButtonSpinerComponent, CategoryTreeComponent, ProductPreviewComponent, NzTreeModule, DescriptionComponent]
 })
 export class ProductFeatureComponent implements OnInit {
   productNewForm: FormGroup;
@@ -56,6 +57,7 @@ export class ProductFeatureComponent implements OnInit {
   selectedCategoriesSignal: Signal<SelectedCategory[]>;
   catalogId: string | null = null;
   productId!: number
+  description!: string
   public nodes!: NzTreeNodeOptions[]
   nzEvent(event: NzFormatEmitEvent): void {
     const events = ['expand', 'check']
@@ -439,6 +441,8 @@ export class ProductFeatureComponent implements OnInit {
   async onSubmit(): Promise<void> {
     this.toggleLoading();
     try {
+      const description = await firstValueFrom(this.productServ.descriptionSubject)
+      this.productNewForm.patchValue({ description })
       const productData = this.prepareProductData();
       await this.saveProductToAPI(productData);
 

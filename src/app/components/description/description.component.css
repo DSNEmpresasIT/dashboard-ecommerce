@@ -1,0 +1,10 @@
+textarea:focus, input:focus{
+    outline: none;
+}
+.angular-editor  {
+    background-color: white !important;
+}
+
+::ng-deep app-description {
+    max-width: 100%;
+}
